@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.common.dictionary.DictionaryBean">
+		<map property="dicId" javaType="java.lang.String" column="DICID" colType=""/>
+		<map property="typeId" javaType="java.lang.String" column="TYPEID" colType=""/>
+		<map property="dicType" javaType="java.lang.String" column="TYPECODE" colType=""/>
+		<map property="typeName" javaType="java.lang.String" column="TYPENAME" colType=""/>
+		<map property="dicCode" javaType="java.lang.String" column="DICCODE" colType=""/>
+		<map property="dicName" javaType="java.lang.String" column="DICNAME" colType=""/>
+		<map property="dicDesc" javaType="java.lang.String" column="DICDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+	</bean>
+</root>

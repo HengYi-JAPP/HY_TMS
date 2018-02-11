@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="listCarrierCheck" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" loadCacheForm="carrierCheckForm"  version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+		    <sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true"  isEscape="false"  >
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+            			FROM TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+            			left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+            			left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+	           			  left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+	           			  left join TB_HTMS_TRANSPORT 
+	                        left join TB_HTMS_TRANSPORTSEND
+	                        left join TB_HTMS_SEND on TB_HTMS_TRANSPORTSEND.SENDID=TB_HTMS_SEND.SENDID 
+	                        on TB_HTMS_TRANSPORT.TRANSPORTID = TB_HTMS_TRANSPORTSEND.TRANSPORTID
+	                      on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSPORT.TRANSID	                      
+            			WHERE TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+            			AND TB_HTMS_TRANSFER.SELFFETCH='0'
+            			AND TB_HTMS_TRANSFER.TRANSSTATUS !='0' 
+            			<if test="$[carCodeSH]!=''">
+            			    and TB_HTMS_TRANSFER.transid in  (select TB_HTMS_TRANSPORT.transid  from TB_HTMS_TRANSPORT where TB_HTMS_TRANSPORT.TRANSPORTID in (
+							select TB_HTMS_TRANSPORTSEND.TRANSPORTID from TB_HTMS_TRANSPORTSEND 
+							where TB_HTMS_TRANSPORTSEND.sendid in (select tb_htms_send.sendid  from tb_htms_send where tb_htms_send.vehicleid in (select TB_HTMS_VEHICLE.vehicleid from TB_HTMS_VEHICLE  where TB_HTMS_VEHICLE.vehicleno like '%$carCodeSH%'))
+							))
+            			</if>
+            			<if test="$[isUrgentSH]!=''">
+                           AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+                        </if>
+                         <if test="$[startTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSport.createTime,'yyyy-MM-dd HH24:mi:ss') > to_date('$startTimeSH','yyyy-MM-dd HH24:mi:ss')
+					     </if>
+					     <if test="$[endTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSport.createTime,'yyyy-MM-dd HH24:mi:ss')  < to_date('$endTimeSH','yyyy-MM-dd HH24:mi:ss')
+					     </if>
+					      <if test="$[assignDateSH]!=''">
+							AND TB_HTMS_TRANSPORT.CREATETIME LIKE '%$assignDateSH%'
+						  </if>
+						  <if test="$[sendCarDateSH]!=''">
+							AND TB_HTMS_SEND.CREATETIME LIKE '%$sendCarDateSH%'
+						  </if>
+						  <if test="$[sendTimeSH]!=''">
+							AND TB_HTMS_SEND.SENDTIME LIKE '%$sendTimeSH%'
+						  </if>
+                         <if test="$[transStatusSH]!=''">
+                            AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+                        </if>
+                       <if test="$[customerNameSH]!=''">
+                            and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                        </if>
+                        <if test="$[saleManSH]!=''">
+                            and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                        </if>
+                        <if test="$[carrierIdSH]!=''">
+                            and TB_HTMS_TRANSFER.TRANSID in (select transid from TB_HTMS_TRANSPORT where carrierid = '$carrierIdSH' )
+                        </if>
+                        <if test="$[shipCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.shipCode  like '%$shipCodeSH%'
+						</if>
+						 <if test="$[sapTransCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.sapTransCode  like '%$sapTransCodeSH%'
+						</if>
+                       <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+						</if>
+                        <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+						</if>                        
+                         <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+						  </if>
+						   <if test="$[factoryIdSH]!=''">
+							     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+						  </if>
+						  <if test="$[carrierCheckSH]=='1'">
+            			       And   ( TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24< TO_DATE(TB_HTMS_SEND.sendtime,'yyyy-MM-dd HH24:mi:ss') Or 
+                              TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24< SYSDATE AND ( TB_HTMS_SEND.Createtime IS NULL))
+            			  </if>
+            			  <if test="$[carrierCheckSH]=='0'">
+            			     And  ( TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24 >  TO_DATE(TB_HTMS_SEND.createtime,'yyyy-MM-dd HH24:mi:ss') Or 
+		                      TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24 >  Sysdate)
+		                       AND   TB_HTMS_SEND.Createtime Is Not  Null
+            			  </if>
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="carrierCheckList" cacheScope="request" isPage="true"  version="2.0" isEscapeQuotation="true"  isEscape="false"  >
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.*,
+						    TB_HTMS_TRANSFERDETAIL.applyTonNum as  detailApplyTonNum,
+						    TB_HTMS_TRANSFERDETAIL.applyPackNum as  detailApplyPackNum,
+						    TB_HTMS_TRANSFERDETAIL.codetailid,
+						    TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+							TB_HTMS_CUSTORDER.CORDERCODE,
+		                    TB_HTMS_CUSTORDER.CUSTOMERNAME,    
+		                    TB_HTMS_CUSTORDER.saleMan,
+				            caddr.areaId,
+				            caddr.caddrDetail,		
+				            TB_HTMS_TRANSFER.createTime as approveAgreeTime,			           
+				            TB_HTMS_SHIP.createTime as shipApplyTime,
+				            TB_HTMS_TRANSPORT.createTime as transportCreateTime,
+                    		TB_HTMS_SEND.Createtime as sendCreateTime,
+                    		tb_htms_carrier.carrierName,
+                    		TB_HTMS_SEND.sendtime ,
+                    		case  
+				         	 when TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24< TO_DATE(TB_HTMS_SEND.sendtime,'yyyy-MM-dd HH24:mi:ss') then '1'
+         					 when TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24< SYSDATE AND (TB_HTMS_SEND.sendtime IS NULL OR TB_HTMS_SEND.Createtime IS NULL) then '1'
+         					else '0'
+         					  end as CARRIERCHECK
+                      FROM 
+                         TB_HTMS_CUSTORDER , TB_HTMS_TRANSFER 
+	                      left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+	                      left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+	                      left join TB_HTMS_TRANSPORT 
+	                        left join TB_HTMS_TRANSPORTSEND
+	                        left join TB_HTMS_SEND on TB_HTMS_TRANSPORTSEND.SENDID=TB_HTMS_SEND.SENDID 
+	                        on TB_HTMS_TRANSPORT.TRANSPORTID = TB_HTMS_TRANSPORTSEND.TRANSPORTID
+	                      on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSPORT.TRANSID
+	                      left join tb_htms_carrier on TB_HTMS_TRANSPORT.carrierid = tb_htms_carrier.carrierid
+                      WHERE 
+                      TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+                      AND TB_HTMS_TRANSFER.SELFFETCH = '0' 
+                      AND TB_HTMS_TRANSFER.TRANSSTATUS !='0'
+                      <if test="$[carCodeSH]!=''">
+            			    and TB_HTMS_TRANSFER.transid in  (select TB_HTMS_TRANSPORT.transid  from TB_HTMS_TRANSPORT where TB_HTMS_TRANSPORT.TRANSPORTID in (
+							select TB_HTMS_TRANSPORTSEND.TRANSPORTID from TB_HTMS_TRANSPORTSEND 
+							where TB_HTMS_TRANSPORTSEND.sendid in (select tb_htms_send.sendid  from tb_htms_send where tb_htms_send.vehicleid in (select TB_HTMS_VEHICLE.vehicleid from TB_HTMS_VEHICLE  where TB_HTMS_VEHICLE.vehicleno like '%$carCodeSH%'))
+							))
+            			</if>
+            			<if test="$[carrierCheckSH]=='1'">
+            			    And
+                     ( TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24< TO_DATE(TB_HTMS_SEND.sendtime,'yyyy-MM-dd HH24:mi:ss') Or 
+                      TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24< SYSDATE AND ( TB_HTMS_SEND.Createtime IS NULL))
+            			</if>
+            			<if test="$[carrierCheckSH]=='0'">
+            			     And
+		                     ( TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24 >  TO_DATE(TB_HTMS_SEND.createtime,'yyyy-MM-dd HH24:mi:ss') Or 
+		                      TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')+2/24 >  Sysdate)
+		                       AND   TB_HTMS_SEND.Createtime Is Not  Null
+            			</if>
+                      <if test="$[isUrgentSH]!=''">
+                           AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+                      </if>
+                      <if test="$[startTimeSH]!=''">
+						   and  TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss') > to_date('$startTimeSH','yyyy-MM-dd HH24:mi:ss')
+					  </if>
+					  <if test="$[endTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSPORT.createTime,'yyyy-MM-dd HH24:mi:ss')  < to_date('$endTimeSH','yyyy-MM-dd HH24:mi:ss')
+					  </if>
+					  <if test="$[assignDateSH]!=''">
+						AND TB_HTMS_TRANSPORT.CREATETIME LIKE '%$assignDateSH%'
+					  </if>
+					  <if test="$[sendCarDateSH]!=''">
+						AND TB_HTMS_SEND.CREATETIME LIKE '%$sendCarDateSH%'
+					  </if>
+					  <if test="$[sendTimeSH]!=''">
+						AND TB_HTMS_SEND.SENDTIME LIKE '%$sendTimeSH%'
+					  </if>
+                      <if test="$[transStatusSH]!=''">
+                            AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+                      </if>
+                      <if test="$[customerNameSH]!=''">
+                            and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                        </if>
+                        <if test="$[saleManSH]!=''">
+                            and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                        </if>
+                        <if test="$[carrierIdSH]!=''">
+                            and TB_HTMS_TRANSFER.TRANSID in (select transid from TB_HTMS_TRANSPORT where carrierid = '$carrierIdSH' )
+                        </if>
+                      <if test="$[shipCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.shipCode  like '%$shipCodeSH%'
+				      </if>
+					  <if test="$[sapTransCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.sapTransCode  like '%$sapTransCodeSH%'
+					  </if>
+                      <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+					   </if>
+                      <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+					  </if>
+					  <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+					  </if>
+					   <if test="$[factoryIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+					  </if>
+                       
+                      ORDER BY TB_HTMS_TRANSPORT.CREATETIME desc ,TB_HTMS_SEND.CREATETIME ,TB_HTMS_SEND.SENDTIME 
+                      
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/carriercheck/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+</root>

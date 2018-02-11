@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.skin.SkinBean">
+		<map property="themesId" javaType="java.lang.String" column="THEMESID" colType=""/>
+		<map property="skinId" javaType="java.lang.String" column="SKINID" colType=""/>
+		<map property="skinName" javaType="java.lang.String" column="SKINNAME" colType=""/>
+		<map property="skinCode" javaType="java.lang.String" column="SKINCODE" colType=""/>
+		<map property="skinDesc" javaType="java.lang.String" column="SKINDESC" colType=""/>
+		<map property="isDefault" javaType="java.lang.String" column="ISDEFAULT" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="showOrder" javaType="java.lang.Integer" column="SHOWORDER" colType=""/>
+		<map property="isColumnSkin" javaType="java.lang.Integer" column="ISCOLUMNSKIN" colType=""/>
+		<map property="indexColumnSkin" javaType="java.lang.Integer" column="INDEXCOLUMNSKIN" colType=""/>
+		<map property="viewColumnSkin" javaType="java.lang.Integer" column="VIEWCOLUMNSKIN" colType=""/>
+		<map property="listColumnSkin" javaType="java.lang.Integer" column="LISTCOLUMNSKIN" colType=""/>
+	</bean>
+
+</root>

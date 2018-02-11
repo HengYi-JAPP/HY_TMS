@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+
+	<!-- 查询需要分配权限的角色，并进入分配权限角色，此处分配权限是指为角色指定可以访问的权限模块。注意：下面是从系统管理员的视角来分配的；如果以各个应用系统的管理员来说，应该与具体的应用系统做关联，该视角后期权限验证时或子系统验证时再实现 -->	
+	<!--<operation name="toAssignPrivilegeForChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_CHANNEL WHERE CHANNELID=$checkChannelId
+		</sql>
+		<sql name="privilegeCheckedList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeCheckedList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_PRIVILEGE.* FROM TB_WSM_PRIVILEGE,TB_WSM_CHANNEL_PRIVILEGE WHERE TB_WSM_PRIVILEGE.PRIVID=TB_WSM_CHANNEL_PRIVILEGE.PRIVID AND TB_WSM_CHANNEL_PRIVILEGE.CHANNELID=$checkChannelId
+		]]></sql>
+		<sql name="privilegeList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_PRIVILEGE 
+		]]></sql>
+		<forward name="viewPage">jsp/portal/console/channel/assignPrivilege.jsp</forward>
+	</operation>
+	
+	<operation name="assignPrivilegeForChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="delete" >
+			 DELETE   FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=executeAssignPrivilegeForChannel</forward>
+	</operation>
+	<operation name="executeAssignPrivilegeForChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="add" forward="" >		
+		<sql name="insert" isBatch="true">
+		INSERT INTO TB_WSM_CHANNEL (CHANNELID,PRIVID)VALUES($channelId,$privId)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listChannel</forward>
+	</operation>
+	
+	--><!-- 用户end -->
+</root>

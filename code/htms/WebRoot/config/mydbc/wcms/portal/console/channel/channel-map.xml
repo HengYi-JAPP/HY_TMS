@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.channel.ChannelBean">
+		<map property="channelId" javaType="java.lang.String" column="CHANNELID" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="channelName" javaType="java.lang.String" column="CHANNELNAME" colType=""/>
+		<map property="channelName" javaType="java.lang.String" column="CHANNELNAME" colType=""/>
+		<map property="channelUrl" javaType="java.lang.String" column="CHANNELURL" colType=""/>
+		<map property="selectedClass" javaType="java.lang.String" column="SELECTEDCLASS" colType=""/>
+		<map property="defaultClass" javaType="java.lang.String" column="DEFAULTCLASS" colType=""/>
+		<map property="channelDesc" javaType="java.lang.String" column="CHANNELDESC" colType=""/>
+		<map property="loadStyle" javaType="java.lang.String" column="LOADSTYLE" colType=""/>
+		<map property="isValidate" javaType="int" column="ISVALIDATE" colType=""/>
+		<map property="defaultOrder" javaType="int" column="DEFAULTORDER" colType=""/>
+		<map property="defaultShow" javaType="int" column="DEFAULTSHOW" colType=""/>
+		<map property="defaultSelect" javaType="int" column="DEFAULTSELECT" colType=""/>
+		<map property="channelOrder" javaType="int" column="CHANNELORDER" colType=""/>
+		<map property="isCurrent" javaType="int" column="ISCURRENT" colType=""/>
+		<map property="isShow" javaType="int" column="ISSHOW" colType=""/>
+		<map property="isSystem" javaType="int" column="ISSYSTEM" colType=""/>
+		<map property="afterIcon" javaType="java.lang.String" column="AFTERICON" colType=""/>
+		<map property="beforeIcon" javaType="java.lang.String" column="BEFOREICON" colType=""/>
+		<map property="showHeight" javaType="java.lang.String" column="SHOWHEIGHT" colType=""/>
+		<map property="userDefine" javaType="java.lang.String" column="USERDEFINE" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+	</bean>
+</root>

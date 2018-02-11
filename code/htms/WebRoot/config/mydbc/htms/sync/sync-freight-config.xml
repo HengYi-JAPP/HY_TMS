@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	
+	<operation name="loadDbFreightSapCode" businessClass="com.zzy.htms.sap.rfc.SapFreightSynker" invokeMethod="list"  forward="" >
+		<sql name="freightList" beanClass="com.zzy.htms.services.business.FreightBean" cacheType="list" cacheName="freightList" cacheScope="request" isEscapeQuotation="true"  isEscape="false"><![CDATA[
+			SELECT SAPCODE,invoiceFreight
+		    FROM TB_HTMS_FREIGHT 
+		    WHERE ISESTIMATE =0 and ( invoiceFreight is null or INVOICETONNUM is null or INVOICETIME  is null )
+		    	<if test="$[startDate]!=''">
+		    	AND  to_date(SUBSTR(FREIGHTTIME,0,10) ,'YYYY-MM-DD') >= to_date('$startDate' ,'YYYY-MM-DD') 
+		    	 </if>
+		    	
+		    	<if test="$[endDate]!=''">
+		    	AND to_date(SUBSTR(FREIGHTTIME,0,10) ,'YYYY-MM-DD')<=to_date('$endDate' ,'YYYY-MM-DD') 
+		    	 </if>
+		]]></sql>
+	</operation>
+	
+	
+	<operation name="updateDbInvoiceFreight" businessClass="com.zzy.htms.sap.rfc.SapFreightSynker" invokeMethod="list"  forward="" >
+			<sql name="UPDATE_INVOICEFREIGHT" isBatch="true"  test="$[invoiceFreight]!=''">
+					<![CDATA[
+						update TB_HTMS_FREIGHT  set invoiceFreight=$invoiceFreight ,INVOICETONNUM =$invoiceTonNum   , INVOICETIME=$invoiceTime   WHERE SAPCODE =$sapCode 
+					]]>
+			</sql>
+	</operation>
+	
+	<operation name="syncSapInvoiceFreight" businessClass="com.zzy.taglib.export.business.SynInvoiceFreightBusiness" version="2.0"  forward="" >
+		<method name="syncSapInvoiceFreight" businessClass="com.zzy.taglib.export.business.SynInvoiceFreightBusiness"  invokeMethod="doBusiness" exeOrder="" version="2.0">
+		</method>
+		<forward name="exportFreight" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/export/exportFreight.jsp]]></address>
+		</forward>
+	</operation>
+</root>

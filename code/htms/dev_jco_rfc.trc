@@ -1,0 +1,647 @@
+
+**** Error file opened at 20170808 102540 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 10:25:40,240<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 102949 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 10:29:49,399<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 103253 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 10:32:53,659<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 103532 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 10:35:32,416<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 110041 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 11:00:41,022<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 110327 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 11:03:27,688<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 125818 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 12:58:18,571<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 130140 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:01:40,097<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:139)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 130216 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:02:16,529<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.getAttributes(RfcDestination.java:618)
+	at com.sap.conn.jco.rt.RfcDestination.getAttributes(RfcDestination.java:26)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationWithoutPool(Jco3Destination.java:155)
+	at com.zzy.htms.sap.rfc.Jco3Destination.main(Jco3Destination.java:202)
+
+
+**** Error file opened at 20170808 130317 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:03:17,343<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.getAttributes(RfcDestination.java:618)
+	at com.sap.conn.jco.rt.RfcDestination.getAttributes(RfcDestination.java:26)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationWithoutPool(Jco3Destination.java:156)
+	at com.zzy.htms.sap.rfc.Jco3Destination.main(Jco3Destination.java:203)
+
+
+**** Error file opened at 20170808 130536 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:05:36,410<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.getAttributes(RfcDestination.java:618)
+	at com.sap.conn.jco.rt.RfcDestination.getAttributes(RfcDestination.java:26)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationWithoutPool(Jco3Destination.java:168)
+	at com.zzy.htms.sap.rfc.Jco3Destination.main(Jco3Destination.java:215)
+
+
+**** Error file opened at 20170808 130639 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:06:39,583<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:152)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:31)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 130839 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:08:39,522<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:152)
+	at com.zzy.htms.sap.rfc.Jco3Destination.main(Jco3Destination.java:215)
+
+
+**** Error file opened at 20170808 130844 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 13:08:44,459<    
+RfcException: [null]
+    message: 'client' missing
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkLogonData(RfcOptions.java:107)
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:355)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.ping(RfcDestination.java:976)
+	at com.zzy.htms.sap.rfc.Jco3Destination.getJCoDestinationAsPool(Jco3Destination.java:152)
+	at com.zzy.htms.sap.rfc.Jco3Destination.main(Jco3Destination.java:215)
+
+
+**** Error file opened at 20170808 165749 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error: [1] >Tue Aug 08 16:57:49,614<    
+RfcException: [System <empty>|192.168.0.225/00]
+    message: Handle close pending
+    Return code: RFC_CLOSED(6)
+    error group: 109
+    key: RFC_ERROR_CANCELLED
+
+**** Error file opened at 20170808 165930 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error: [1] >Tue Aug 08 16:59:30,541<    
+RfcException: [System <empty>|192.168.0.225/00]
+    message: Handle close pending
+    Return code: RFC_CLOSED(6)
+    error group: 109
+    key: RFC_ERROR_CANCELLED
+
+**** Error file opened at 20170808 170318 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error: [1] >Tue Aug 08 17:03:18,374<    
+RfcException: [System <empty>|192.168.0.225/00]
+    message: Handle close pending
+    Return code: RFC_CLOSED(6)
+    error group: 109
+    key: RFC_ERROR_CANCELLED
+
+**** Error file opened at 20170808 170351 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error: [1] >Tue Aug 08 17:03:51,131<    
+RfcException: [System <empty>|192.168.0.225/00]
+    message: Handle close pending
+    Return code: RFC_CLOSED(6)
+    error group: 109
+    key: RFC_ERROR_CANCELLED
+
+**** Error file opened at 20170808 172547 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Tue Aug 08 17:25:47,265<    
+RfcException: [null]
+    message: 'sysnr' needs to be a two digit number string instead of 'EP1'
+    Return code: RFC_INVALID_PARAMETER(19)
+    error group: 101
+    key: RFC_ERROR_PROGRAM
+	at com.sap.conn.rfc.api.RfcOptions.checkParameters(RfcOptions.java:215)
+	at com.sap.conn.rfc.api.RfcApi.RfcOpen(RfcApi.java:75)
+	at com.sap.conn.jco.rt.MiddlewareJavaRfc$JavaRfcClient.connect(MiddlewareJavaRfc.java:1263)
+	at com.sap.conn.jco.rt.ClientConnection.connect(ClientConnection.java:661)
+	at com.sap.conn.jco.rt.PoolingFactory.init(PoolingFactory.java:103)
+	at com.sap.conn.jco.rt.ConnectionManager.createFactory(ConnectionManager.java:171)
+	at com.sap.conn.jco.rt.DefaultConnectionManager.createFactory(DefaultConnectionManager.java:44)
+	at com.sap.conn.jco.rt.ConnectionManager.getFactory(ConnectionManager.java:160)
+	at com.sap.conn.jco.rt.RfcDestination.initialize(RfcDestination.java:766)
+	at com.sap.conn.jco.rt.RfcDestination.getSystemID(RfcDestination.java:794)
+	at com.sap.conn.jco.rt.RepositoryManager.getRepository(RepositoryManager.java:32)
+	at com.sap.conn.jco.rt.RfcDestination.getRepository(RfcDestination.java:865)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.callFunction(Jco3SapUtils.java:37)
+	at com.zzy.htms.sap.rfc.Jco3SapUtils.main(Jco3SapUtils.java:89)
+
+
+**** Error file opened at 20170808 172715 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error: [1] >Tue Aug 08 17:27:15,261<    
+RfcException: [System <empty>|192.168.0.225/00]
+    message: Handle close pending
+    Return code: RFC_CLOSED(6)
+    error group: 109
+    key: RFC_ERROR_CANCELLED
+
+**** Error file opened at 20170808 173325 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error: [1] >Tue Aug 08 17:33:25,604<    
+RfcException: [System <empty>|192.168.0.225/00]
+    message: Handle close pending
+    Return code: RFC_CLOSED(6)
+    error group: 109
+    key: RFC_ERROR_CANCELLED
+
+**** Error file opened at 20170909 145630 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Sat Sep 09 14:56:30,589<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=00 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3300' not reached
+
+TIME        Sat Sep 09 14:56:30 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3300
+SYSTEM CALL connect
+ERRNO       10061
+ERRNO TEXT  WSAECONNREFUSED: Connection refused
+COUNTER     2
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+Error:  >Sat Sep 09 14:56:31,590<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=00 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3300' not reached
+
+TIME        Sat Sep 09 14:56:31 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3300
+SYSTEM CALL connect
+ERRNO       10061
+ERRNO TEXT  WSAECONNREFUSED: Connection refused
+COUNTER     4
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20170909 150110 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Sat Sep 09 15:01:10,091<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=00 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3300' not reached
+
+TIME        Sat Sep 09 15:01:10 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3300
+SYSTEM CALL connect
+ERRNO       10061
+ERRNO TEXT  WSAECONNREFUSED: Connection refused
+COUNTER     2
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+Error:  >Sat Sep 09 15:01:11,092<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=00 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3300' not reached
+
+TIME        Sat Sep 09 15:01:11 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3300
+SYSTEM CALL connect
+ERRNO       10061
+ERRNO TEXT  WSAECONNREFUSED: Connection refused
+COUNTER     4
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20170909 172312 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Sat Sep 09 17:23:12,655<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+Error:  >Sat Sep 09 17:23:13,717<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+
+**** Error file opened at 20170909 172446 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Sat Sep 09 17:24:46,473<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+Error:  >Sat Sep 09 17:24:47,906<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+
+**** Error file opened at 20170909 172520 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Sat Sep 09 17:25:20,793<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+Error:  >Sat Sep 09 17:25:20,953<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+
+**** Error file opened at 20170909 172729 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Sat Sep 09 17:27:29,161<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+Error:  >Sat Sep 09 17:27:30,313<    >RfcGetException rc (7) message: Syntax error in program SAPLZRFC_HTMS                           .
+<RfcGetException
+
+
+**** Error file opened at 20170911 215537 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Mon Sep 11 21:55:37,158<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=01 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3301' not reached
+
+TIME        Mon Sep 11 21:55:37 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3301
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     2
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+Error:  >Mon Sep 11 21:55:58,586<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=01 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3301' not reached
+
+TIME        Mon Sep 11 21:55:58 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3301
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     4
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+Error:  >Mon Sep 11 21:56:19,766<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=01 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3301' not reached
+
+TIME        Mon Sep 11 21:56:19 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3301
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     6
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+Error:  >Mon Sep 11 21:56:40,736<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=01 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3301' not reached
+
+TIME        Mon Sep 11 21:56:40 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3301
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     8
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20170911 215750 China Standard Time Rel 3.0.1 (2008-10-21) [711.15]
+Error:  >Mon Sep 11 21:57:50,800<    
+RfcException: [null]
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=ABAP_AS_WITH_POOL ASHOST=192.168.0.222 SYSNR=01 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '192.168.0.222:3301' not reached
+
+TIME        Mon Sep 11 21:57:50 2017
+RELEASE     711
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        3147
+DETAIL      NiPConnect2: 192.168.0.222:3301
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     2
+
+    Return code: RFC_FAILURE(1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="listFtechPrivilege" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  loadCacheForm="fetchPrivilegeForm"  version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0"  isEscapeQuotation="true"  isEscape="false" >
+					<content><![CDATA[						
+						  Select Count(*) AS totalCount
+				           From   (  
+				               Select  tt.userid, wm_concat(FACTORYNAME) as FACTORYNAME  From 
+				                (
+				                   Select TB_WSM_USER.*,TB_HTMS_FACTORY.FACTORYID,FACTORYNAME  From TB_WSM_USER  ,TB_HTMS_USER_FACTORY, TB_HTMS_FACTORY   WHERE TB_WSM_USER.USERID = TB_HTMS_USER_FACTORY.USERID
+										AND TB_HTMS_FACTORY.FACTORYID = TB_HTMS_USER_FACTORY.FACTORYID
+										AND TB_WSM_USER.CUSTOMERTYPE = '1' AND TB_WSM_USER.USERNAME LIKE '%$userNameSH%' 
+								 )  tt where tt.factoryname like '%$factoryNameSH%' Group By tt.userid 
+							)
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.user.HtmsUserBean" cacheType="list" cacheName="fetchPrivilegeList"   isEscapeQuotation="true"  isEscape="false"  cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+					    Select uu.*,ttt.factoryname    From   (  
+						    Select  tt.userid, wm_concat(FACTORYNAME)  As factoryname  From 
+	                        (
+	                        Select TB_WSM_USER.*,TB_HTMS_FACTORY.FACTORYID,FACTORYNAME  From TB_WSM_USER  ,TB_HTMS_USER_FACTORY, TB_HTMS_FACTORY   WHERE TB_WSM_USER.USERID = TB_HTMS_USER_FACTORY.USERID
+							AND TB_HTMS_FACTORY.FACTORYID = TB_HTMS_USER_FACTORY.FACTORYID
+							AND TB_WSM_USER.CUSTOMERTYPE = '1'   AND TB_WSM_USER.USERNAME LIKE '%$userNameSH%'  
+							 ) tt Group By tt.userid 
+						 )  ttt  Left Join TB_WSM_USER uu On   ttt.userid=uu.userid
+						 where ttt.factoryname  LIKE '%$factoryNameSH%' 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/fetchprivilege/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="toAddFetchPrivilege" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0"  isEscapeQuotation="true"  isEscape="false" >
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount
+						FROM TB_WSM_USER WHERE TB_WSM_USER.CUSTOMERTYPE = '1'
+						AND TB_WSM_USER.USERNAME LIKE '%$userNameSH%'
+						 ORDER BY TB_WSM_USER.USERID
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.user.HtmsUserBean" cacheType="list" cacheName="userList"   isEscapeQuotation="true"  isEscape="false" isPage="true" cacheScope="request" version="2.0">
+					<content><![CDATA[
+						SELECT TB_WSM_USER.* FROM TB_WSM_USER WHERE TB_WSM_USER.CUSTOMERTYPE = '1'
+						AND TB_WSM_USER.USERNAME LIKE '%$userNameSH%'
+						 ORDER BY TB_WSM_USER.USERID
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/fetchprivilege/add.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="addFetchPrivilege" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  invokeMethod="beforeAdd" exeOrder="" version="2.0">
+			<sql name="SELECT_USER_FACTORY" beanClass="com.zzy.htms.user.HtmsUserBean" cacheType="list" cacheName="SELECT_USER_FACTORY"   isEscapeQuotation="true"  isEscape="false"  cacheScope="request" version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_USER_FACTORY.* FROM TB_HTMS_USER_FACTORY where userid in ($userId)
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listFtechPrivilege]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="saveFetchPrivileges" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness" invokeMethod="add"  >
+		<sql name="saveUserFactory"  isBatch="true" >
+			INSERT INTO TB_HTMS_USER_FACTORY(
+				userId,factoryId
+			)VALUES(
+				$userIds,$factoryIds
+			)
+		</sql>
+	</operation>
+	
+	
+	<operation name="deleteFetchPrivilege" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_USER_FACTORY 
+				    WHERE TB_HTMS_USER_FACTORY.userId = $userId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listFtechPrivilege]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyFetchPrivilege" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_USER_FACTORY 
+				    WHERE TB_HTMS_USER_FACTORY.userId = $userId
+					]]></content>
+			</sql>
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_USER_FACTORY ( userId, factoryId) 
+				        VALUES($userId,$factoryIdSH)
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listFtechPrivilege]]></address>
+		</forward>
+	</operation>
+	<operation name="viewFetchPrivilege" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.fetchprivilege.FetchPrivilegeBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW_FETCH_PRIVILEGE" beanClass="com.zzy.htms.user.HtmsUserBean" cacheType="bean" cacheName="fetchPrivilegeViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 Select uu.*,ttt.factoryname    From   (  
+						    Select  tt.userid, wm_concat(FACTORYNAME)  As factoryname  From 
+	                        (
+	                        Select TB_WSM_USER.*,TB_HTMS_FACTORY.FACTORYID,FACTORYNAME  From TB_WSM_USER  ,TB_HTMS_USER_FACTORY, TB_HTMS_FACTORY   WHERE TB_WSM_USER.USERID = TB_HTMS_USER_FACTORY.USERID
+							AND TB_HTMS_FACTORY.FACTORYID = TB_HTMS_USER_FACTORY.FACTORYID
+							AND TB_WSM_USER.CUSTOMERTYPE = '1'   AND TB_WSM_USER.USERNAME LIKE '%$userNameSH%'  
+							 ) tt Group By tt.userid 
+						 )  ttt  Left Join TB_WSM_USER uu On   ttt.userid=uu.userid
+						 WHERE ttt.userid = $userId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/logistic/fetchprivilege/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/logistic/fetchprivilege/modify.jsp]]></address>
+		</forward>
+	</operation>
+</root>

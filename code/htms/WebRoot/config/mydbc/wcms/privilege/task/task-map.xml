@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.privilege.task.ScheduleTaskBean">
+		<map property="taskId" javaType="java.lang.String" column="TASKID" colType=""/>
+		<map property="taskName" javaType="java.lang.String" column="TASKNAME" colType=""/>
+		<map property="taskDesc" javaType="java.lang.String" column="TASKDESC" colType=""/>
+		<map property="taskInterval" javaType="java.lang.String" column="TASKINTERVAL" colType=""/>
+		<map property="taskTimeUnit" javaType="java.lang.String" column="TASKTIMEUNIT" colType=""/>
+		<map property="taskClass" javaType="java.lang.String" column="TASKCLASS" colType=""/>
+		<map property="isUse" javaType="java.lang.String" column="ISUSE" colType=""/>
+		<map property="startDatetime" javaType="java.lang.String" column="STARTDATETIME" colType=""/>
+		<map property="ednDateTime" javaType="java.lang.String" column="EDNDATETIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		
+		<map property="taskType" javaType="java.lang.String" column="taskType" colType=""/>
+		<map property="taskValue" javaType="java.lang.String" column="taskValue" colType=""/>
+	</bean>
+</root>

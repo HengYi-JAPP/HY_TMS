@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+<!-- 查看审批货申请单 -->
+	<operation name="viewApproveShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="viewShipApply" exeOrder="" version="2.0">
+			<!-- 订单信息 -->
+			<sql name="orderBean" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="bean" cacheName="shipViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT  *
+			            FROM TB_HTMS_CUSTORDER,TB_HTMS_SHIP 
+			            WHERE  TB_HTMS_CUSTORDER.corderId=TB_HTMS_SHIP.corderId 
+			            AND   TB_HTMS_SHIP.shipId=$shipId
+					]]></content>
+			</sql>
+			<!-- 订单行项目，明细 -->
+			<sql name="detailLit" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.*,
+						       TB_HTMS_CUSTORDERDETAIL.meterialFactory,
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc,
+						       TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       TB_HTMS_CUSTORDERDETAIL.orderAmount,
+						       factory.factoryName,
+						       product.productname
+						       
+						  FROM TB_HTMS_CUSTORDERDETAIL,TB_HTMS_SHIPDETAIL						  					  
+		                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_SHIPDETAIL.Factoryid
+		                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_SHIPDETAIL.productid 
+						 WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId
+						 and TB_HTMS_CUSTORDERDETAIL.codetailId = TB_HTMS_SHIPDETAIL.codetailId
+						 order by shipDetailId
+
+					]]></content>
+			</sql>
+			
+			<!-- 客户地址列表 -->
+			<sql name="CUSTOMERADDR" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="bean" cacheName="custAddrBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_HTMS_CUSTOMERADDR.CADDRID, TB_HTMS_CUSTOMERADDR.AREAID, TB_HTMS_CUSTOMERADDR.CADDRDETAIL
+					        FROM  TB_HTMS_CUSTOMERADDR,TB_HTMS_SHIP
+					       WHERE 
+					        TB_HTMS_SHIP.shipId=$shipId
+					       AND TB_HTMS_CUSTOMERADDR.CADDRID=TB_HTMS_SHIP.CADDRID
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/approve/view.jsp]]></address>
+		</forward>
+	</operation>
+<!-- 查出审批列表 -->
+
+<operation name="listApproveShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0" loadCacheForm="approveShipForm"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="searchApproveList" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  isEscapeQuotation="true"  isEscape="false"  version="2.0" >
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+						from 
+						TB_HTMS_SHIPDETAIL,TB_HTMS_SHIP,TB_HTMS_CUSTORDER ,TB_HTMS_CUSTORDERDETAIL,TB_HTMS_CUSTOMERADDR
+						where 
+						TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+						AND TB_HTMS_SHIPDETAIL.CODETAILID=TB_HTMS_CUSTORDERDETAIL.CODETAILID
+						AND TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID
+						AND TB_HTMS_SHIP.CADDRID=TB_HTMS_CUSTOMERADDR.CADDRID             
+						AND TB_HTMS_SHIP.APPLYSTATUS<>-2
+				      <if test="$[meterialDescSH]!=''">
+						AND TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC LIKE '%$meterialDescSH%'
+					  </if>
+			          <if test="$[customerNameSH]!=''">
+							AND TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+					  </if>
+					  <if test="$[corderCodeSH]!=''">
+							AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+					  </if>
+					   <if test="$[saleManSH]!=''">
+							AND TB_HTMS_CUSTORDER.SALEMAN LIKE '%$saleManSH%'
+					  </if>
+					   <if test="$[startDateSH]!=''">
+							AND to_date(TB_HTMS_SHIP.createTime ,'YYYY-MM-DD HH24:MI:SS')>=to_date('$startDateSH' ,'YYYY-MM-DD HH24:MI:SS')
+					  </if>
+					   <if test="$[endDateSH]!=''">
+							AND to_date(TB_HTMS_SHIP.createTime ,'YYYY-MM-DD HH24:MI:SS')<=to_date('$endDateSH' ,'YYYY-MM-DD HH24:MI:SS')
+					  </if>
+					  <if test="$[isUrgentSH]!=''">
+							AND TB_HTMS_SHIP.ISURGENT=$isUrgentSH
+					  </if>						  
+					  <if test="$[shipStatusSH]!=''">
+							AND TB_HTMS_SHIP.APPLYSTATUS=$shipStatusSH
+					  </if>	
+					   <if test="$[shortStockSH]!=''">
+							AND TB_HTMS_SHIP.shortStock=$shortStockSH
+					  </if>			  
+			          <if test="$[facorysIdsSH]!=''||$[productsIdsSH]!=''">
+						AND TB_HTMS_SHIP.shipid IN(
+			                  SELECT shipid FROM TB_HTMS_SHIPDETAIL WHERE 
+			                  <if test="$[facorysIdsSH]!=''">
+			                  TB_HTMS_SHIPDETAIL.FACTORYID IN( $facorysIdsSH) 
+			                  </if>
+			                  <if test="$[facorysIdsSH]!=''&&$[productsIdsSH]!=''">
+			                  AND 
+			                   </if>
+			                  <if test="$[productsIdsSH]!=''">
+			                  TB_HTMS_SHIPDETAIL.PRODUCTID IN ( $productsIdsSH)
+			                  </if>
+			              )
+			            </if>
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipList"  cacheScope="request" isPage="true" isEscapeQuotation="true"  isEscape="false" version="2.0" >
+					<content><![CDATA[
+				select  TB_HTMS_SHIP.SHIPID,
+			          TB_HTMS_SHIP.SHIPCODE,
+			          TB_HTMS_SHIP.CREATETIME,
+			          TB_HTMS_SHIP.APPLYSTATUS,
+			          TB_HTMS_SHIP.ISURGENT,
+			          TB_HTMS_SHIP.CORDERID,
+			          TB_HTMS_CUSTORDER.CORDERCODE,
+			          TB_HTMS_CUSTORDER.CUSTOMERNAME,
+			          TB_HTMS_CUSTORDER.CUSTOMERCODE,
+			          TB_HTMS_CUSTORDER.SALEMAN,
+			          TB_HTMS_CUSTOMERADDR.CADDRID,
+			          TB_HTMS_CUSTOMERADDR.areaId,
+			          TB_HTMS_CUSTOMERADDR.caddrDetail,
+			          TB_HTMS_SHIPDETAIL.SHIPDETAILID,
+			          TB_HTMS_SHIPDETAIL.APPLYTONNUM,
+			          TB_HTMS_SHIPDETAIL.APPLYPACKNUM,
+			          TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATE,
+		              TB_HTMS_CUSTORDERDETAIL.PRODUCTID,
+		              TB_HTMS_CUSTORDERDETAIL.FACTORYID,
+			          TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC
+			          from 
+			            TB_HTMS_SHIPDETAIL,TB_HTMS_SHIP,TB_HTMS_CUSTORDER ,TB_HTMS_CUSTORDERDETAIL,TB_HTMS_CUSTOMERADDR
+			            where 
+			            TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+			            AND TB_HTMS_SHIPDETAIL.CODETAILID=TB_HTMS_CUSTORDERDETAIL.CODETAILID
+			            AND TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID
+			            AND TB_HTMS_SHIP.CADDRID=TB_HTMS_CUSTOMERADDR.CADDRID             
+			            AND TB_HTMS_SHIP.APPLYSTATUS<>-2
+				      <if test="$[meterialDescSH]!=''">
+						AND TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC LIKE '%$meterialDescSH%'
+					  </if>
+			          <if test="$[customerNameSH]!=''">
+							AND TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+					  </if>
+					  <if test="$[corderCodeSH]!=''">
+							AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+					  </if>
+					   <if test="$[saleManSH]!=''">
+							AND TB_HTMS_CUSTORDER.SALEMAN LIKE '%$saleManSH%'
+					  </if>
+					  <if test="$[startDateSH]!=''">
+							AND to_date(TB_HTMS_SHIP.createTime ,'YYYY-MM-DD HH24:MI:SS')>=to_date('$startDateSH' ,'YYYY-MM-DD HH24:MI:SS')
+					  </if>
+					   <if test="$[endDateSH]!=''">
+							AND to_date(TB_HTMS_SHIP.createTime ,'YYYY-MM-DD HH24:MI:SS')<=to_date('$endDateSH' ,'YYYY-MM-DD HH24:MI:SS')
+					  </if>
+					  <if test="$[isUrgentSH]!=''">
+							AND TB_HTMS_SHIP.ISURGENT=$isUrgentSH
+					  </if>
+					  
+					  <if test="$[shipStatusSH]!=''">
+							AND TB_HTMS_SHIP.APPLYSTATUS=$shipStatusSH
+					  </if>
+					  <if test="$[shortStockSH]!=''">
+							AND TB_HTMS_SHIP.shortStock=$shortStockSH
+					  </if>
+			          <if test="$[facorysIdsSH]!=''||$[productsIdsSH]!=''">
+						AND TB_HTMS_SHIP.shipid IN(
+			                  SELECT shipid FROM TB_HTMS_SHIPDETAIL WHERE 
+			                  <if test="$[facorysIdsSH]!=''">
+			                  TB_HTMS_SHIPDETAIL.FACTORYID IN( $facorysIdsSH) 
+			                  </if>
+			                  <if test="$[facorysIdsSH]!=''&&$[productsIdsSH]!=''">
+			                  AND 
+			                   </if>
+			                  <if test="$[productsIdsSH]!=''">
+			                  TB_HTMS_SHIPDETAIL.PRODUCTID IN ( $productsIdsSH)
+			                  </if>
+			              )
+			            </if>
+			          ORDER BY TB_HTMS_SHIP.APPLYSTATUS ,TB_HTMS_SHIP.ISURGENT DESC,TB_HTMS_SHIP.createTime asc 
+					]]></content>
+			</sql>
+			<!-- 明细查询 -->
+			
+		</method>
+		<!--<method name="getShipDetailList" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="getShipDetailList" exeOrder="" version="2.0">
+			 明细查询 
+			<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"   isEscapeQuotation="true"  isEscape="false"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.*
+						  FROM TB_HTMS_SHIPDETAIL
+						 WHERE TB_HTMS_SHIPDETAIL.shipId IN($shipsIds)
+					]]></content>
+			</sql>
+		</method>
+		--><forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/approve/list.jsp]]></address>
+		</forward>
+	</operation>
+
+	<!-- 获取工厂和物料已经申请但未生成调拨单的库存 -->
+	 <operation name="selectUseStock" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness"  invokeMethod="list"   forward="" >
+				
+				<sql name="selectUseStock"  beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" >
+						<![CDATA[
+						select itemCode,sum(applytonnum) as applytonnum from (
+							select concat(d.meterialno,d.meterialfactory) as itemCode,t.applytonnum  
+							from tb_htms_transferdetail t,tb_htms_transfer ta,tb_htms_custorderdetail d
+							where t.transid=ta.transid 
+							and ta.saptranscode is null
+							and  t.codetailid=d.codetailid and 
+							(
+							      d.meterialno=$meterialNo and d.meterialfactory=$meterialFactory
+							)
+						)
+						group by itemCode
+						]]>
+				</sql>
+				
+	</operation>
+	
+	
+	<!-- 进入审批列表 -->
+	<operation name="toApproveShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="toApprove" exeOrder="" version="2.0">
+		<!-- 订单信息 -->
+			<sql name="shipViewBean" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="bean" cacheName="shipViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT  TB_HTMS_SHIP.createTime as applyTime, TB_HTMS_CUSTORDER.* ,TB_HTMS_SHIP.*
+			            FROM TB_HTMS_CUSTORDER,TB_HTMS_SHIP 
+			            WHERE  TB_HTMS_CUSTORDER.corderId=TB_HTMS_SHIP.corderId 
+			            AND   TB_HTMS_SHIP.shipId=$shipId
+					]]></content>
+			</sql>
+			
+			<!-- 订单行项目，明细 -->
+			<sql name="detailLit" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.*,
+						       TB_HTMS_CUSTORDERDETAIL.meterialFactory,						       
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificate,
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc,
+						       TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       TB_HTMS_CUSTORDERDETAIL.orderAmount,
+						       TB_HTMS_CUSTORDERDETAIL.meterialNo,
+						       TB_HTMS_CUSTORDERDETAIL.freight,
+						       TB_HTMS_CUSTORDERDETAIL.unitPrice,
+						       factory.factoryName,
+						       product.productname
+						       
+						  FROM TB_HTMS_CUSTORDERDETAIL,TB_HTMS_SHIPDETAIL						  					  
+		                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_SHIPDETAIL.Factoryid
+		                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_SHIPDETAIL.productid  
+						 WHERE 
+						 
+						 TB_HTMS_SHIPDETAIL.shipId = $shipId
+						 and TB_HTMS_CUSTORDERDETAIL.codetailId = TB_HTMS_SHIPDETAIL.codetailId
+						 order by shipDetailId
+					]]></content>
+			</sql>
+			<!-- 订单中已经审批未生成调拨单的信息以及，已经审批通过，但未在SAP成生调拨单的信息-->
+			<sql name="transferDetailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="transferDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT tb_htms_transferdetail.Itemcode, sum(to_number(tb_htms_transferdetail.Applytonnum)) AS applyTonNum
+			             FROM tb_htms_transferdetail,tb_htms_transfer
+			             WHERE
+			               tb_htms_transfer.corderId= $corderId
+			                     and  tb_htms_transfer.saptranscode is  null
+			               and tb_htms_transferdetail.transid = tb_htms_transfer.transid
+			                     group by tb_htms_transferdetail.Itemcode
+					]]></content>
+			</sql>
+			
+			<!-- 客户地址列表 -->
+			<sql name="CUSTOMERADDR" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="bean" cacheName="custAddrBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_HTMS_CUSTOMERADDR.CADDRID,TB_HTMS_CUSTOMERADDR.customerId , TB_HTMS_CUSTOMERADDR.AREAID, TB_HTMS_CUSTOMERADDR.CADDRDETAIL
+					        FROM  TB_HTMS_CUSTOMERADDR,TB_HTMS_SHIP
+					       WHERE 
+					        TB_HTMS_SHIP.shipId=$shipId
+					       AND TB_HTMS_CUSTOMERADDR.CADDRID=TB_HTMS_SHIP.CADDRID
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/approve/approve.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="checkShipApply" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"     forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="checkShipStatusApply"  exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+						
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+		   <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listApproveShip]]></address>
+		</forward>
+		<forward name="passShipApplyAction" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=passShipApply]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="checkPassApplySql"  businessClass="com.zzy.htms.sales.ship.ShipBusiness" >
+		<sql name="checkPassApplySql"  beanClass="com.zzy.htms.logistic.transfer.TransferBean"   >
+		    <![CDATA[
+			     select *  from TB_HTMS_TRANSFER where shipId =$shipId
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="getShipBeanById"  businessClass="com.zzy.htms.sales.ship.ShipBusiness" >
+		<sql name="getShipBeanById"  beanClass="com.zzy.htms.sales.ship.ShipBean"  >
+		    <![CDATA[
+			     select *  from TB_HTMS_SHIP where shipId =$shipId
+		     ]]>
+		</sql>
+	</operation>
+	
+	
+	
+	<!-- 审批 -->
+	<operation name="passShipApply" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="passShipApply" exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+			<sql name="INSERT"  caiidTable="TB_HTMS_TRANSFER" caiidKey="transId" caiidName="transId" caiidVar="transId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_TRANSFER (transId, shipId,shipCode, logisticsId, corderId, caddrId,
+				        customerId, transferCode, applyTonNum, applyPackNum, actualTonNum, 
+				        actualPackNum, planFreight, actualFreight, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, transStatus, creator, createTime,isValidate,isDefault) 
+				        SELECT 
+				        $transId, shipId,shipCode, $logisticsId, corderId, caddrId,
+				        customerId, $transferCode, applyTonNum, applyPackNum, 0, 
+				        0, 0, 0, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, 0, $userId, $createTime,1,1
+				        FROM TB_HTMS_SHIP WHERE TB_HTMS_SHIP.shipId=$shipId
+					]]></content>
+			</sql>
+			<!-- 插入调拨单明细，可能批量 -->
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_TRANSFERDETAIL" caiidKey="transDetailId" caiidName="transDetailId" caiidVar="transDetailId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_TRANSFERDETAIL (transDetailId, shipDetailId, itemCode,
+				        transId, shipId,codetailId, caddrId, productId,factoryId, applyTonNum, applyPackNum, 
+				        fetchTonNum, fetchPackNum, planFreight, actulFreight, 
+				        freightUnit, transDetailNotice, transDetailStatus, creator, 
+				        createTime, isValidate) 
+				        SELECT 
+				        $transDetailId, shipDetailId, itemCode,
+				        $transId, shipId,codetailId, caddrId, productId,factoryId, applyTonNum, applyPackNum, 
+				        0, 0, 0, 0, 
+				        freightUnit, shipDetailNotice, 0, $userId, 
+				        $createTime, 1
+				        FROM TB_HTMS_SHIPDETAIL
+				        WHERE TB_HTMS_SHIPDETAIL.shipDetailId=$shipDetailId
+					]]></content>
+			</sql>
+			<!-- 更新申请明细状态，为审批通过 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							TB_HTMS_SHIPDETAIL.shipDetailId = $shipDetailId 
+					]]></content>
+			</sql>
+			<!-- 更新申请状态，为审批通过，及审批意见 -->
+			<sql name="UPDATESHIP"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = $approveNotice,
+							modifier=$userId,
+							modifyTime=$modifyTime,
+							shortStock=$shortStock,
+							shortNotice=$shortNotice,
+							shortTime=$modifyTime
+				     WHERE TB_HTMS_SHIP.shipId = $shipId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=passShipApplyEndCheck]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 审批 -->
+	<operation name="passShipApplyEndCheck" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="passShipApplyEndCheck" exeOrder="" version="2.0">
+			<sql name="countTransferById"  refCols="shipIdCountNum" refNames="refShipIdCountNum" version="2.0">
+					<content><![CDATA[
+						select shipid,count(shipid) as shipIdCountNum from  tb_htms_transfer 
+						where shipid = $shipId  and  isdefault=1  Group By shipid
+					]]></content>
+			</sql>
+			<sql name="deleteTransferDetailById"  version="2.0">
+					<content><![CDATA[
+					    <if test="$[refShipIdCountNum]!='1'">
+						    delete from TB_HTMS_TRANSFERDETAIL where transid = $transId
+						</if>
+					]]></content>
+			</sql>
+			<sql name="deleteTransferById"  version="2.0">
+					<content><![CDATA[
+					    <if test="$[refShipIdCountNum]!='1'">
+						    delete from TB_HTMS_TRANSFER where transid =  $transId
+						</if>
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listApproveShip]]></address>
+		</forward>
+	</operation>
+	
+	
+	
+	<operation name="notPassShipApply" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"     forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="checkShipStatusNotPass"  exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+		   <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listApproveShip]]></address>
+		</forward>
+		<forward name="notPassShipApplyAction" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performNotPassShipApply]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="performNotPassShipApply" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="rejectShipApprive" exeOrder="1" version="2.0">
+			<!-- 更新申请明细状态，不通过 -->
+			<sql name="UPDATESHIPDETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =901,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							shipId = $shipId 
+					]]></content>
+			</sql>
+			<!-- 更新申请状态，不通过 -->
+			<sql name="UPDATESHIP"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=901,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = $approveNotice,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $shipId 
+					]]></content>
+			</sql>
+			<!-- 更新订单明细，把申请数量算回去 -->
+			<!--<sql name="UPDATECODETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($applyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($applyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]></content>
+			</sql>
+			-->
+			<!--查出申请明细，进行订单行项目数据修改 -->
+			<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.*
+						  FROM TB_HTMS_SHIPDETAIL
+						 WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId
+					]]></content>
+			</sql>
+		</method>
+		<method name="setShipDetail" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="setShipDetail" exeOrder="2" version="2.0">
+		</method>
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="updateCustOrderDetail" exeOrder="3" version="2.0">
+			<!-- 更新订单明细，把申请数量算回去 -->
+			<sql name="UPDATECODETAIL"  isBatch="true" version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($applyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($applyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listApproveShip]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="cancelShipApprove" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"     forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="checkShipStatusCancel"  exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+						
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+		   <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listApproveShip]]></address>
+		</forward>
+		<forward name="cancelShipApplyAction" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performCancelShipApprove]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 撤消审批 -->
+	<operation name="performCancelShipApprove" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<!-- 在撤消删除调拨单之前，需要先删除SAP中的调拨单 -->
+		<!--<method name="deleteSapTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="cancelSelfFetch" exeOrder="1" version="2.0">
+			<sql name="transferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean"  version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE
+			         from TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			         where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_TRANSFER.shipId=$shipId AND ISDEFAULT=1
+					]]></content>
+			</sql>
+		</method>
+		-->
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="cancelShipApprove" exeOrder="2" version="2.0">
+			<!-- 删除调拨单明细 -->
+			<sql name="DELETERANSFERDETAIL"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM  TB_HTMS_TRANSFERDETAIL where shipId=$shipId
+					]]></content>
+			</sql>
+			<!--  删除调拨单 -->
+			<sql name="DELETETRANSFER"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_TRANSFER where shipId=$shipId
+					]]></content>
+			</sql>
+			
+			<!-- 更新申请明细状态，为撤消审批,恢复到审批中状态 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =0,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							shipId=$shipId
+					]]></content>
+			</sql>
+			<!-- 更新申请状态，为撤消审批,恢复到审批中状态 -->
+			<sql name="UPDATESHIP"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=0,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = '撤消',
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE TB_HTMS_SHIP.shipId = $shipId 
+					]]></content>
+			</sql>
+		</method>
+		
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listApproveShip]]></address>
+		</forward>
+	</operation>
+	
+	
+	
+	<operation name="deleteCancelShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"     forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="checkShipApplyDelete"  exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+						
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+		   <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listShip]]></address>
+		</forward>
+		<forward name="checkShipApplyAction" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performDeleteCancelShip]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 删除已经撤销的申请 -->	
+	<operation name="performDeleteCancelShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETEDETAIL" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_SHIPDETAIL 
+				    WHERE  shipId = $shipId 
+					]]></content>
+			</sql>
+			<sql name="DELETESHIP" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_SHIP 
+				    WHERE  shipId = $shipId 
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listShip]]></address>
+		</forward>
+	</operation>
+</root>

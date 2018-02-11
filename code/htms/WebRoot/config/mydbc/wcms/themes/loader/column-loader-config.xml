@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemColumns" businessClass="com.mobilecn.themes.loader.ColumnLoader" invokeMethod="list" forward="" >
+	<sql name="loadAllSystemColumns" beanClass="com.mobilecn.portal.column.ColumnBean"><![CDATA[
+		    SELECT TB_WSM_COLUMN.*  
+		    FROM TB_WSM_COLUMN 
+		    WHERE   TB_WSM_COLUMN.ISVALIDATE=1 AND  TB_WSM_COLUMN.SYSID IN(
+		    	SELECT SYSID FROM TB_SYSTEM WHERE TB_SYSTEM.ISVALIDATE=1
+		    )
+		    ORDER BY TB_WSM_COLUMN.SYSID			
+	]]></sql>
+</operation>
+</root>

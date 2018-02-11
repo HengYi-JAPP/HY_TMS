@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="listTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" loadCacheForm="transferForm"  version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+		    <sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true"  isEscape="false"  >
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+            			FROM TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+            			left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+            			left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+            			  left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid	                      
+            			WHERE TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+            			AND TB_HTMS_TRANSFER.SELFFETCH='0' 
+            			<if test="$[carCodeSH]!=''">
+            			    and TB_HTMS_TRANSFER.transid in  (select TB_HTMS_TRANSPORT.transid  from TB_HTMS_TRANSPORT where TB_HTMS_TRANSPORT.TRANSPORTID in (
+							select TB_HTMS_TRANSPORTSEND.TRANSPORTID from TB_HTMS_TRANSPORTSEND 
+							where TB_HTMS_TRANSPORTSEND.sendid in (select tb_htms_send.sendid  from tb_htms_send where tb_htms_send.vehicleid in (select TB_HTMS_VEHICLE.vehicleid from TB_HTMS_VEHICLE  where TB_HTMS_VEHICLE.vehicleno like '%$carCodeSH%'))
+							))
+            			</if>
+            			<if test="$[isUrgentSH]!=''">
+                           AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+                        </if>
+                         <if test="$[startTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss') > to_date('$startTimeSH','yyyy-MM-dd HH24:mi:ss')
+					     </if>
+					     <if test="$[endTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss')  < to_date('$endTimeSH','yyyy-MM-dd HH24:mi:ss')
+					     </if>
+                         <if test="$[transStatusSH]!=''">
+                            AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+                        </if>
+                       <if test="$[customerNameSH]!=''">
+                            and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                        </if>
+                        <if test="$[saleManSH]!=''">
+                            and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                        </if>
+                        <if test="$[carrierIdSH]!=''">
+                            and TB_HTMS_TRANSFER.TRANSID in (select transid from TB_HTMS_TRANSPORT where carrierid = '$carrierIdSH' )
+                        </if>
+                        <if test="$[shipCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.shipCode  like '%$shipCodeSH%'
+						</if>
+						 <if test="$[sapTransCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.sapTransCode  like '%$sapTransCodeSH%'
+						</if>
+                       <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+						</if>
+                        <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+						</if>                        
+                         <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+						  </if>
+						   <if test="$[factoryIdSH]!=''">
+							     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+						  </if>
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferList" cacheScope="request" isPage="true"  version="2.0" isEscapeQuotation="true"  isEscape="false"  >
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.*,
+						    TB_HTMS_TRANSFERDETAIL.applyTonNum as  detailApplyTonNum,
+						    TB_HTMS_TRANSFERDETAIL.applyPackNum as  detailApplyPackNum,
+						    TB_HTMS_TRANSFERDETAIL.codetailid,
+						    TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+							TB_HTMS_CUSTORDER.CORDERCODE,
+		                    TB_HTMS_CUSTORDER.CUSTOMERNAME,   
+		                    TB_HTMS_CUSTORDER.CUSTOMERCODE,   
+                            TB_HTMS_CUSTORDER.saleorg,  
+		                    TB_HTMS_CUSTORDER.saleMan,
+				            caddr.areaId,
+				            caddr.caddrDetail,		
+				            TB_HTMS_TRANSFER.createTime as approveAgreeTime,			           
+				            TB_HTMS_SHIP.createTime as shipApplyTime 
+                      FROM 
+                         TB_HTMS_CUSTORDER , TB_HTMS_TRANSFER 
+	                      left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+	                      left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+                      WHERE 
+                      TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+                      AND TB_HTMS_TRANSFER.SELFFETCH = '0' 
+                      <if test="$[carCodeSH]!=''">
+            			    and TB_HTMS_TRANSFER.transid in  (select TB_HTMS_TRANSPORT.transid  from TB_HTMS_TRANSPORT where TB_HTMS_TRANSPORT.TRANSPORTID in (
+							select TB_HTMS_TRANSPORTSEND.TRANSPORTID from TB_HTMS_TRANSPORTSEND 
+							where TB_HTMS_TRANSPORTSEND.sendid in (select tb_htms_send.sendid  from tb_htms_send where tb_htms_send.vehicleid in (select TB_HTMS_VEHICLE.vehicleid from TB_HTMS_VEHICLE  where TB_HTMS_VEHICLE.vehicleno like '%$carCodeSH%'))
+							))
+            			</if>
+                      <if test="$[isUrgentSH]!=''">
+                           AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+                      </if>
+                      <if test="$[startTimeSH]!=''">
+						   and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss') > to_date('$startTimeSH','yyyy-MM-dd HH24:mi:ss')
+					  </if>
+					  <if test="$[endTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss')  < to_date('$endTimeSH','yyyy-MM-dd HH24:mi:ss')
+					  </if>
+                      <if test="$[transStatusSH]!=''">
+                            AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+                      </if>
+                      <if test="$[customerNameSH]!=''">
+                            and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                        </if>
+                        <if test="$[saleManSH]!=''">
+                            and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                        </if>
+                        <if test="$[carrierIdSH]!=''">
+                            and TB_HTMS_TRANSFER.TRANSID in (select transid from TB_HTMS_TRANSPORT where carrierid = '$carrierIdSH' )
+                        </if>
+                      <if test="$[shipCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.shipCode  like '%$shipCodeSH%'
+				      </if>
+					  <if test="$[sapTransCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.sapTransCode  like '%$sapTransCodeSH%'
+					  </if>
+                      <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+					   </if>
+                      <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+					  </if>
+					  <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+					  </if>
+					   <if test="$[factoryIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+					  </if>
+                       
+                      ORDER BY   TB_HTMS_TRANSFER.TRANSSTATUS asc  ,TB_HTMS_TRANSFER.ISURGENT  desc,  TB_HTMS_TRANSFER. createTime desc
+                      
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/transfer/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="SELECT_TRANSFERDETAILBEAN"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" invokeMethod="list" >
+		<sql name="SELECT_TRANSFERDETAILBEAN"  beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean"   isEscapeQuotation="true"  isEscape="false">
+		    <![CDATA[
+			  SELECT TB_HTMS_TRANSFERDETAIL.*,TB_HTMS_CUSTORDERDETAIL.freight,TB_HTMS_CUSTORDERDETAIL.unitPrice ,TB_HTMS_CUSTORDERDETAIL.shipPointDesc
+						 FROM 
+                          TB_HTMS_TRANSFERDETAIL left join TB_HTMS_CUSTORDERDETAIL on TB_HTMS_TRANSFERDETAIL.codetailid=TB_HTMS_CUSTORDERDETAIL.codetailid
+                          where TB_HTMS_TRANSFERDETAIL.transId in ($transDetailListId)
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="listTransferMerge" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" loadCacheForm="listTransferMergeForm"  version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+		    <sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true"  isEscape="false"  >
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+            			FROM TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+            			left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+            			left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+            			  left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid	                      
+            			WHERE TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+            			AND TB_HTMS_TRANSFER.SELFFETCH='0'  and TB_HTMS_TRANSFER.saptranscode Is  Null 
+            			<if test="$[carCodeSH]!=''">
+            			    and TB_HTMS_TRANSFER.transid in  (select TB_HTMS_TRANSPORT.transid  from TB_HTMS_TRANSPORT where TB_HTMS_TRANSPORT.TRANSPORTID in (
+							select TB_HTMS_TRANSPORTSEND.TRANSPORTID from TB_HTMS_TRANSPORTSEND 
+							where TB_HTMS_TRANSPORTSEND.sendid in (select tb_htms_send.sendid  from tb_htms_send where tb_htms_send.vehicleid in (select TB_HTMS_VEHICLE.vehicleid from TB_HTMS_VEHICLE  where TB_HTMS_VEHICLE.vehicleno like '%$carCodeSH%'))
+							))
+            			</if>
+            			<if test="$[isUrgentSH]!=''">
+                           AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+                        </if>
+                         <if test="$[startTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss') > to_date('$startTimeSH','yyyy-MM-dd HH24:mi:ss')
+					     </if>
+					     <if test="$[endTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss')  < to_date('$endTimeSH','yyyy-MM-dd HH24:mi:ss')
+					     </if>
+                         <if test="$[transStatusSH]!=''">
+                            AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+                        </if>
+                       <if test="$[customerNameSH]!=''">
+                            and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                        </if>
+                        <if test="$[saleManSH]!=''">
+                            and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                        </if>
+                        <if test="$[carrierIdSH]!=''">
+                            and TB_HTMS_TRANSFER.TRANSID in (select transid from TB_HTMS_TRANSPORT where carrierid = '$carrierIdSH' )
+                        </if>
+                        <if test="$[shipCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.shipCode  like '%$shipCodeSH%'
+						</if>
+						 <if test="$[sapTransCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.sapTransCode  like '%$sapTransCodeSH%'
+						</if>
+                       <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+						</if>
+                        <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+						</if>                        
+                        <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+						</if>
+						<if test="$[factoryIdSH]!=''">
+							     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+						</if>
+						<if test="$[isMergerSH]!=''">
+							     and TB_HTMS_TRANSFER.ismerger = $isMergerSH
+						</if>
+						<if test="$[mergerGroupSH]!=''">
+							     and TB_HTMS_TRANSFER.mergerGroup like  '%$mergerGroupSH%'
+						</if>
+						
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferList" cacheScope="request" isPage="true"  version="2.0" isEscapeQuotation="true"  isEscape="false"  >
+					<content><![CDATA[
+							SELECT TB_HTMS_TRANSFER.*,
+						    TB_HTMS_TRANSFERDETAIL.applyTonNum as  detailApplyTonNum,
+						    TB_HTMS_TRANSFERDETAIL.applyPackNum as  detailApplyPackNum,
+						    TB_HTMS_TRANSFERDETAIL.codetailid,
+						    TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+							TB_HTMS_CUSTORDER.CORDERCODE,
+		                    TB_HTMS_CUSTORDER.CUSTOMERNAME,    
+		                    TB_HTMS_CUSTORDER.saleMan,
+				            caddr.areaId,
+				            caddr.caddrDetail,		
+				            TB_HTMS_TRANSFER.createTime as approveAgreeTime,			           
+				            TB_HTMS_SHIP.createTime as shipApplyTime 
+                      FROM 
+                         TB_HTMS_CUSTORDER , TB_HTMS_TRANSFER 
+	                      left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+	                      left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+                      WHERE 
+                      TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+                      AND TB_HTMS_TRANSFER.SELFFETCH = '0'    and   TB_HTMS_TRANSFER.saptranscode Is  Null 
+                      <if test="$[carCodeSH]!=''">
+            			    and TB_HTMS_TRANSFER.transid in  (select TB_HTMS_TRANSPORT.transid  from TB_HTMS_TRANSPORT where TB_HTMS_TRANSPORT.TRANSPORTID in (
+							select TB_HTMS_TRANSPORTSEND.TRANSPORTID from TB_HTMS_TRANSPORTSEND 
+							where TB_HTMS_TRANSPORTSEND.sendid in (select tb_htms_send.sendid  from tb_htms_send where tb_htms_send.vehicleid in (select TB_HTMS_VEHICLE.vehicleid from TB_HTMS_VEHICLE  where TB_HTMS_VEHICLE.vehicleno like '%$carCodeSH%'))
+							))
+            		  </if>
+                      <if test="$[isUrgentSH]!=''">
+                           AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+                      </if>
+                      <if test="$[startTimeSH]!=''">
+						   and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss') > to_date('$startTimeSH','yyyy-MM-dd HH24:mi:ss')
+					  </if>
+					  <if test="$[endTimeSH]!=''">
+							and  TO_DATE(TB_HTMS_TRANSFER.createTime,'yyyy-MM-dd HH24:mi:ss')  < to_date('$endTimeSH','yyyy-MM-dd HH24:mi:ss')
+					  </if>
+                      <if test="$[transStatusSH]!=''">
+                            AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+                      </if>
+                      <if test="$[customerNameSH]!=''">
+                            and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                      </if>
+                      <if test="$[saleManSH]!=''">
+                            and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                      </if>
+                      <if test="$[carrierIdSH]!=''">
+                            and TB_HTMS_TRANSFER.TRANSID in (select transid from TB_HTMS_TRANSPORT where carrierid = '$carrierIdSH' )
+                      </if>
+                      <if test="$[shipCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.shipCode  like '%$shipCodeSH%'
+				      </if>
+					  <if test="$[sapTransCodeSH]!=''">
+							 AND TB_HTMS_TRANSFER.sapTransCode  like '%$sapTransCodeSH%'
+					  </if>
+                      <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+					   </if>
+                      <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+					  </if>
+					  <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+					  </if>
+					   <if test="$[factoryIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+					  </if>
+					  <if test="$[isMergerSH]!=''">
+							     and TB_HTMS_TRANSFER.ismerger = $isMergerSH
+						</if>
+						<if test="$[mergerGroupSH]!=''">
+							     and TB_HTMS_TRANSFER.mergerGroup like  '%$mergerGroupSH%'
+						</if>
+                       
+                      ORDER BY  caddr.areaId, TB_HTMS_TRANSFER.TRANSSTATUS asc  ,TB_HTMS_TRANSFER.ISURGENT  desc,  TB_HTMS_TRANSFER. createTime desc
+                      
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/transfermerge/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+   <operation name="doMergeTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="beforeMerge" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="checkMergeTransferParams" exeOrder="1" version="2.0">
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listTransferMerge]]></address>
+		</forward>
+		<forward name="perfromPage" forwardStyle="2" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performMergeTransfer]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation    name="getTransferMergeData"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" >
+			<sql name="SELECT_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferBeanList" cacheScope="request"  version="2.0"  isEscapeQuotation="true" isEscape="false">
+					<![CDATA[
+							SELECT TB_HTMS_TRANSFER.*,Tb_Htms_Transferdetail.factoryid,Tb_Htms_Transferdetail.productid,
+						    TB_HTMS_TRANSFERDETAIL.applyTonNum as  detailApplyTonNum,
+						    TB_HTMS_TRANSFERDETAIL.applyPackNum as  detailApplyPackNum,
+						    TB_HTMS_TRANSFERDETAIL.codetailid,
+						    TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+							TB_HTMS_CUSTORDER.CORDERCODE,
+		                    TB_HTMS_CUSTORDER.CUSTOMERNAME,    
+		                    TB_HTMS_CUSTORDER.saleMan,
+				            caddr.areaId,
+				            caddr.caddrDetail,		
+				            TB_HTMS_TRANSFER.createTime as approveAgreeTime,			           
+				            TB_HTMS_SHIP.createTime as shipApplyTime 
+                      FROM 
+                         TB_HTMS_CUSTORDER , TB_HTMS_TRANSFER 
+	                      left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+	                      left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+                      WHERE   TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+                           AND TB_HTMS_TRANSFER.SELFFETCH = '0'  
+                           AND TB_HTMS_TRANSFER.transid in ($transferIds)
+					]]>
+			 </sql>
+	</operation>
+	
+	
+	<operation name="performMergeTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="add" exeOrder="2" version="2.0" >
+			<sql name="UPDATE_TRANSFER"  version="2.0"  isEscapeQuotation="true" isEscape="false">
+				<content><![CDATA[
+					update TB_HTMS_TRANSFER set
+					 isMerger='$isMerger',
+					 mergerGroup='$mergerGroup',
+					 mergerTime='$mergerTime',
+					 mergerPerson='$userId'
+					 where transid in ($transferIds)
+				]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listTransferMerge]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="cancelTransferMerge" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="modify"  version="2.0">
+			<sql name="UPDATE_TRANSFER" >
+				<content><![CDATA[
+					update TB_HTMS_TRANSFER set
+					 isMerger=-1,
+					 mergerGroup='',
+					 mergerTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+					 mergerPerson=$userId
+					 where  mergerGroup = ( select mergerGroup from TB_HTMS_TRANSFER where  transid = $currentTransId ) and  saptranscode Is Null 
+				]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listTransferMerge]]></address>
+		</forward>
+	</operation>
+	
+		
+	<operation name="viewTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="SELECT_CARRIERID" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="list" cacheName="carrierBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.CARRIERID,TB_HTMS_TRANSPORT.TRANSID FROM TB_HTMS_TRANSPORT WHERE TB_HTMS_TRANSPORT.TRANSID=$tranferId
+					]]></content>
+			</sql>
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.OrderDetailBean" cacheType="bean" cacheName="tranferViewBean"   
+			 cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDER.corderId,TB_HTMS_TRANSFER.TRANSID,TB_HTMS_TRANSFER.SHIPID
+						,TB_HTMS_TRANSFER.APPLYTONNUM,TB_HTMS_TRANSFER.APPLYPACKNUM
+		                 ,TB_HTMS_TRANSFER.SHIPNOTICE, TB_HTMS_CUSTORDER.customerId 
+		                ,TB_HTMS_CUSTORDER.corderName ,TB_HTMS_CUSTORDER.corderCode 
+		                ,TB_HTMS_CUSTORDER.customerCode ,TB_HTMS_CUSTORDER.saleNum 
+		                ,TB_HTMS_CUSTORDER.saleChannel ,TB_HTMS_CUSTORDER.productGroup 
+		                ,TB_HTMS_CUSTORDER.saleGroup ,TB_HTMS_CUSTORDER.saleDepartment 
+		                ,TB_HTMS_CUSTORDER.saleType ,TB_HTMS_CUSTORDER.exchangeTitle 
+		                ,TB_HTMS_CUSTORDER.fetchFactory 
+		                ,TB_HTMS_CUSTORDER.deliveryStatus ,TB_HTMS_CUSTORDER.createDate 
+		                ,TB_HTMS_CUSTORDER.createTime ,TB_HTMS_CUSTORDER.creator 
+		                ,TB_HTMS_CUSTORDER.inputTime ,TB_HTMS_CUSTORDER.isValidate 
+		                 ,TB_HTMS_CUSTORDER.CUSTOMERNAME
+		            FROM TB_HTMS_CUSTORDER,TB_HTMS_TRANSFER
+		            WHERE TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID AND TB_HTMS_TRANSFER.transId=$tranferId
+					]]></content>
+			</sql>
+			<sql name="CUSTOMER_ADDRESS" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="bean" cacheName="addressViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMERADDR.CADDRDETAIL,TB_HTMS_CUSTOMERADDR.AREAID FROM TB_HTMS_CUSTOMERADDR WHERE TB_HTMS_CUSTOMERADDR.CADDRID=$caddrId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/logistic/transfer/modify.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/logistic/transfer/view.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="getTransferById"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  >
+		<sql name="getTransferById"  beanClass="com.zzy.htms.logistic.transfer.TransferBean"   >
+		    <![CDATA[
+			     select *  from TB_HTMS_TRANSFER where transId=$transId
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="getTransferByShipId"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  >
+		<sql name="getTransferByShipId"  beanClass="com.zzy.htms.logistic.transfer.TransferBean"   >
+		    <![CDATA[
+			     select *  from TB_HTMS_TRANSFER where shipId=$shipId and transId <> $transId
+		     ]]>
+		</sql>
+	</operation>
+
+
+	<!-- 转向分配承运商页面 -->
+	<operation name="toAssignTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="getAssignNum" exeOrder="" version="2.0">
+			<sql name="price_type_list" beanClass="com.zzy.htms.dictionary.transprice.TransPriceBean" cacheType="list" cacheName="price_type_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DIC_TYPE WHERE TYPECODE='priceType' ORDER BY TYPEID
+					]]></content>
+			</sql>
+			<sql name="price_unit_list" beanClass="com.zzy.htms.dictionary.transprice.DicBean" cacheType="list" cacheName="price_unit_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TB_DIC_TYPE.TYPECODE='priceType' ORDER BY SHOWORDER
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<!-- 不可删除TB_HTMS_CUSTORDER.*,此查询中的部分数据，用于调用sap接口，不可修改 -->
+			<sql name="tranferViewBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="tranferViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+			          select 
+			           caddr.customerId,
+			           TB_HTMS_CUSTORDER.*,
+			           TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+			           TB_HTMS_TRANSFER.*,	
+			           TB_HTMS_TRANSFER.createTime as approveAgreeTime,			         
+					  TB_HTMS_SHIP.createTime as shipapplyTime,
+			          caddr.areaId,
+			          caddr.caddrDetail,
+			          caddr.caddrContactor,
+			          caddr.caddrTelephone
+			          from TB_HTMS_SHIP,TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			                where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			                AND TB_HTMS_SHIP.shipId=TB_HTMS_TRANSFER.Shipid
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+			<sql name="detailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="detailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*,
+						       TB_HTMS_CUSTORDERDETAIL.meterialFactory,
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc,
+						       TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       
+						       TB_HTMS_CUSTORDERDETAIL.meterialNo,
+						       TB_HTMS_CUSTORDERDETAIL.freight,
+						       TB_HTMS_CUSTORDERDETAIL.unitPrice ,
+						       factory.factoryName,
+						       product.productname
+						       
+						  FROM TB_HTMS_TRANSFERDETAIL, TB_HTMS_CUSTORDERDETAIL 						  						  						  					  
+		                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.Factoryid
+		                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productid 
+						 WHERE TRANSID=$transId
+						 and TB_HTMS_CUSTORDERDETAIL.codetailId = TB_HTMS_TRANSFERDETAIL.codetailId
+						 order by transDetailId
+
+					]]></content>
+			</sql>			
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/transfer/assign.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="SELECT_TRANSPORTBEANBYID"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" invokeMethod="list" >
+		<sql name="SELECT_TRANSPORTBEANBYID"  beanClass="com.zzy.htms.logistic.transport.TransportBean"   isEscapeQuotation="true"  isEscape="false">
+		    <![CDATA[
+			       SELECT TB_HTMS_TRANSPORT.* ,TB_HTMS_CARRIER.CARRIERNAME
+				            FROM TB_HTMS_TRANSPORT ,TB_HTMS_CARRIER
+				            WHERE TB_HTMS_CARRIER.CARRIERID=TB_HTMS_TRANSPORT.CARRIERID
+								AND   TB_HTMS_TRANSPORT.transId = $transId
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="SELECT_SENDBEAN"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" invokeMethod="list" >
+		<sql name="SELECT_SENDBEAN"  beanClass="com.zzy.htms.logistic.send.SendBean"   isEscapeQuotation="true"  isEscape="false">
+		    <![CDATA[
+			       SELECT TB_HTMS_SEND.*,TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,TB_HTMS_DRIVER.driverIdNum,TB_HTMS_VEHICLE.VEHICLENO
+		            FROM TB_HTMS_TRANSPORTSEND,TB_HTMS_SEND ,TB_HTMS_DRIVER,TB_HTMS_VEHICLE
+		            WHERE
+		            TB_HTMS_TRANSPORTSEND.TRANSPORTID=$transportId 
+		            AND TB_HTMS_TRANSPORTSEND.SENDID=TB_HTMS_SEND.SENDID 
+		            AND TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID  
+		            AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+		     ]]>
+		</sql>
+	</operation>
+	<!-- 
+	 SELECT  TB_HTMS_SEND.*
+					FROM
+						TB_HTMS_SEND  LEFT JOIN TB_HTMS_TRANSPORTSEND 
+					   ON TB_HTMS_SEND.sendid = TB_HTMS_TRANSPORTSEND.sendid
+					WHERE
+						TB_HTMS_TRANSPORTSEND.transportId IN ($transportId)
+		     ]]>
+	
+	 -->
+	
+	
+		<!-- 查看调拨单及其分配情况 -->
+	<operation name="toViewAndModifyTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			
+			
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			
+			<sql name="TransferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="bean" cacheName="tranferViewBean"   refCols="sapTransCode" refNames="refSapCode"  cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					select  
+					  caddr.customerId,
+					  TB_HTMS_CUSTORDER.CORDERCODE,
+					  TB_HTMS_TRANSFER.*,					 
+					  TB_HTMS_CUSTORDER.CUSTOMERNAME,
+					  TB_HTMS_CUSTORDER.CUSTOMERCODE,
+					  TB_HTMS_CUSTORDER.saleMan,
+					  TB_HTMS_TRANSFER.createTime as approveAgreeTime,	
+					  TB_HTMS_SHIP.createTime as shipApplyTime,
+			          caddr.areaId,			          
+			          caddr.caddrDetail,
+			          caddr.caddrContactor,
+			          caddr.caddrTelephone
+			          from TB_HTMS_SHIP,TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			                where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			                AND TB_HTMS_SHIP.shipId=TB_HTMS_TRANSFER.Shipid
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+			<sql name="TRANSFERDETAIL" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="detailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*,
+						       TB_HTMS_CUSTORDERDETAIL.meterialFactory,
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc,
+						       TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       TB_HTMS_CUSTORDERDETAIL.freight,
+						       TB_HTMS_CUSTORDERDETAIL.unitPrice ,
+						       factory.factoryName,
+						       product.productname
+						       
+						  FROM TB_HTMS_TRANSFERDETAIL, TB_HTMS_CUSTORDERDETAIL 						  						  					  
+		                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.Factoryid
+		                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productid 
+						 WHERE TRANSID=$transId
+						 and TB_HTMS_CUSTORDERDETAIL.codetailId = TB_HTMS_TRANSFERDETAIL.codetailId
+						 order by transDetailId
+
+					]]></content>
+			</sql>
+			<!-- 已经分配的承运商 -->
+			<sql name="SELECTED_CARRIER" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="bean" cacheName="transportBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId,TB_HTMS_CARRIER.carrierName,TB_HTMS_TRANSPORT.*,TB_HTMS_TRANSPORTDETAIL.transDetailNotice  
+				    FROM TB_HTMS_CARRIER,TB_HTMS_TRANSPORT,TB_HTMS_TRANSPORTDETAIL
+				    WHERE 
+				    TB_HTMS_CARRIER.carrierId=TB_HTMS_TRANSPORT.carrierId
+				    AND TB_HTMS_TRANSPORT.transportId=TB_HTMS_TRANSPORTDETAIL.transportId
+				    AND TB_HTMS_TRANSPORT.transId=$transId
+				    AND TB_HTMS_CARRIER.isValidate='1'
+					]]></content>
+			</sql>
+			<!-- 已经分配的承运商 -->
+			<sql name="TRANSFERPRICE" beanClass="com.zzy.htms.dictionary.transprice.TransPriceBean" cacheType="bean" cacheName="transpriceBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					Select Tb_Htms_Transfer_Price.*, Tb_Dictionary.Dicname, Tb_Dic_Type.Typename
+					From Tb_Htms_Transfer_Price Left Join  Tb_Dictionary 
+					   On Tb_Htms_Transfer_Price.Priceunit = Tb_Dictionary.Dicid 
+					   Left Join  Tb_Dic_Type On  Tb_Htms_Transfer_Price.Pricetype = Tb_Dic_Type.Typeid
+					Where   Tb_Htms_Transfer_Price.Transid=$transId AND TB_HTMS_TRANSFER_PRICE.isValidate='1'
+                           Order  By Tb_Htms_Transfer_Price.createtime Desc
+					]]></content>
+			</sql>
+			
+			<sql name="freightBean" beanClass="com.zzy.htms.services.business.FreightBean" cacheType="list" cacheName="freightBean"   cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					     select * from tb_htms_freight where sapcode = $refSapCode  and isValidate =1 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/logistic/transfer/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/logistic/transfer/modify.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==3]]></condition>
+			<address><![CDATA[jsp/htms/logistic/transfer/viewNoFreightTransfer.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==4]]></condition>
+			<address><![CDATA[jsp/htms/logistic/transfermerge/view.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	
+	
+	<!--  修改调拨单 -->
+	<!-- 
+	1）更新调拨单及明细状态；
+	2）更新发货申请及明细状态；
+	 -->
+	<operation name="doModifyTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness"  invokeMethod="list"   forward="" >
+			<!-- 更新当前调拨单申请吨数和包数 -->
+			<sql name="UPDATE_CURRENT_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET 
+				    applyTonNum= $splitTonNum,
+				    applyPackNum = $splitPackNum ,
+				    modifier=$userId,
+				    modifyTime=$modifyTime
+				    WHERE transId = $currentTransId
+					]]>
+			</sql>
+			<!-- 更新当前调拨单明细中申请吨数和包数 -->
+			<sql name="UPDATE_CURRENT_DETAIL" isBatch="true">
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL SET 				   
+				    applyTonNum= $splitTonNum,
+				    applyPackNum = $splitPackNum,
+				    transDetailNotice  = $splitNotice,
+				    modifier= $userId,
+				    modifyTime=$modifyTime
+				    WHERE   transDetailId = $currentTransDetailId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+	</operation>
+	
+	
+</root>

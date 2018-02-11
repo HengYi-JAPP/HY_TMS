@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.filestore.FileBean">
+		<map property="fileId" javaType="java.lang.String" column="FILEID" colType=""/>
+		<map property="fileName" javaType="java.lang.String" column="FILENAME" colType=""/>
+		<map property="fileFormat" javaType="java.lang.String" column="FILEFORMAT" colType=""/>
+		<map property="accessCount" javaType="java.lang.Integer" column="ACCESSCOUNT" colType=""/>
+		<map property="fileType" javaType="java.lang.String" column="FILETYPE" colType=""/>
+		<map property="diskPath" javaType="java.lang.String" column="DISKPATH" colType=""/>
+		<map property="creator" javaType="java.lang.String" column="CREATOR" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="fileSize" javaType="long" column="FILESIZE" colType=""/>
+	</bean>
+</root>

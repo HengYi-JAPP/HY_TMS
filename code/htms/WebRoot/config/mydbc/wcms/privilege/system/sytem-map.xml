@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+		<bean beanClass="com.mobilecn.privilege.system.SystemBean">
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="sysCode" javaType="java.lang.String" column="SYSCODE" colType=""/>
+		<map property="sysName" javaType="java.lang.String" column="SYSNAME" colType=""/>
+		<map property="sysPath" javaType="java.lang.String" column="SYSPATH" colType=""/>
+		<map property="sysDesc" javaType="java.lang.String" column="SYSDESC" colType=""/>
+		<map property="showOrder" javaType="int" column="SHOWORDER" colType=""/>
+		<map property="isValidate" javaType="int" column="ISVALIDATE" colType=""/>
+		<map property="isShow" javaType="int" column="ISSHOW" colType=""/>
+		<map property="isSelected" javaType="int" column="ISSELECTED" colType=""/>
+		<map property="userOrder" javaType="int" column="USERORDER" colType=""/>
+		<map property="isSystem" javaType="int" column="ISSYSTEM" colType=""/>
+		
+		<map property="isInside" javaType="int" column="ISINSIDE" colType=""/>
+	</bean>
+</root>

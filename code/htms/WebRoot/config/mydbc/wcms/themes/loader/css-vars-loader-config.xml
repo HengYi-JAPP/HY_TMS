@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemCssVars" businessClass="com.mobilecn.themes.loader.CssVarsLoader" invokeMethod="list" forward="" >
+	<sql name="loadAllSystemCssVars" beanClass="com.mobilecn.themes.params.ParamsBean"><![CDATA[
+		SELECT * FROM TB_WSM_THEMES_PARAMS
+		WHERE TB_WSM_THEMES_PARAMS.ISVALIDATE=1 AND
+			TB_WSM_THEMES_PARAMS.THEMESID IN(
+			  SELECT  TB_WSM_SYS_THEMES.THEMESID  
+			    FROM TB_WSM_SYS_THEMES  
+			    GROUP BY THEMESID  
+			  )
+	]]></sql>
+</operation>
+</root>

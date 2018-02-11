@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toListSQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryListBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean"
+			cacheName="queryViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SQLQUERY WHERE   QUERYID=$checkQueryId
+		</sql>	
+		<forward name="viewPage"><![CDATA[contoller.do?operation=listSQLQueryList]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addSQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryListBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="insert"  caiidTable="TB_WSM_INFO_SQLQUERY_LIST" caiidKey="CONFIGID"  caiidName="SQLQUERY_LIST" caiidVar="sqlQueryListConfigId">
+		INSERT INTO TB_WSM_INFO_SQLQUERY_LIST (CONFIGID,QUERYID,TITLE,VARNAME,WIDTH,ALIGN,VALIGN,TARGET,EXCHANGE,ISVIEW,ISVALIDATE,SHOWORDER)
+		VALUES($sqlQueryListConfigId,$checkQueryId,$title,$varName,$width,$align,$valign,$target,$exchange,$isView,$isValidate,$showOrder)
+		</sql>
+		<forward name="listAction">contoller.do?operation=toListSQLQueryList</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryListBusiness"
+		invokeMethod="list" forward="" cacheList="titleSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total 
+			FROM TB_WSM_INFO_SQLQUERY_LIST
+			WHERE  QUERYID=$checkQueryId AND TITLE LIKE '%$titleSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryListBean"
+			cacheName="sqlqueryListList" cacheScope="request" isPage="true" pageField="CONFIGID"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY_LIST.* 
+				FROM TB_WSM_INFO_SQLQUERY_LIST 
+				WHERE  QUERYID=$checkQueryId AND TITLE LIKE '%$titleSH%'  
+				ORDER BY SHOWORDER 				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/sqlquery/list/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryListBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY_LIST WHERE CONFIGID=$checkConfigId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=toListSQLQueryList</forward>
+	</operation>
+	
+	<!--query实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	
+	<operation name="viewSQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryListBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryListBean"
+			cacheName="sqlqueryListViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SQLQUERY_LIST WHERE  CONFIGID=$configId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/sqlquery/list/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/sqlquery/list/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifySQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryListBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_SQLQUERY_LIST SET 
+			QUERYID=$checkQueryId, 
+			TITLE=$title,         
+			VARNAME=$varName,     
+			WIDTH=$width,         
+			ALIGN=$align,         
+			VALIGN=$valign,       
+			TARGET=$target,       
+			EXCHANGE=$exchange,   
+			ISVIEW=$isView,       
+			ISVALIDATE=$isValidate,
+			SHOWORDER=$showOrder
+		 WHERE  CONFIGID=$configId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=toListSQLQueryList]]></forward>
+	</operation>
+</root>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="addInfoTypeParams" businessClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidTable="TB_WSM_INFOTYPE_PARAMS" caiidKey="PARAMSID"  caiidName="INFOTYPE_PARAMS" caiidVar="newParamsId">
+		INSERT INTO TB_WSM_INFOTYPE_PARAMS (PARAMSID,INFOTYPEID,PARAMSVAR,PARAMSNAME,PARAMSVALUE,PARAMSDEFVALUE,PARAMSDESC,ISVALIDATE)
+		VALUES($newParamsId,$checkInfoTypeId,$paramsVar,$paramsName,$paramsValue,$paramsDefValue,$paramsDesc,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listInfoTypeParams</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listInfoTypeParams" businessClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBusiness"
+		invokeMethod="list" forward="" cacheParams="paramsNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_INFOTYPE_PARAMS WHERE INFOTYPEID=$checkInfoTypeId AND PARAMSNAME LIKE '%$paramsNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBean"
+			cacheName="infoTypeParamsList" cacheScope="request" isPage="true" ><![CDATA[
+			    SELECT * FROM TB_WSM_INFOTYPE_PARAMS WHERE INFOTYPEID=$checkInfoTypeId AND PARAMSNAME LIKE '%$paramsNameSH%'
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/infotype/params/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteInfoTypeParams" businessClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBusiness"
+		invokeMethod="delete"  afterInvoke="reloadParamsRepository"  forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_INFOTYPE_PARAMS WHERE  PARAMSID =$checkParamsId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listInfoTypeParams</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewInfoTypeParams" businessClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBusiness"
+		invokeMethod="view" afterInvoke="reloadParamsRepository" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBean"
+			cacheName="infoTypeParamsViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_INFOTYPE_PARAMS WHERE PARAMSID=$paramsId
+		</sql>
+		
+		<forward name="modifyPage">jsp/portal/console/infotype/params/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/infotype/params/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyInfoTypeParams" businessClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBusiness"
+		invokeMethod="modify"  afterInvoke="reloadParamsRepository"  forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_INFOTYPE_PARAMS SET 
+			PARAMSVAR=$paramsVar,
+			PARAMSNAME=$paramsName,
+			PARAMSVALUE=$paramsValue,
+			PARAMSDEFVALUE=$paramsDefValue,
+			PARAMSDESC=$paramsDesc	
+		 WHERE PARAMSID=$paramsId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listInfoTypeParams</forward>
+	</operation>
+	
+	<operation name="loadInfoTypeParams" businessClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBusiness"
+		invokeMethod="list">		
+		<sql name="infoTypeParamsList" beanClass="com.mobilecn.portal.infotype.params.InfoTypeParamsBean"><![CDATA[
+			    SELECT * FROM TB_WSM_INFOTYPE_PARAMS WHERE ISVALIDATE=1
+		]]></sql>		
+	</operation>
+	<!-- 用户end -->
+</root>

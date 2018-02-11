@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 用户组start -->
+	
+	<!-- 添加 -->
+	<operation name="toAddPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="list" forward="">		
+		<sql name="list" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_PRIVILEGE.*  FROM  TB_WSM_PRIVILEGE  ORDER BY PRIVPARENTID,PRIVORDER ASC
+		]]></sql>
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' ORDER BY SHOWORDER
+		]]></sql>
+		<forward name="listPage">jsp/privilege/privilege/add.jsp</forward>
+	</operation>
+	
+	<operation name="addPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="add"  afterInvoke="relaodPrivilege" forward="">
+		<sql name="insert"  caiidTable="TB_WSM_PRIVILEGE" caiidKey="PRIVID"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privId">
+		  INSERT INTO TB_WSM_PRIVILEGE(PRIVID,PRIVNAME,PRIVCODE,PRIVDESC,PRIVADDR,PRIVPARENTID,PRIVTYPE,ISVALIDATE,PRIVORDER,SYSID)
+          VALUES($privId,$privName,$privCode,$privDesc,$privAddr,$privParentId,$privType,$isValidate,$privOrder,$sysId)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listPrivilege</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="list" forward="" cacheParams="privNameSH,privCodeSH,curpage" cacheScopes="session,session,session">
+		<!-- <sql name="count">
+			  SELECT count(*) as total FROM TB_WSM_PRIVILEGE WHERE PRIVNAME LIKE '%$privNameSH%' AND PRIVCODE LIKE '%$privCodeSH%'
+		</sql> -->
+		<sql name="list" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_PRIVILEGE.*  FROM  TB_WSM_PRIVILEGE,TB_SYSTEM WHERE TB_SYSTEM.ISVALIDATE=1 AND TB_SYSTEM.SYSID=TB_WSM_PRIVILEGE.SYSID AND TB_WSM_PRIVILEGE.ISVALIDATE=1 AND PRIVNAME LIKE '%$privNameSH%' AND PRIVCODE LIKE '%$privCodeSH%'  ORDER BY PRIVORDER 
+		]]></sql>
+		<forward name="listPage">jsp/privilege/privilege/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deletePrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="delete"  forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_PRIVILEGE WHERE PRIVID = $checkPrivId
+		</sql>		
+		<sql name="deleteRole" isBatch="true">
+			 DELETE FROM TB_WSM_ROLE_PRIVILEGE WHERE PRIVID=$checkPrivId  
+		</sql>		
+		<forward name="listAction">contoller.do?operation=listPrivilege</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeViewBean" cacheScope="request">
+		 select * from TB_WSM_PRIVILEGE  WHERE PRIVID = $privId
+		</sql>
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' ORDER BY SHOWORDER
+		]]></sql>
+		<forward name="modifyPage">jsp/privilege/privilege/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/privilege/view.jsp</forward>
+	</operation>
+	
+	<operation name="listCheckedPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="list" forward="" >		
+		<sql name="list" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_PRIVILEGE.*  FROM  TB_WSM_PRIVILEGE  ORDER BY PRIVPARENTID,PRIVORDER ASC
+		]]></sql>
+		
+		<sql name="listChecked" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeCheckedList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_PRIVILEGE.*  FROM  TB_WSM_PRIVILEGE WHERE TB_WSM_PRIVILEGE.PRIVID = (SELECT TB_WSM_PRIVILEGE.PRIVPARENTID  FROM  TB_WSM_PRIVILEGE  WHERE PRIVID = $privId) 
+		]]></sql>
+		<forward name="listPage">contoller.do?operation=viewPrivilege</forward>
+	</operation>
+	<!-- 修改记录 -->
+	<operation name="modifyPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="modify"  afterInvoke="relaodPrivilege"  forward="">
+		<sql name="modify" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean">
+			UPDATE TB_WSM_PRIVILEGE 
+      		   SET PRIVNAME       = $privName,
+          		   PRIVCODE       = $privCode,
+          		   PRIVDESC       = $privDesc,
+          		   PRIVADDR       = $privAddr,
+          		   PRIVPARENTID   = $privParentId,
+          		   PRIVTYPE       = $privType,
+          		   PRIVORDER	  = $privOrder,
+          		   SYSID          = $sysId		          		   
+    	     WHERE PRIVID = $privId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listPrivilege</forward>
+	</operation>
+	
+	<operation name="loadPrivilege" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="privilegeList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"><![CDATA[
+			  SELECT * FROM TB_WSM_PRIVILEGE WHERE ISVALIDATE='1'
+		]]></sql>
+	</operation>
+	<!-- 用户组end -->
+</root>

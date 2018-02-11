@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>		
+	<operation name="loadAllUserSalesNo" businessClass="com.zzy.htms.schedule.TestScheduleTask"
+		invokeMethod="list" >
+			<sql name="loadUserSalesNoList" beanClass="java.lang.String" cacheType="list" cacheName="transPriceList" cacheScope="request"  >
+					<![CDATA[
+					   select DISTINCT salesno 
+					   from tb_wsm_user  
+					   where salesno is not null
+					]]>
+			</sql>
+	</operation>
+</root>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 增加 -->
+	<operation name="addThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_THEMES" caiidKey="THEMESID"  caiidName="TB_WSM_THEMES" caiidVar="newThemesId" isBatch="true">
+		INSERT INTO TB_WSM_THEMES (THEMESID,THEMESNAME,THEMESCODE,SHOWORDER,THEMESDESC,ISVALIDATE,ISDEFAULT)
+		VALUES($newThemesId,$themesName,$themesCode,$showOrder,$themesDesc,$isValidate,$isDefault)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listThemes</forward>
+	</operation>
+
+	<!-- 查询 -->
+	<operation name="listThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="list" forward="" cacheParams="themesNameSH,themesCodeSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			SELECT COUNT(*) AS total  FROM TB_WSM_THEMES WHERE  TB_WSM_THEMES.THEMESNAME LIKE '%$themesCodeSH%' AND  TB_WSM_THEMES.THEMESNAME LIKE '%$themesNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.themes.themes.ThemesBean"
+			cacheName="themesList" cacheScope="request" isPage="true" pageField="PROJECTID"><![CDATA[
+			SELECT TB_WSM_THEMES.*  FROM TB_WSM_THEMES  WHERE TB_WSM_THEMES.THEMESNAME LIKE '%$themesCodeSH%'  AND  TB_WSM_THEMES.THEMESNAME LIKE '%$themesNameSH%' ORDER BY TB_WSM_THEMES.SHOWORDER DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/themes/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteSelectableValue" isBatch="true">
+		DELETE FROM TB_WSM_THEMES_SELECTABLE_VALUE 
+	    WHERE TB_WSM_THEMES_SELECTABLE_VALUE.TDTID IN(
+		    SELECT TB_WSM_THEMES_DEFINE_TYPE.TDTID 
+		    FROM TB_WSM_THEMES_DEFINE_TYPE
+		    WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID =$checkThemesId
+	    )
+		</sql>
+		<sql name="deleteDefineType" isBatch="true">
+			DELETE FROM  TB_WSM_THEMES_DEFINE_TYPE
+		    WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID =$checkThemesId
+		</sql>
+		<sql name="deleteParams" isBatch="true">
+			DELETE FROM  TB_WSM_THEMES_PARAMS
+		    WHERE TB_WSM_THEMES_PARAMS.THEMESID =$checkThemesId
+		</sql>
+		<sql name="deleteItems" isBatch="true">
+			DELETE  FROM TB_WSM_CSS_ITEM
+			 WHERE TB_WSM_CSS_ITEM.CSSID IN(
+			 		SELECT TB_WSM_CSS.CSSID
+			          FROM TB_WSM_CSS
+			         WHERE  TB_WSM_CSS.OWNERID IN(
+			               SELECT TB_WSM_SKIN.SKINID
+			                   FROM TB_WSM_SKIN
+			                  WHERE TB_WSM_SKIN.THEMESID = $checkThemesId
+			                ) OR 
+			                TB_WSM_CSS.OWNERID= $checkThemesId
+			               )
+		</sql>
+		<sql name="deleteCss" isBatch="true">
+			DELETE  FROM TB_WSM_CSS
+			         WHERE  TB_WSM_CSS.OWNERID IN(
+			               SELECT TB_WSM_SKIN.SKINID
+			                   FROM TB_WSM_SKIN
+			                  WHERE TB_WSM_SKIN.THEMESID = $checkThemesId
+			                ) OR 
+			                TB_WSM_CSS.OWNERID= $checkThemesId
+		</sql>
+		<sql name="deleteSkin" isBatch="true">
+			DELETE FROM TB_WSM_SKIN
+			WHERE TB_WSM_SKIN.THEMESID = $checkThemesId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_THEMES WHERE THEMESID=$checkThemesId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listThemes</forward>
+	</operation>
+	
+	<!-- 查看 -->
+	<operation name="viewThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.themes.ThemesBean"
+			cacheName="themesViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_THEMES WHERE THEMESID    =$themesId
+		</sql>	
+		
+		<forward name="modifyPage">jsp/portal/themes/themes/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/themes/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改 -->
+	<operation name="modifyThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_THEMES SET 
+			 THEMESNAME =$themesName,
+			 THEMESCODE =$themesCode,
+			 SHOWORDER=$showOrder,
+			 THEMESDESC =$themesDesc,
+			 ISVALIDATE =$isValidate,
+			ISDEFAULT   =$isDefault
+		 WHERE THEMESID    =$themesId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listThemes]]></forward>
+	</operation>
+	
+	
+	<operation name="toAddSkinForThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="view"   forward="" >
+		<sql name="view" beanClass="com.mobilecn.themes.themes.ThemesBean"
+			cacheName="themesViewBean" cacheScope="request">
+			  SELECT  TB_WSM_THEMES.*  FROM TB_WSM_THEMES  WHERE THEMESID = $checkThemesId
+		</sql>
+		<sql name="skinOfThemes" beanClass="com.mobilecn.themes.skin.SkinBean" 
+			cacheName="skinOfThemes" cacheScope="request">
+			  SELECT  TB_WSM_SKIN.*  FROM TB_WSM_SKIN WHERE TB_WSM_SKIN.SKINID IN (
+			  SELECT  TB_WSM_SKIN.SKINID  
+			  FROM TB_WSM_THEMES_SKIN,TB_WSM_SKIN  
+			  WHERE TB_WSM_THEMES_SKIN.SKINID=TB_WSM_SKIN.SKINID AND TB_WSM_THEMES_SKIN.THEMESID =$checkThemesId) ORDER BY TB_WSM_SKIN.SKINID
+		</sql>
+		<sql name="canSelectSkin" beanClass="com.mobilecn.themes.skin.SkinBean"  
+			cacheName="canSelectSkin" cacheScope="request">
+			 SELECT  TB_WSM_SKIN.*  FROM  TB_WSM_SKIN WHERE TB_WSM_SKIN.ISVALIDATE='1' AND TB_WSM_SKIN.SKINID NOT IN (
+			  SELECT  TB_WSM_SKIN.SKINID  
+			  FROM TB_WSM_THEMES_SKIN,TB_WSM_SKIN  
+			  WHERE TB_WSM_THEMES_SKIN.SKINID=TB_WSM_SKIN.SKINID AND TB_WSM_THEMES_SKIN.THEMESID =$checkThemesId) ORDER BY TB_WSM_SKIN.SKINID
+		</sql>
+		<forward name="viewPage">jsp/portal/themes/themes/bindSkin.jsp</forward>
+	</operation>
+	
+	<operation name="doAddSkinForThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="delete"    forward="" >
+		<sql name="delete" >
+			  DELETE FROM  TB_WSM_THEMES_SKIN WHERE  THEMESID = $checkThemesId
+		</sql>
+		<forward name="listAction">contoller.do?operation=addSkinForThemes</forward>
+	</operation>
+	<operation name="addSkinForThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_THEMES_SKIN(THEMESID,SKINID) VALUES($checkThemesId,$selectedSkin)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listThemes</forward>
+	</operation>
+	
+	<!-- 排序 -->
+	<operation name="orderThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="list" forward="" cacheParams="themesNameSH,themesCodeSH,curpage" cacheScopes="page,page,session">
+		
+		<sql name="list" beanClass="com.mobilecn.themes.themes.ThemesBean"
+			cacheName="themesList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_THEMES.*  FROM TB_WSM_THEMES  WHERE AND TB_WSM_THEMES.ISVALIDATE=1  ORDER BY TB_WSM_THEMES.SHOWORDER				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/themes/orderThemes.jsp</forward>
+	</operation>
+	
+	<operation name="updateThemesOrder" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify" isBatch="true">		
+		 UPDATE TB_WSM_THEMES SET 
+			 SHOWORDER=$showOrder
+		 WHERE THEMESID    =$themesId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=orderThemes]]></forward>
+	</operation>
+</root>

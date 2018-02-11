@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<tag2generator>
+		<mapping key="com.mobilecn.taglib.tags.ajax.AjaxTag"   value="com.mobilecn.taglib.tags.ajax.AjaxGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.dtable.tag.TableTag"   value="com.mobilecn.taglib.tags.dtable.generator.TableGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.dtable.tag.RowTag"   value="com.mobilecn.taglib.tags.dtable.generator.RowGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.dtable.tag.ColumnTag"   value="com.mobilecn.taglib.tags.dtable.generator.ColumnGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.ChooseTag"   value="com.mobilecn.taglib.tags.elements.generator.ChooseGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.ImageTag"   value="com.mobilecn.taglib.tags.elements.generator.ImageGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.OptionTag"   value="com.mobilecn.taglib.tags.elements.generator.OptionGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.SelectTag"   value="com.mobilecn.taglib.tags.elements.generator.SelectGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.TextAreaTag"   value="com.mobilecn.taglib.tags.elements.generator.TextAreaGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.TextTag"   value="com.mobilecn.taglib.tags.elements.generator.TextGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.operate.OperationTag"   value="com.mobilecn.taglib.tags.operate.OperationGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.parameter.ParameterTag"   value="com.mobilecn.taglib.tags.parameter.ParameterGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.tree.TreeTag"   value="com.mobilecn.taglib.tags.tree.TreeGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.tree.TreeOperationTag"   value="com.mobilecn.taglib.tags.tree.TreeOperationGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.forms.FormTag"   value="com.mobilecn.taglib.tags.forms.FormGenerator"/>	
+		<mapping key="com.mobilecn.taglib.tags.lorbox.tag.SelectBoxTag"   value="com.mobilecn.taglib.tags.lorbox.generator.SelectBoxGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.lorbox.tag.MopTag"   value="com.mobilecn.taglib.tags.lorbox.generator.MopGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.lorbox.tag.LorBoxTag"   value="com.mobilecn.taglib.tags.lorbox.generator.LorBoxGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.dynamic.DynamicTag"   value="com.mobilecn.taglib.tags.dynamic.DynamicGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.pagination.PaginationTag"   value="com.mobilecn.taglib.tags.pagination.PaginationGenerator"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PortalPageTag"   value="com.mobilecn.taglib.tags.portlet.generator.PortalPageGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PageRowTag"   value="com.mobilecn.taglib.tags.portlet.generator.PageRowGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PageColumnTag"   value="com.mobilecn.taglib.tags.portlet.generator.PageColumnGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.ContainerTag"   value="com.mobilecn.taglib.tags.portlet.generator.ContainerGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PortletTag"   value="com.mobilecn.taglib.tags.portlet.generator.PortletGenerator"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.TabPortletTag"   value="com.mobilecn.taglib.tags.portlet.generator.TabPortletGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.TabPortletSegmentTag"   value="com.mobilecn.taglib.tags.portlet.generator.TabPortletSegmentGenerator"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.vcode.VCodeTag"   value="com.mobilecn.taglib.tags.vcode.VCodeGenerator"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.vml.tag.BarTag"   value="com.mobilecn.taglib.tags.vml.generator.BarGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.vml.tag.PieTag"   value="com.mobilecn.taglib.tags.vml.generator.PieGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.vml.tag.CurveTag"   value="com.mobilecn.taglib.tags.vml.generator.CurveGenerator"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.validator.ValidatorTag"   value="com.mobilecn.taglib.tags.validator.ValidatorGenerator"/>
+		<mapping key="com.mobilecn.taglib.tags.page.PageTag"   value="com.mobilecn.taglib.tags.page.PageGenerator"/>
+	</tag2generator>
+</root>

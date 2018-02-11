@@ -1,0 +1,91 @@
+
+
+F:\hy_code\hy_work_interface\htms\WebRoot\WEB-INF\classes\com\zzy\htms\webservice\market\order
+
+
+/usr/local/tomcat6/tmsdeploy/htms/WEB-INF/classes/com/zzy/htms/webservice/market/order
+
+
+#创建目录
+mkdir -p /usr/local/deploy/201802060/
+mkdir -p /usr/local/backup/201802060/
+cd /usr/local/deploy/201802060/
+
+#上传htms部署文件
+
+#停机备份
+/usr/local/tomcat6/bin/shutdown.sh
+cp -r  /usr/local/tomcat6/tmsdeploy/htms       /usr/local/backup/201802060/
+cp -r  /usr/local/tomcat6/tmsdeploy/htms.war   /usr/local/backup/201802060/
+cd /usr/local/backup/201802060/
+ls
+
+
+#移除旧文件
+rm -rf /usr/local/tomcat6/tmsdeploy/htms
+rm -f /usr/local/tomcat6/tmsdeploy/htms.war
+
+##部署新工程
+
+cp -f /usr/local/deploy/201802060/htms.war /usr/local/tomcat6/tmsdeploy/
+mkdir -p  /usr/local/tomcat6/tmsdeploy/htms/
+cp -f /usr/local/deploy/201802060/htms.war /usr/local/tomcat6/tmsdeploy/htms/
+cd /usr/local/tomcat6/tmsdeploy/htms/
+jar -xvf htms.war
+rm -rf htms.war
+
+#删除catalina.out 日志
+zip /usr/local/tomcat6/logs/catalina201802060.zip /usr/local/tomcat6/logs/catalina.out
+rm -rf /usr/local/tomcat6/logs/catalina.out
+
+#启动
+/usr/local/tomcat6/bin/startup.sh
+
+
+
+
+更新代码后需要检查的内容
+1.检查发货申请,点击申请,查看地址是否显示正常   此检查可以确认sap的jar是否正常,如果不正常,需要用在线环境的jar包替换
+2.检查运费接口是否在运行
+3.检查订单同步接口是否很快的执行通过
+
+
+
+
+#查看日志
+tail -f 100 /usr/local/tomcat6/logs/catalina.out
+
+1.检查catalina.out 日志
+2.检查tb_htms_system_log表日志
+
+
+
+
+sql:导出
+imp htms/htms@orcl  full=y file=htms-2017-08-05.dmp ignore=y
+
+
+exp htms/htms1234@orcl  full=y file=htms-2017-09-15.dmp ignore=y
+
+
+
+
+SSO登录配置检查
+1.放开web.xml部分的cas部分权限
+2.修改web.xml的主机名称地址
+3.修改common-system 启用sso
+4.修改用户map关系
+5.使用此地址访问SSO  http://htms.hengyi.com/contoller.do?operation=LoginAction_of_myportal
+
+
+
+scp root@192.168.0.85:/usr/local/deploy/20170903  /usr/local/deploy/20170903
+
+
+
+
+
+
+
+
+

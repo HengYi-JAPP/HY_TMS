@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.composite.CompositeColumnBean">
+		<map property="ccId" javaType="java.lang.String" column="CCID" colType=""/>
+		<map property="channelId" javaType="java.lang.String" column="CHANNELID" colType=""/>
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="parentId" javaType="java.lang.String" column="PARENTID" colType=""/>
+		<map property="showName" javaType="java.lang.String" column="SHOWNAME" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+		
+		<map property="afterIcon" javaType="java.lang.String" column="AFTERICON" colType=""/>
+		<map property="beforeIcon" javaType="java.lang.String" column="BEFOREICON" colType=""/>
+		<map property="showHeight" javaType="java.lang.String" column="SHOWHEIGHT" colType=""/>
+		<map property="userDefine" javaType="java.lang.String" column="USERDEFINE" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		
+	</bean>
+</root>

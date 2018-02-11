@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 复制主题 -->
+	<operation name="copyThemes" businessClass="com.mobilecn.themes.themes.ThemesBusiness"
+		invokeMethod="add" beforeInvoke="prepareCopy" forward="" >
+		<!-- 插入主题 -->
+		<sql name="insertThemes" isBatch="true">
+		INSERT INTO TB_WSM_THEMES (THEMESID,THEMESNAME,THEMESCODE,SHOWORDER,THEMESDESC,ISVALIDATE,ISDEFAULT)
+		VALUES($newThemesId,$newThemesName,$newThemesCode,$newShowOrder,$newThemesDesc,$newThemesValidate,$newThemesDefault)
+		</sql>
+		<!-- 插入主题类型定义 -->
+		<sql name="insertType" test="$[typeSize]>0"  isBatch="true">
+		INSERT INTO TB_WSM_THEMES_DEFINE_TYPE (TDTID,TDTCODE,TDTNAME,TDTDESC,TDTICON,THEMESID,ISDEFAULT,SHOWORDER,ISVALIDATE)
+		VALUES($newTdtId,$newTdtCode,$newTdtName,$newTdtDesc,$newTdtIcon,$newTdtThemesId,$newTdtDefault,$newTdtsShowOrder,'1')
+		</sql>
+		<!-- 插入主题参数 -->
+		<sql name="insertParams" test="$[paramsSize]>0" isBatch="true">
+		INSERT INTO TB_WSM_THEMES_PARAMS (PARAMSID,PARAMSCODE,PARAMSNAME,PARAMSDESC,PARAMSTYPE,THEMESID,SHOWORDER,ISVALIDATE)
+		VALUES($newParamsId,$newParamsCode,$newParamsName,$newParamsDesc,$newParamsType,$newParamsThemesId,$newParamsShowOrder,'1')
+		</sql>
+		<!-- 插入主题参数值 -->
+		<sql name="insertValue" test="$[valueSize]>0" isBatch="true">
+		INSERT INTO TB_WSM_THEMES_SELECTABLE_VALUE (VALUEID,PARAMSID,TDTID,VALUECONTENT,VALUEDESC,ISVALIDATE)
+		VALUES($newValueId,$newValueParamsId,$newValueTdtId,$newValueContent,$newValueDesc,'1')
+		</sql>
+		<!-- 插入皮肤 -->
+		<sql name="insertSkin" test="$[skinSize]>0" isBatch="true">
+		INSERT INTO TB_WSM_SKIN (SKINID,THEMESID,SKINNAME,SKINCODE,SHOWORDER,SKINDESC,ISVALIDATE,ISDEFAULT,ISCOLUMNSKIN,INDEXCOLUMNSKIN,VIEWCOLUMNSKIN,LISTCOLUMNSKIN)
+		VALUES($newSkinId,$newSkinThemesId,$newSkinName,$newSkinCode,$newSkinShowOrder,$newSkinDesc,'1',$newSkinIsDefault,$newIsColumnSkin,$newIndexColumnSkin,$newViewColumnSkin,$newListColumnSkin)
+		</sql>
+		<!-- 插入样式 -->
+		<sql name="insertCss" test="$[cssSize]>0"  isBatch="true">
+		INSERT INTO TB_WSM_CSS (CSSID,OWNERID,CSSNAME,CSSCODE,SHOWORDER,CSSCONTENT,CSSDESC,ISVALIDATE)
+		VALUES($newCssId,$newCssOwnerId,$newCssName,$newCssCode,$newCsSshowOrder,$newCssContent,$newCssDesc,'1')
+		</sql>
+		<!-- 插入样式项 -->
+		<sql name="insertCssItem"  test="$[itemSize]>0" isBatch="true">
+		INSERT INTO TB_WSM_CSS_ITEM (ITEMID,CSSID,ITEMCODE,ITEMVALUE,ITEMVAR,ISVALIDATE)
+		VALUES($newBatchItemId,$newBatchCssId,$newBatchItemCode,$newBatchItemValue,$newBatchItemVar,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=listThemes</forward>
+	</operation>
+	
+	<!-- 复制皮肤 -->
+	<operation name="copySkin" businessClass="com.mobilecn.themes.skin.SkinBusiness"
+		invokeMethod="add" beforeInvoke="prepareCopy" forward="" >
+		<!-- 插入皮肤 -->
+		<sql name="insertSkin" isBatch="true">
+		INSERT INTO TB_WSM_SKIN (SKINID,THEMESID,SKINNAME,SKINCODE,SHOWORDER,SKINDESC,ISVALIDATE,ISDEFAULT,ISCOLUMNSKIN,INDEXCOLUMNSKIN,VIEWCOLUMNSKIN,LISTCOLUMNSKIN)
+		VALUES($newSkinId,$newSkinThemesId,$newSkinName,$newSkinCode,$newSkinShowOrder,$newSkinDesc,'1',$newSkinIsDefault,$newIsColumnSkin,$newIndexColumnSkin,$newViewColumnSkin,$newListColumnSkin)
+		</sql>
+		<!-- 插入样式 -->
+		<sql name="insertCss"  test="$[cssSize]>0" isBatch="true">
+		INSERT INTO TB_WSM_CSS (CSSID,OWNERID,CSSNAME,CSSCODE,SHOWORDER,CSSCONTENT,CSSDESC,ISVALIDATE)
+		VALUES($newCssId,$newCssOwnerId,$newCssName,$newCssCode,$newCsSshowOrder,$newCssContent,$newCssDesc,'1')
+		</sql>
+		<!-- 插入样式项 -->
+		<sql name="insertCssItem"  test="$[itemSize]>0" isBatch="true">
+		INSERT INTO TB_WSM_CSS_ITEM (ITEMID,CSSID,ITEMCODE,ITEMVALUE,ITEMVAR,ISVALIDATE)
+		VALUES($newBatchItemId,$newBatchCssId,$newBatchItemCode,$newBatchItemValue,$newBatchItemVar,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSkin</forward>
+	</operation>
+	<!-- 复制样式 -->
+	<operation name="copyCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="add" beforeInvoke="prepareCopy" forward="" >
+		<!-- 插入样式 -->
+		<sql name="insertCss"   isBatch="true">
+		INSERT INTO TB_WSM_CSS (CSSID,OWNERID,CSSNAME,CSSCODE,SHOWORDER,CSSCONTENT,CSSDESC,ISVALIDATE)
+		VALUES($newCssId,$newCssOwnerId,$newCssName,$newCssCode,$newCsSshowOrder,$newCssContent,$newCssDesc,'1')
+		</sql>
+		<!-- 插入样式项 -->
+		<sql name="insertCssItem"  test="$[itemSize]>0"  isBatch="true">
+		INSERT INTO TB_WSM_CSS_ITEM (ITEMID,CSSID,ITEMCODE,ITEMVALUE,ITEMVAR,ISVALIDATE)
+		VALUES($newBatchItemId,$newBatchCssId,$newBatchItemCode,$newBatchItemValue,$newBatchItemVar,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=listCss</forward>
+	</operation>
+	
+</root>

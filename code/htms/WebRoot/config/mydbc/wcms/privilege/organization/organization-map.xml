@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 机构 start -->
+	<bean beanClass="com.mobilecn.privilege.organization.OrganizationBean">
+		<map property="orgId" javaType="java.lang.String" column="ORGID" colType=""/>
+		<map property="orgCode" javaType="java.lang.String" column="ORGCODE" colType=""/>
+		<map property="orgName" javaType="java.lang.String" column="ORGNAME" colType=""/>
+		<map property="orgDesc" javaType="java.lang.String" column="ORGDESC" colType=""/>
+		<map property="orgSimpleName" javaType="java.lang.String" column="ORGSIMPLENAME" colType=""/>
+		<map property="orgAlias" javaType="java.lang.String" column="ORGALIAS" colType=""/>
+		<map property="orgEngName" javaType="java.lang.String" column="ORGENGNAME" colType=""/>
+		<map property="orgParentId" javaType="java.lang.String" column="ORGPARENTID" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+	<!-- 机构 end -->
+</root>

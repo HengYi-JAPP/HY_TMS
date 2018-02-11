@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 增加 -->
+	<operation name="addBackground" businessClass="com.mobilecn.themes.background.BackgroundBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_BACKGROUND" caiidKey="BGDID"  caiidName="TB_WSM_BACKGROUND" caiidVar="newBgdId">
+		INSERT INTO TB_WSM_BACKGROUND (BGDID,BGDCODE,BGDNAME,BGDDESC,BGDICON,BGDCONTENT,BGDTYPE,ISVALIDATE)
+		VALUES($newBgdId,$bgdCode,$bgdName,$bgdDesc,$bgdIcon,$bgdContent,$bgdType,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=listBackground</forward>
+	</operation>
+
+	<!-- 查询 -->
+	<operation name="listBackground" businessClass="com.mobilecn.themes.background.BackgroundBusiness"
+		invokeMethod="list" forward="" cacheParams="bgdNameSH,bgdCodeSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			SELECT COUNT(*) AS total  FROM TB_WSM_BACKGROUND WHERE  TB_WSM_BACKGROUND.BGDCODE LIKE '%$bgdCodeSH%' AND  TB_WSM_BACKGROUND.BGDNAME LIKE '%$bgdNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.themes.background.BackgroundBean"
+			cacheName="bgdList" cacheScope="request" isPage="true" pageField="BGDID"><![CDATA[
+			SELECT TB_WSM_BACKGROUND.*  FROM TB_WSM_BACKGROUND  WHERE TB_WSM_BACKGROUND.BGDCODE LIKE '%$bgdCodeSH%'  AND  TB_WSM_BACKGROUND.BGDNAME LIKE '%$bgdNameSH%' ORDER BY TB_WSM_BACKGROUND.BGDID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/background/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteBackground" businessClass="com.mobilecn.themes.background.BackgroundBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_BACKGROUND WHERE BGDID=$checkBackgroundId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listBackground</forward>
+	</operation>
+	
+	<!-- 查看 -->
+	<operation name="viewBackground" businessClass="com.mobilecn.themes.background.BackgroundBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.background.BackgroundBean"
+			cacheName="bgdViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_BACKGROUND WHERE BGDID=$bgdId
+		</sql>	
+		
+		<forward name="modifyPage">jsp/portal/themes/background/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/background/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改 -->
+	<operation name="modifyBackground" businessClass="com.mobilecn.themes.background.BackgroundBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_BACKGROUND SET 
+			BGDNAME=$bgdName,
+			BGDCODE=$bgdCode,
+			BGDDESC=$bgdDesc,
+			BGDICON=$bgdIcon,
+			BGDCONTENT=$bgdContent,
+			BGDTYPE=$bgdType,
+			ISVALIDATE=$isValidate
+		 WHERE BGDID=$bgdId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listBackground]]></forward>
+	</operation>
+	
+</root>

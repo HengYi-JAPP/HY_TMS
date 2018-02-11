@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 
+	系统连接器配置，指定系统：SSO，PRIV
+	 -->
+	<connector system="myportal">
+	<!-- 
+		有两种通讯方式：
+		1）system:系统为单位或核心的交叉信息交互通讯；默认为该类型，该类型需要配置服务器system
+		2）user:用户为单位或核心的星形信息交互通讯，主要基于用户票据访问 。
+		-->
+		<style>system</style>
+				
+		<!-- 链接方式 :http(默认),socket,webservice-->
+		<type>http</type>
+		<!-- 如果connector=http,webservice,则填服务访问的完整地址；如果connector=socket,则填写IP地址：端口 -->
+		<!--
+		http:<server><![CDATA[http://localhost:8080/myconsole/publisher]]></server>
+		socket:<server><![CDATA[127.0.0.1:9909]]></server>
+		<server><![CDATA[http://localhost:8080/myconsole/services/WebServiceServer?wsdl]]></server>
+		-->
+		<server><![CDATA[http://localhost:8080/myportal/publisher]]></server>
+		<!-- 请求方式，只有http连接有效， 有get,post两种方式 -->
+		<method>get</method>
+		<!-- 系统ID，在同一系统的服务中必须是唯一 -->
+		<systemId>myportal</systemId>
+		<!-- 访问凭证，相当于访问密码 -->
+		<passport>myportal</passport>	
+		<!-- 描述 -->	
+		<description></description>
+			
+		<!-- 参数格式-->
+		<parameter-fomatter>xml</parameter-fomatter>
+		<!-- 参数加密算法:BASE64=1100,URL=3099,MD5=5088, RSA=7001-->
+		<parameter-algorithm>1100</parameter-algorithm>
+		<!-- 返回值加密算法,多个算法并用时，用逗号分隔，顺序按配置顺序依次重叠加密 -->
+		<return-algorithm>1100</return-algorithm>
+	</connector>
+</root>

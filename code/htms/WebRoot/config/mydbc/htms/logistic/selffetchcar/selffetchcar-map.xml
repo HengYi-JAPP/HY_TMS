@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBean">
+		<map property="carId" javaType="int" column="carId"  colType=""/>
+		<map property="customerCode" javaType="String" column="customerCode"  colType=""/>
+		<map property="vehicleNo" javaType="String" column="vehicleNo"  colType=""/>
+		<map property="remark" javaType="String" column="remark"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="isValidate" javaType="String" column="isValidate"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		
+	</bean>
+</root>

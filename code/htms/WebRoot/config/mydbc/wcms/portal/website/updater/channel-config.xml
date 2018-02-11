@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>	
+	<!-- 更新用户的频道列表 -->
+	<operation name="updateChannel_of_commonSystem" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="modify"  forward="" >
+		<!-- 删除用户原有的频道定义信息 -->
+		<sql name="deleteUserChannel"  isBatch="true" >
+			DELETE FROM TB_WSM_USER_CHANNEL WHERE USERID=$userId AND SYSID=$sysId
+		</sql>	
+		<!-- 记录用户当前的频道定义信息 -->	
+		<sql name="updateUserChannel"  isBatch="true" >
+			INSERT INTO TB_WSM_USER_CHANNEL (SYSID,USERID,CHANNELID,CHANNELORDER,ISCURRENT,ISSHOW)
+			VALUES($sysId,$userId,$_channelId,$_channelOrder,$_isCurrent,$_isShow)
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadChannelPersonalizeList&currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+	</operation>
+</root>

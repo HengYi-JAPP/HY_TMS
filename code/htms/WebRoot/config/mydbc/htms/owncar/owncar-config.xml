@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="viewOwnCar" businessClass="com.zzy.htms.owncar.OwnCarBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.owncar.OwnCarBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="bean" cacheName="ownCarViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.CUSTOMERID, TB_HTMS_CUSTOMER.CUSTOMERCODE,
+						TB_HTMS_CUSTOMER.CUSTOMERNAME,TB_HTMS_MANAGEMENTFEE.MANAGEMENTFEE 
+					       FROM TB_HTMS_CUSTOMER LEFT JOIN TB_HTMS_MANAGEMENTFEE 
+					       ON TB_HTMS_CUSTOMER.FEEID = TB_HTMS_MANAGEMENTFEE.FEEID
+				    WHERE  TB_HTMS_CUSTOMER.CUSTOMERID = $customerId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/owncar/view.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/owncar/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteOwnCar" businessClass="com.zzy.htms.owncar.OwnCarBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.owncar.OwnCarBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTOMER  SET 
+							FEEID = '',
+							MANAGEMENTFEE = '',
+			              	ISFEE ='0'     
+			         WHERE TB_HTMS_CUSTOMER.CUSTOMERID = $customerId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listOwnCar]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyOwnCar" businessClass="com.zzy.htms.owncar.OwnCarBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.owncar.OwnCarBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_MANAGEMENTFEE" caiidKey="feeId" caiidName="feeId" caiidVar="feeId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_MANAGEMENTFEE ( feeId, managementFee, createTime,isValidate) 
+				        VALUES($feeId,$managementFee,$createTime,'1') 
+					]]></content>
+			</sql>
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTOMER  SET 
+							FEEID = $feeId,
+							MANAGEMENTFEE = $managementFee,
+			               	ISFEE ='1'     
+			         WHERE  TB_HTMS_CUSTOMER.CUSTOMERID = $customerId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listOwnCar]]></address>
+		</forward>
+	</operation>
+	<operation name="listOwnCar" businessClass="com.zzy.htms.owncar.OwnCarBusiness" version="2.0"  forward="" loadCacheForm="ownCarForm">
+		<method name="默认查询" businessClass="com.zzy.htms.owncar.OwnCarBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_CUSTOMER LEFT JOIN TB_HTMS_MANAGEMENTFEE 
+					       ON TB_HTMS_CUSTOMER.FEEID = TB_HTMS_MANAGEMENTFEE.FEEID
+					       WHERE  TB_HTMS_CUSTOMER.ISVALIDATE = '1'
+					       AND TB_HTMS_CUSTOMER.CUSTOMERCODE LIKE'%$customerCodeSH%' 
+					       AND TB_HTMS_CUSTOMER.CUSTOMERNAME LIKE'%$customerNameSH%' 
+					       ORDER BY TB_HTMS_CUSTOMER.CUSTOMERID DESC 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="ownCarList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_HTMS_CUSTOMER.CUSTOMERID, TB_HTMS_CUSTOMER.CUSTOMERCODE,
+						 	TB_HTMS_CUSTOMER.CUSTOMERNAME,TB_HTMS_MANAGEMENTFEE.MANAGEMENTFEE 
+					       FROM TB_HTMS_CUSTOMER LEFT JOIN TB_HTMS_MANAGEMENTFEE 
+					       ON TB_HTMS_CUSTOMER.FEEID = TB_HTMS_MANAGEMENTFEE.FEEID
+					       WHERE  TB_HTMS_CUSTOMER.ISVALIDATE = '1'
+					       AND TB_HTMS_CUSTOMER.CUSTOMERCODE LIKE'%$customerCodeSH%' 
+					       AND TB_HTMS_CUSTOMER.CUSTOMERNAME LIKE'%$customerNameSH%' 
+					       ORDER BY TB_HTMS_CUSTOMER.CUSTOMERID DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/owncar/list.jsp]]></address>
+		</forward>
+	</operation>
+	<!-- 管理费维护 
+	<operation name="toModifyManagementFee" businessClass="com.zzy.htms.owncar.OwnCarBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.owncar.OwnCarBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="SELECT" beanClass="com.zzy.htms.owncar.OwnCarBean" cacheType="bean" cacheName="feeBean" cacheScope="request" version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_MANAGEMENTFEE.*
+				    FROM TB_HTMS_MANAGEMENTFEE WHERE TB_HTMS_MANAGEMENTFEE.ISVALIDATE = '1'
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/owncar/managementFee.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyManagementFee" businessClass="com.zzy.htms.owncar.OwnCarBusiness" version="2.0">
+		<method name="默认新增" businessClass="com.zzy.htms.owncar.OwnCarBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_MANAGEMENTFEE  SET 
+			               TB_HTMS_MANAGEMENTFEE.ISVALIDATE ='0'     
+			         WHERE  TB_HTMS_MANAGEMENTFEE.FEEID = $feeIdSH
+					]]></content>
+			</sql>
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_MANAGEMENTFEE" caiidKey="feeId" caiidName="feeId" caiidVar="feeId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_MANAGEMENTFEE ( feeId, managementFee, createTime,isValidate) 
+				        VALUES($feeId,$managementFee,$createTime,'1') 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.owncar.OwnCarBean" cacheType="bean" cacheName="feeBean" cacheScope="request" version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_MANAGEMENTFEE.*
+				    FROM TB_HTMS_MANAGEMENTFEE WHERE TB_HTMS_MANAGEMENTFEE.ISVALIDATE = '1'
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/owncar/managementFee.jsp]]></address>
+		</forward>
+	</operation>
+	-->
+</root>

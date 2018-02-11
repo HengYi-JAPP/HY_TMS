@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+	<operation name="loadUserPersonalizeLayoutList" businessClass="com.mobilecn.portal.personalizer.LayoutPersonalizer"
+		invokeMethod="list"  afterInvoke="getPersonalizeLayoutList" forward="" >
+		<!-- 系统定义的当前频道的布局列表 -->
+		<!-- __LAYOUT_LIST___  修改之后要修改mydbc-xml-conf.properties文件中的__LAYOUT_LIST变量值 -->
+		<sql name="userAllLayoutList"  beanClass="com.mobilecn.portal.layout.LayoutBean" cacheName="userAllLayoutList" cacheScope="session" >
+			SELECT TB_WSM_LAYOUT.* FROM TB_WSM_LAYOUT WHERE
+			 TB_WSM_LAYOUT.CHANNELID=$channelId AND (
+				 (
+				 	TB_WSM_LAYOUT.DEFAULTSHOW=1 
+				 )OR (
+				 	TB_WSM_LAYOUT.USERDEFINE=1 AND
+				 	TB_WSM_LAYOUT.USERID=$userId
+				 )			 	
+			 ) AND 			 
+			 TB_WSM_LAYOUT.ISVALIDATE = 1  
+			 ORDER BY TB_WSM_LAYOUT.DEFAULTORDER		 
+		</sql>	
+		<sql name="userPersonalizeLayoutList"  beanClass="com.mobilecn.portal.layout.LayoutBean" cacheName="userPersonalizeLayoutList" cacheScope="session" >
+			SELECT TB_WSM_USER_LAYOUT.* FROM TB_WSM_USER_LAYOUT WHERE
+			 TB_WSM_USER_LAYOUT.CHANNELID=$channelId AND 
+			 TB_WSM_USER_LAYOUT.USERID=$userId 
+			 ORDER BY TB_WSM_USER_LAYOUT.SHOWORDER		 
+		</sql>	
+		<forward name="listPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/layout/list.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+	</operation>
+
+	<operation name="saveUserDefineLayout" businessClass="com.mobilecn.portal.personalizer.LayoutPersonalizer"
+		invokeMethod="add" forward="" >
+		<!-- 保存布局 -->		
+		<sql name="insertLayout" caiidTable="TB_WSM_LAYOUT" caiidKey="LAYOUTID" caiidName="TB_WSM_LAYOUT" caiidVar="newLayoutId"><![CDATA[
+		INSERT INTO TB_WSM_LAYOUT (LAYOUTID,CHANNELID,LAYOUTNAME,LAYOUTTEMPL,LAYOUTLOGO,LAYOUTSELECTEDLOGO,LAYOUTDESC,ISVALIDATE,DEFAULTORDER,DEFAULTSELECT,DEFAULTSHOW,USERID,USERDEFINE)
+		VALUES($newLayoutId,$channelId,$layoutName,' ',$layoutLogo,$layoutSelectedLogo,$layoutDesc,$isValidate,$defaultOrder,$defaultSelect,$defaultShow,$userId,$userDefine)
+		]]></sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadUserPersonalizeLayoutList&currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+	</operation>
+
+<!-- 查看单个记录 -->
+	<operation name="viewUserDefineLayout" businessClass="com.mobilecn.portal.personalizer.LayoutPersonalizer"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.layout.LayoutBean"
+			cacheName="layoutViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_LAYOUT WHERE LAYOUTID=$layoutId
+		</sql>		
+		<forward name="modifyPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/layout/modify.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+		<forward name="viewPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/layout/view.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+	</operation>
+	<operation name="modifyUserDefineLayout" businessClass="com.mobilecn.portal.personalizer.LayoutPersonalizer"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_LAYOUT SET 
+			LAYOUTNAME=$layoutName,
+			LAYOUTLOGO=$layoutLogo,
+			LAYOUTSELECTEDLOGO=$layoutSelectedLogo
+		 WHERE  LAYOUTID=$layoutId
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadUserPersonalizeLayoutList&currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+	</operation>
+	<!-- 删除 -->
+	<operation name="deleteUserDefineLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteUserUnitColumn"  isBatch="true">
+			 DELETE FROM TB_WSM_USER_COLUMN WHERE UNITID IN(SELECT UNITID FROM TB_WSM_UNIT WHERE LAYOUTID=$layoutId)
+		</sql>
+		<sql name="deleteUnitColumn"  isBatch="true">
+			 DELETE FROM TB_WSM_UNIT_COLUMN WHERE UNITID IN(SELECT UNITID FROM TB_WSM_UNIT WHERE LAYOUTID=$layoutId)
+		</sql>
+		<sql name="deleteUnit"  isBatch="true">
+			 DELETE FROM TB_WSM_UNIT WHERE LAYOUTID=$layoutId
+		</sql>	
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_USER_LAYOUT WHERE LAYOUTID=$layoutId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LAYOUT WHERE LAYOUTID=$layoutId
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadUserPersonalizeLayoutList&currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+	</operation>
+	
+	
+	<!-- 保存用户定义布局个性化信息，这种情况下，用户有可能修改布局单元，所以要先删除原有的布局、布局单元及栏目对应关系 -->
+	<operation name="saveSystemLayoutUserDefineColumns" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="add" afterInvoke="publish" forward="" >	
+		<!-- 由于新增和修改功能共用一个操作，则在保存之前先删除 -->
+		<!-- 用户自定义布局中定制的栏目属于个性化栏目，要存放在个性化栏目列表中，而不是-->
+		<sql name="deleteUserLayoutUnit"  isBatch="true">
+		delete from TB_WSM_USER_COLUMN where  UNITID IN(SELECT TB_WSM_UNIT.UNITID FROM TB_WSM_UNIT WHERE TB_WSM_UNIT.LAYOUTID= $layoutId)
+		</sql>
+		
+		<!-- 保存布局单元 -->	
+		
+		<!-- 保存各个单元与栏目的对应关系 -->
+		<sql name="insertUnitColumn" isBatch="true" ><![CDATA[
+			   INSERT INTO TB_WSM_USER_COLUMN (USERID,UNITID,LAYOUTID,COLUMNID,SHOWORDER,ISSHOW,ISOPEN,ISMOVE)
+			   VALUES($userId,$columnUnitId,$layoutId,$columnId,$showOrder,$isShow,$isOpen,$isMove)  
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadColumns4UserLayoutDesign&currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]&layoutId=$[layoutId]&isDirect=$[isDirect]]]></forward>
+	</operation>
+	
+	
+	
+	<operation name="save4UserDefineLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="add" afterInvoke="publish" forward="" >	
+		<!-- 由于新增和修改功能共用一个操作，则在保存之前先删除 -->
+		<!-- 用户自定义布局中定制的栏目属于个性化栏目，要存放在个性化栏目列表中，而不是-->
+		<sql name="deleteUserLayoutUnit"  isBatch="true">
+		delete from TB_WSM_USER_COLUMN where  UNITID IN(SELECT TB_WSM_UNIT.UNITID FROM TB_WSM_UNIT WHERE TB_WSM_UNIT.LAYOUTID= $layoutId)
+		</sql>
+		<sql name="deleteLayoutUnit"  isBatch="true">
+		delete from TB_WSM_UNIT_COLUMN where  UNITID IN(SELECT TB_WSM_UNIT.UNITID FROM TB_WSM_UNIT WHERE TB_WSM_UNIT.LAYOUTID= $layoutId)
+		</sql>
+		<sql name="deleteUnit"  isBatch="true">
+		delete from TB_WSM_UNIT where  LAYOUTID = $layoutId
+		</sql>
+		<sql name="modify">
+		 UPDATE TB_WSM_LAYOUT SET 
+			LAYOUTTEMPL=$layoutTempl
+		 WHERE  LAYOUTID=$layoutId
+		</sql>	
+		<!-- 保存布局单元 -->	
+		<sql name="insertUnit" isBatch="true"><![CDATA[			  
+			insert into TB_WSM_UNIT (LAYOUTID,UNITID)values ($layoutId,$unitId)  
+		]]></sql>
+		<!-- 保存各个单元与栏目的对应关系 -->
+		<sql name="insertUnitColumn" isBatch="true" ><![CDATA[
+			   INSERT INTO TB_WSM_UNIT_COLUMN (UNITID,COLUMNID,DEFAULTORDER,DEFAULTSHOW,DEFAULTOPEN,DEFAULTMOVE)
+			   VALUES($columnUnitId,$columnId,$showOrder,$isShow,$isOpen,$isMove)  
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadColumns4UserLayoutDesign&currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]&layoutId=$[layoutId]&isDirect=$[isDirect]]]></forward>
+	</operation>
+	
+	<!-- 在用户定义布局之前，加载用户可以定制的栏目列表,用户可定制的栏目包括系统定义的栏目及用户自己定义的栏目 -->
+	<operation name="loadColumns4UserLayoutDesign" businessClass="com.mobilecn.portal.personalizer.LayoutPersonalizer"
+		invokeMethod="view" afterInvoke="getCurrentLayoutColumn" forward="" >	
+		<sql name="view" beanClass="com.mobilecn.portal.layout.LayoutBean"
+			cacheName="layoutViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_LAYOUT WHERE LAYOUTID=$layoutId
+		</sql>		
+		<!--可选择的栏目:当前系统中，用户有权限访问的栏目以及用户自定义的栏目 -->	
+		<sql name="systemColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="systemColumn" cacheScope="request" isEscape="false"><![CDATA[
+			    SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN WHERE 
+			    TB_WSM_COLUMN.SYSID = $sysId AND (
+				    TB_WSM_COLUMN.COLUMNID IN(
+				    	SELECT TB_WSM_ROLE_COLUMN.COLUMNID FROM TB_WSM_USER_GROUP,TB_WSM_GROUP_ROLE,TB_WSM_ROLE_COLUMN WHERE 
+				    		TB_WSM_USER_GROUP.USERID=$userId AND 
+				    		TB_WSM_USER_GROUP.GROUPID = TB_WSM_GROUP_ROLE.GROUPID AND 
+				    		TB_WSM_GROUP_ROLE.ROLEID = TB_WSM_ROLE_COLUMN.ROLEID
+				    ) OR (
+				    	 TB_WSM_COLUMN.USERID=$userId AND 
+			    		TB_WSM_COLUMN.USERDEFINE = 1  
+				    )
+			    )AND TB_WSM_COLUMN.ISVALIDATE = 1
+			    ORDER BY TB_WSM_COLUMN.COLUMNID			     
+		]]></sql>
+		
+		<!--当前布局中，用户栏目个性化信息 -->	
+		<sql name="personalizeColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="personalizeColumn" cacheScope="request" isEscape="false"><![CDATA[
+			    SELECT TB_WSM_USER_COLUMN.* FROM TB_WSM_USER_COLUMN WHERE 
+			    TB_WSM_USER_COLUMN.LAYOUTID=$layoutId AND 
+			    TB_WSM_USER_COLUMN.USERID=$userId  
+		]]></sql>
+		<!--可选择的栏目:当前布局中中，用户自定义的栏目 -->	
+		<sql name="currentLayoutColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="currentLayoutColumn" cacheScope="request" isEscape="false"><![CDATA[
+			   SELECT TB_WSM_COLUMN.*,TB_WSM_UNIT_COLUMN.UNITID,TB_WSM_UNIT_COLUMN.DEFAULTORDER,TB_WSM_UNIT_COLUMN.DEFAULTSHOW,TB_WSM_UNIT_COLUMN.DEFAULTOPEN,TB_WSM_UNIT_COLUMN.DEFAULTMOVE 
+			   FROM TB_WSM_UNIT,TB_WSM_UNIT_COLUMN,TB_WSM_COLUMN 
+			   WHERE 
+			   TB_WSM_UNIT.LAYOUTID=$layoutId AND 
+			   TB_WSM_UNIT.UNITID=TB_WSM_UNIT_COLUMN.UNITID AND 
+			   TB_WSM_UNIT_COLUMN.COLUMNID=TB_WSM_COLUMN.COLUMNID AND 
+			   TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		<forward name="viewPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/layout/design.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]&layoutId=$[layoutId]&isDirect=$[isDirect]]]></forward>
+	</operation>
+</root>

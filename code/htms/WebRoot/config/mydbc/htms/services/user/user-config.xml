@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	 <!-- [ServiceUserBean] 新增  -->
+	 <operation name="addServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="add">
+		<sql name="insert" caiidName="TB_HTMS_SERVICEUSER" caiidVar=""><![CDATA[
+			INSERT INTO TB_HTMS_SERVICEUSER(SUSERID,SYSCODE,ACCOUNT,PASSWD,ISVALIDATE)
+			VALUES($suserId,$syscode,$account,$passwd,$isValidate)
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listServiceUser]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 列表查询  -->
+	 <operation name="listServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="list">
+		<sql name="count"><![CDATA[
+			SELECT COUNT(*) AS total   FROM TB_HTMS_SERVICEUSER WHERE 1=1
+		]]></sql>
+		<sql name="list" beanClass="com.zzy.htms.services.user.ServiceUserBean" cacheName="serviceUserList" cacheScope="request" isPage="true" pageField=""><![CDATA[
+			SELECT * FROM TB_HTMS_SERVICEUSER WHERE 1=1 ORDER BY ID DESC
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/../../serviceuser/list.jsp]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 查看/预览  -->
+	 <operation name="viewServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="view">
+		<sql name="view" beanClass="com.zzy.htms.services.user.ServiceUserBean" cacheName="serviceUserBean" cacheScope="request" ><![CDATA[
+			SELECT *  FROM TB_HTMS_SERVICEUSER WHERE ID=$checkId
+		]]></sql>
+		<forward name="modifyPage"><![CDATA[jsp/../../serviceuser/modify.jsp]]></forward>
+		<forward name="viewPage"><![CDATA[jsp/../../serviceuser/view.jsp]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 修改 -->
+	 <operation name="modifyServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="modify">
+		<sql name="modify" ><![CDATA[
+			UPDATE TB_HTMS_SERVICEUSER SET
+				SUSERID=$suserId,
+				SYSCODE=$syscode,
+				ACCOUNT=$account,
+				PASSWD=$passwd,
+				ISVALIDATE=$isValidate
+			WHERE ID=$checkId
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listServiceUser]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 删除  -->
+	 <operation name="deleteServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="delete">
+		<sql name="delete">
+			DELETE FROM  TB_HTMS_SERVICEUSER WHERE 1=1
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listServiceUser]]></forward>
+	</operation>
+	
+	
+	<operation name="loadAllServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness"
+		invokeMethod="list" >		
+		<sql name="loadAllServiceUser" beanClass="com.zzy.htms.services.user.ServiceUserBean"><![CDATA[
+			   SELECT * FROM TB_HTMS_SERVICEUSER WHERE  ISVALIDATE=1
+		]]></sql>
+		
+	</operation>
+</root>

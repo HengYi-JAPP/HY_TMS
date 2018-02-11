@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 查看 -->
+	<operation name="toImportSkinCss" businessClass="com.mobilecn.themes.skin.SkinBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="skinViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_SKIN WHERE SKINID    =$checkSkinId
+		</sql>	
+		
+		<forward name="modifyPage">jsp/portal/themes/skin/import.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/skin/import.jsp</forward>
+	</operation>
+	
+	<operation name="importSkinCss" businessClass="com.mobilecn.themes.skin.SkinBusiness"
+		invokeMethod="view" afterInvoke="importCss"  forward="">
+		<sql name="modify" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="skinViewBean" cacheScope="request">
+			UPDATE TB_WSM_SKIN SET SKINFILEPATH=$skinFilePath WHERE SKINID    =$checkSkinId
+		</sql>	
+		<sql name="view" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="skinViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_SKIN WHERE SKINID    =$checkSkinId
+		</sql>	
+			
+		<sql name="cssList" beanClass="com.mobilecn.themes.css.CssBean"
+			cacheName="cssList" cacheScope="request">
+			 SELECT *  FROM TB_WSM_CSS WHERE OWNERID    =$checkSkinId
+		</sql>
+			
+		<sql name="itemList" beanClass="com.mobilecn.themes.cssitem.CssItemBean"
+			cacheName="itemList" cacheScope="request">
+			 SELECT *  FROM TB_WSM_CSS_ITEM WHERE CSSID IN(SELECT CSSID  FROM TB_WSM_CSS WHERE OWNERID    =$checkSkinId)
+			 ORDER BY ITEMID
+		</sql>
+		<forward name="modifyPage">jsp/portal/themes/skin/import.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/skin/import.jsp</forward>
+	</operation>
+	
+	<operation name="doImportSkinCss" businessClass="com.mobilecn.themes.skin.SkinBusiness"
+		invokeMethod="view" beforeInvoke="getImportCss"  forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="skinViewBean" cacheScope="request">
+			UPDATE TB_WSM_SKIN SET SKINFILEPATH=$skinFilePath WHERE SKINID    =$checkSkinId
+		</sql>	
+		<sql name="insertCsss"  caiidTable="TB_WSM_CSS" caiidKey="CSSID"  caiidName="TB_WSM_CSS" caiidVar="newCssId" isBatch="true" test="$[cssCode]!=''">
+			INSERT INTO TB_WSM_CSS (CSSID,OWNERID,CSSNAME,CSSCODE,SHOWORDER,CSSDESC,ISVALIDATE)
+			VALUES($newCssId,$checkSkinId,$cssCode,$cssCode,999,$cssCode,1)
+		</sql>
+		<sql name="insertItems" caiidTable="TB_WSM_CSS_ITEM" caiidKey="ITEMID" caiidName="TB_WSM_CSS_ITEM" caiidVar="newImportItemId"  isBatch="true" test="$[importItemCode]!=''">
+			INSERT INTO TB_WSM_CSS_ITEM (ITEMID,CSSID,ITEMCODE,ITEMVALUE,ISVALIDATE)
+			SELECT $newImportItemId,CSSID,$importItemCode,$importItemValue,1
+			FROM TB_WSM_CSS
+			WHERE  OWNERID=$checkSkinId AND CSSCODE=$itemCssCode
+		</sql>
+	
+		<sql name="upadteItems" beanClass="com.mobilecn.themes.css.CssBean"
+			cacheName="cssList" cacheScope="request" test="$[updateItemId]!=''">
+			UPDAE TB_WSM_CSS_ITEM SET 
+			ITEMVALUE=$updateItemValue
+			WHERE ITEMID=$updateItemId
+		</sql>
+		
+		<forward name="modifyPage">jsp/portal/themes/skin/import.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/skin/import.jsp</forward>
+	</operation>
+</root>

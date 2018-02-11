@@ -1,0 +1,21 @@
+.register{
+	padding:5px 8px;	
+	font-size: 16px;
+	color:#333333;
+}
+.reginput{
+	margin-left: 10px;
+	border: 1px solid #d6cfcf;	
+	height:25px;
+	border-radius:7px;
+	width: 68%;
+}
+.regBtn{
+	border: 1px  solid #dddddd;
+    padding: 5px 5px;
+    text-align: center;
+    border-radius: 7px;
+    background-color: #2eaed3;
+    color: white;
+    font-size: 16px;
+}

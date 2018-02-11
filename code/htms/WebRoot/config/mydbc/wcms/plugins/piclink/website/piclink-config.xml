@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 分页列表展示 -->
+	<!-- 分页列表展示 -->
+	<operation name="listWebSitePicLinkIndex" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="list" forward="" cacheParams="titleSH,curpage" cacheScopes="page,session">
+		<!-- 系统定义且有权限访问的信息 -->		
+		<sql name="picLinkTypeList" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_LINK_TYPE.* FROM TB_WSM_LINK_TYPE WHERE TB_WSM_LINK_TYPE.LINKTYPEID IN(
+				SELECT TB_WSM_LINK.LINKTYPEID FROM TB_WSM_LINK,TB_WSM_INFO_COLUMN WHERE   TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND  TB_WSM_INFO_COLUMN.INFOID=TB_WSM_LINK.LINKID AND  TB_WSM_INFO_COLUMN.ISVALIDATE = 1 AND  TB_WSM_INFO_COLUMN.APPROVESTATUS =0 
+			) 
+			ORDER BY TB_WSM_LINK_TYPE.LINKTYPEID	
+		]]></sql>
+		<sql name="picLinkGroupList" beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean"
+			cacheName="picLinkGroupList" cacheScope="request"><![CDATA[
+			SELECT TB_WSM_LINK_GROUP.* FROM TB_WSM_LINK_GROUP WHERE TB_WSM_LINK_GROUP.LINKGROUPID IN(
+				SELECT TB_WSM_LINK.LINKGROUPID FROM TB_WSM_LINK,TB_WSM_INFO_COLUMN WHERE   TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND  TB_WSM_INFO_COLUMN.INFOID=TB_WSM_LINK.LINKID AND  TB_WSM_INFO_COLUMN.ISVALIDATE = 1 AND  TB_WSM_INFO_COLUMN.APPROVESTATUS =0 
+			) 
+			ORDER BY TB_WSM_LINK_GROUP.LINKGROUPID		
+		]]></sql>
+		<sql name="picLinkList" beanClass="com.mobilecn.plugins.piclink.PicLinkBean"
+			cacheName="picLinkList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_LINK.* FROM TB_WSM_LINK,TB_WSM_INFO_COLUMN WHERE  
+			 TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND  
+			 TB_WSM_INFO_COLUMN.INFOID=TB_WSM_LINK.LINKID AND  			
+			 TB_WSM_INFO_COLUMN.ISVALIDATE = 1 AND  
+			 TB_WSM_INFO_COLUMN.APPROVESTATUS =0  			
+			ORDER BY TB_WSM_LINK.SHOWORDER,TB_WSM_INFO_COLUMN.ISTOP DESC,TB_WSM_INFO_COLUMN.ISRECOMMEND DESC
+		]]></sql>
+		
+		
+		<forward name="listPage">jsp/portal/website/plugins/picklink/index.jsp</forward>
+	</operation>
+	
+
+
+
+</root>

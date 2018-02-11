@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>	
+
+	<!-- 加载用户当前系统的频道列表 -->
+	<operation name="loadChannelPersonalizeList" businessClass="com.mobilecn.portal.personalizer.ChannelPersonalizer"
+		invokeMethod="list" afterInvoke="getPersonalizeChannelList" forward="" >
+		<!-- 用户有权限访问的系统定义频道-->
+		<sql name="userChannelList"  beanClass="com.mobilecn.portal.channel.ChannelBean" 
+		cacheName="userChannelList"  cacheScope="request" >
+			SELECT TB_WSM_CHANNEL.* FROM TB_WSM_CHANNEL WHERE 
+			TB_WSM_CHANNEL.SYSID=$__systemId AND			
+			TB_WSM_CHANNEL.ISVALIDATE = 1 AND 
+			TB_WSM_CHANNEL.DEFAULTSHOW = 1 AND 
+			(
+				TB_WSM_CHANNEL.CHANNELID IN(
+					SELECT TB_WSM_ROLE_CHANNEL.CHANNELID FROM TB_WSM_ROLE_CHANNEL,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+					WHERE 
+					TB_WSM_USER_GROUP.USERID=$userId AND 
+					TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+					TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_CHANNEL.ROLEID
+				)OR(
+					TB_WSM_CHANNEL.USERDEFINE=1 AND
+					TB_WSM_CHANNEL.USERID=$userId
+				)
+			)
+			ORDER BY TB_WSM_CHANNEL.DEFAULTORDER			
+		</sql>	
+		
+		<!-- 用户个性化频道 -->
+		<sql name="userDefinehannelList" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="userDefinehannelList" cacheScope="request" ><![CDATA[
+			  SELECT * FROM TB_WSM_USER_CHANNEL WHERE USERID=$userId AND SYSID=$__systemId  ORDER BY CHANNELORDER
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/channel/list.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+	</operation>
+	<!-- 更新用户的频道列表 -->
+	
+	
+	<operation name="addUserSelfChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insertChannel"  caiidTable="TB_WSM_CHANNEL" caiidKey="CHANNELID"  caiidName="TB_WSM_CHANNEL" caiidVar="newChannelId">
+		INSERT INTO TB_WSM_CHANNEL (CHANNELID,SYSID,CHANNELNAME,CHANNELURL,LOADSTYLE,ISVALIDATE,DEFAULTORDER,DEFAULTSHOW,DEFAULTSELECT,BEFOREICON,AFTERICON,SHOWHEIGHT,USERDEFINE,USERID)
+		VALUES($newChannelId,$sysId,$channelName,$channelUrl,$loadStyle,$isValidate,$defaultOrder,$defaultShow,$defaultSelect,$beforeIcon,$afterIcon,$showHeight,$userDefine,$userId)
+		</sql>
+		<sql name="insertLayout"  caiidTable="TB_WSM_LAYOUT" caiidKey="LAYOUTID"  caiidName="TB_WSM_LAYOUT" caiidVar="newLayoutId">
+		INSERT INTO TB_WSM_LAYOUT (LAYOUTID,CHANNELID,LAYOUTNAME,LAYOUTTEMPL,LAYOUTDESC,ISVALIDATE,DEFAULTORDER,DEFAULTSELECT,DEFAULTSHOW,USERDEFINE,USERID)
+		VALUES($newLayoutId,$newChannelId,$channelName,' ',$channelDesc,1,1,1,1,$userDefine,$userId)
+		</sql>
+		<sql name="insertPersonale"  isBatch="true" >
+			INSERT INTO TB_WSM_USER_CHANNEL (SYSID,USERID,CHANNELID,CHANNELORDER,ISCURRENT,ISSHOW)
+			VALUES($sysId,$userId,$newChannelId,$defaultOrder,$defaultSelect,$defaultShow)
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadChannelPersonalizeList&currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<!-- 删除 -->
+	<operation name="deleteUserSelfChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="delete" forward="">
+		<!-- 删除布局单元、布局、组合频道、栏目、频道 -->
+		<sql name="deleteUnitColumn" isBatch="true">
+			DELETE FROM TB_WSM_UNIT_COLUMN WHERE UNITID IN(SELECT UNITID FROM TB_WSM_UNIT WHERE LAYOUTID IN(SELECT LAYOUTID FROM TB_WSM_LAYOUT WHERE CHANNELID=$channelId))
+		</sql>
+		<sql name="deleteUnit" isBatch="true">
+			DELETE FROM TB_WSM_UNIT WHERE LAYOUTID IN(SELECT LAYOUTID FROM TB_WSM_LAYOUT WHERE CHANNELID=$channelId)
+		</sql>		
+		<sql name="deleteLayout" isBatch="true">
+			DELETE  FROM TB_WSM_LAYOUT WHERE CHANNELID=$channelId
+		</sql>
+		<sql name="deleteChannelColumn" isBatch="true">
+			DELETE  FROM TB_WSM_CHANNEL_COLUMN WHERE CHANNELID=$channelId
+		</sql>
+		<sql name="deleteChannel" isBatch="true">
+			DELETE  FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadChannelPersonalizeList&currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<!-- 查看单个记录 -->
+	<operation name="viewUserSpecifyChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="userChannelBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>		
+		<forward name="modifyPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/channel/modify.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+		<forward name="viewPage"><![CDATA[jsp/wsites/$[currentSysCode]/personalize/channel/view.jsp?currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyUserSelfChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		UPDATE TB_WSM_CHANNEL SET 
+			CHANNELNAME=$channelName,
+			CHANNELURL=$channelUrl,
+			LOADSTYLE=$loadStyle,
+			DEFAULTORDER=$defaultOrder,
+			DEFAULTSHOW=$defaultShow,
+			DEFAULTSELECT=$defaultSelect,
+			BEFOREICON=$beforeIcon,
+			AFTERICON=$afterIcon,
+			SHOWHEIGHT=$showHeight
+		 WHERE  CHANNELID=$channelId
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadChannelPersonalizeList&currentSysCode=$[currentSysCode]&sysId=$[sysId]]]></forward>
+	</operation>
+</root>

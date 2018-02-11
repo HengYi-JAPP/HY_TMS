@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+		<!-- 加载所有没有园区物流信息的SAP调拨单号 -->
+	<operation name="loadAllNoParkLogisticsInfoSapCode" businessClass="com.zzy.htms.parklogistics.ParkLogisticsBussiness" invokeMethod="list"  forward="" >
+		<sql name="loadAllNoParkLogisticsInfoSapCode" beanClass="com.zzy.htms.logistic.transfer.TransferBean" 
+		cacheType="list" cacheName="allNoParkLogisticsInfoSapCode" cacheScope="request" ><![CDATA[
+			select trans.saptranscode
+			from TB_HTMS_transfer  trans
+			where  
+			trans.saptranscode is not null  And  to_date(createtime,'yyyy-MM-dd HH24:mi:ss')>to_date($startDate,'yyyy-MM-dd')
+		]]></sql>
+		<sql name="loadAllParkLogisticsInfo" beanClass="com.zzy.htms.parklogistics.ParkLogisticsBean" 
+		cacheType="list" cacheName="loadAllParkLogisticsInfo" cacheScope="request" ><![CDATA[
+			      select * from TB_HTMS_ParkLogistics t Where  to_date(createtime,'yyyy-MM-dd HH24:mi:ss')>to_date($startDate,'yyyy-MM-dd')
+		]]></sql>
+	</operation>
+	
+	<!-- 保存最新的经过解析的地理位置信息 -->
+    <operation name="saveParkLogistics" businessClass="com.zzy.htms.parklogistics.ParkLogisticsBussiness" invokeMethod="add"  >
+		<sql name="saveParkLogistics"  isBatch="true"  >
+			INSERT INTO TB_HTMS_ParkLogistics(
+				  sapCode   ,  bindingTime  ,  exitTime,  parkStatus ,  CREATETIME   )
+			VALUES(
+				 $sapCode   ,  $bindingTime  ,  $exitTime , $parkStatus  ,  to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'))
+		</sql>
+	</operation>
+	
+	<operation name="syncParkLogistics" businessClass="com.zzy.htms.parklogistics.ParkLogisticsBussiness"  forward="" >
+		<!-- 插入园区物流信息 -->
+		<sql name="INSERT" isBatch="true" >
+				<![CDATA[
+				INSERT INTO TB_HTMS_ParkLogistics(
+				  sapCode   ,  bindingTime  ,  exitTime,  parkStatus ,  CREATETIME   )
+			    VALUES(
+				 $insert_sapCode   ,  $insert_bindingTime  ,  $insert_exitTime , $insert_parkStatus  ,  to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+				 )
+				]]>
+		</sql>
+		<!-- 更新园区物流信息 -->
+		<sql name="UPDATE" isBatch="true"  version="2.0">
+					<![CDATA[
+						Update tb_htms_ParkLogistics
+				set   bindingTime  = $update_bindingTime  ,  exitTime = $update_exitTime   , parkStatus = $update_parkStatus ,  modifyTime= to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+				where   sapcode  = $update_sapCode
+					]]>
+			</sql>
+	</operation>
+	
+	
+	<operation name="getParkLogisticsBySapCode" businessClass="com.zzy.htms.parklogistics.ParkLogisticsBussiness" invokeMethod="view"  >
+		<sql name="getParkLogisticsBySapCode" beanClass="com.zzy.htms.parklogistics.ParkLogisticsBean"  isEscapeQuotation="true"  isEscape="false" >
+			<![CDATA[ 
+			    select * from  tb_htms_ParkLogistics
+				where  sapcode  = $sapCode  
+			]]>
+		</sql>
+	</operation>
+	
+	<operation name="updateParkLogistics" businessClass="com.zzy.htms.parklogistics.ParkLogisticsBussiness" invokeMethod="add"  >
+		<sql name="updateParkLogistics"  isBatch="true"  >
+			Update tb_htms_ParkLogistics
+				set   bindingTime  = $bindingTime  ,  exitTime = $exitTime   , parkStatus = $parkStatus ,  modifyTime= to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+				where   sapcode  = $sapCode  
+		</sql>
+	</operation>
+	
+
+</root>

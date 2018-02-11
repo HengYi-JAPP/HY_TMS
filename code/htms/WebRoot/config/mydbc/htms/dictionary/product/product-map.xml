@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.dictionary.product.ProductBean">
+		<map property="productId" javaType="int" column="productId"  colType=""/>
+		<map property="typeId" javaType="int" column="typeId"  colType=""/>
+		<map property="productName" javaType="String" column="productName"  colType=""/>
+		<map property="productCode" javaType="String" column="productCode"  colType=""/>
+		<map property="productDesc" javaType="String" column="productDesc"  colType=""/>
+		<map property="sapNo" javaType="String" column="sapNo"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+</root>

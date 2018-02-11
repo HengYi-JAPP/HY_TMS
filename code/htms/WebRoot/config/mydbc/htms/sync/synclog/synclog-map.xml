@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.synclog.HtmsSyncLogBean">
+		<map property="synId"      javaType="String"   column="synId"        colType=""  />
+		<map property="startDate"  javaType="String"   column="startDate"    colType=""  />
+		<map property="endDate"    javaType="String"   column="endDate"      colType=""  />
+		<map property="salesNo"    javaType="String"   column="salesNo"      colType=""  />
+		<map property="creator"    javaType="String"   column="creator"      colType=""  />
+		<map property="createTime" javaType="String"   column="createTime"   colType=""  />
+		<map property="modifier"   javaType="String"   column="modifier"     colType=""  />		
+		<map property="modifyTime" javaType="String"   column="modifyTime"   colType=""  />
+		<map property="isValidate" javaType="String"   column="isValidate"   colType=""  />
+		<map property="synIp"      javaType="String"   column="synIp"        colType=""  />
+		<map property="startTime"  javaType="String"   column="startTime"    colType=""  />
+		<map property="endTime"    javaType="String"   column="endTime"      colType=""  />
+		<map property="useTime"    javaType="String"   column="useTime"      colType=""  />		
+	</bean>
+</root>

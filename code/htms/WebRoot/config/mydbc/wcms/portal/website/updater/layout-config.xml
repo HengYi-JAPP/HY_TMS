@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>	
+	<!-- 更新用户的布局列表 -->
+	<operation name="updateLayout_of_commonSystem" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="modify"  forward="" >
+		<!-- 删除用户原有的布局定义信息 -->
+		<sql name="deleteUserLayout"  isBatch="true" >
+			DELETE FROM TB_WSM_USER_LAYOUT WHERE USERID=$userId AND CHANNELID=$channelId
+		</sql>	
+		<!-- 记录用户当前的布局定义信息 -->	
+		<sql name="updateUserLayout"  isBatch="true" >
+			INSERT INTO TB_WSM_USER_LAYOUT (USERID,LAYOUTID,SHOWORDER,ISSELECTED,ISSHOW,CHANNELID)
+			VALUES($userId,$_layoutId,$_showOrder,$_isSelect,$_isShow,$channelId)
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadUserPersonalizeLayoutList&currentSysCode=$[currentSysCode]&sysId=$[sysId]&channelId=$[channelId]]]></forward>
+	</operation>
+</root>

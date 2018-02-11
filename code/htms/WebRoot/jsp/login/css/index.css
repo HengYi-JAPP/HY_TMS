@@ -1,0 +1,25 @@
+
+
+/* mian */
+.main{width: 1080px;margin: 10px auto;}
+.main .title{border-bottom: 1px solid #e4e4e4;font-size: 26px; color: #333333;font-family:"Microsoft YaHei";font-weight: normal;height: 55px;line-height: 55px;}
+.left_main{width: 670px;float: left;}
+      .focuslist{height: 302px;}
+          .focuslist li{width: 325px;float: left;margin-top: 20px;background: #e6e6e6;position: relative;}
+          .focuslist li .f_img{float: left;}
+          .focuslist li .f_con{padding: 15px;float: left;width: 148px;color: #333333;}
+          .focuslist li .f_con .tit{font-size: 12px;font-family:"Microsoft YaHei";}
+          .focuslist li .f_con p{margin-top: 5px;}
+          .focuslist li .f_con .link{width: 33px;height: 33px;background: url(../images/linkarrow.png) #cfcfcf no-repeat;display: inline-block;position: absolute;right: 0;bottom: 0;}
+     .storylist{}
+          .storylist li{width: 325px;float: left;margin-top: 20px;}
+          .storylist li .s_con .tit{font-size: 12px;font-family:"Microsoft YaHei";margin-top: 15px;}
+          .storylist li .s_con p{color: #333333;margin-top: 10px;}
+.right_main{width: 355px;float: right;background: #f3f3f3;padding: 0 10px;}
+      .newslist li{padding: 20px 0;border-bottom: 1px dashed #b5b5b5;}
+      .newslist li a.tit{color: #0072cf;font-size: 14px;font-weight: bold;}
+      .newslist li .time{color: #666666;font-family: Candara;margin-top: 10px;}
+      .newslist li .text{color: #333333;margin-top: 5px;}
+      .newslist li.borbno{border-bottom: none;}
+      .right_main .more{color: #0072cf;float: right;padding-bottom: 10px;}
+

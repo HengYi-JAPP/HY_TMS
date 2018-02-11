@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.service.ServiceBean">		
+		<map property="serviceId" javaType="java.lang.String" column="SERVICEID" colType=""/>
+		<map property="serviceName" javaType="java.lang.String" column="SERVICENAME" colType=""/>
+		<map property="serviceDesc" javaType="java.lang.String" column="SERVICEDESC" colType=""/>
+		<map property="serviceAddress" javaType="java.lang.String" column="SERVICEADDRESS" colType=""/>
+		<map property="invokeMethod" javaType="java.lang.String" column="INVOKEMETHOD" colType=""/>
+		<map property="invokeStyle" javaType="java.lang.String" column="INVOKESTYLE" colType=""/>
+		<map property="seivcePlatform" javaType="java.lang.String" column="SEIVCEPLATFORM" colType=""/>
+		<map property="showStyle" javaType="java.lang.String" column="SHOWSTYLE" colType=""/>
+		<map property="showNum" javaType="int" column="SHOWNUM" colType=""/>
+		<map property="isValidate" javaType="int" column="ISVALIDATE" colType=""/>
+		<map property="isShowTitle" javaType="int" column="ISSHOWTITLE" colType=""/>
+		<map property="showLength" javaType="int" column="SHOWLENGTH" colType=""/>
+		<map property="replaceString" javaType="java.lang.String" column="REPLACESTRING" colType=""/>
+		<map property="titleRowNum" javaType="int" column="TITLEROWNUM" colType=""/>
+		<map property="titleColNum" javaType="int" column="TITLECOLNUM" colType=""/>
+	</bean>
+
+</root>

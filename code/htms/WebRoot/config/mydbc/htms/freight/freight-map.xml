@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+		<bean beanClass="com.zzy.htms.services.business.FreightBean">
+		<map property="freightId" javaType="java.lang.String" column="FREIGHTID" colType=""/>
+		<map property="shipId" javaType="java.lang.String" column="SHIPID" colType=""/>
+		<map property="transferId" javaType="java.lang.String" column="TRANSFERID" colType=""/>
+		<map property="sapCode" javaType="java.lang.String" column="SAPCODE" colType=""/>
+		<map property="itemCode" javaType="java.lang.String" column="ITEMCODE" colType=""/>
+		<map property="subItemCode" javaType="java.lang.String" column="SUBITEMCODE" colType=""/>
+		<map property="freightType" javaType="java.lang.String" column="FREIGHTTYPE" colType=""/>
+		<map property="freightStyle" javaType="java.lang.String" column="FREIGHTSTYLE" colType=""/>
+		<map property="freightModel" javaType="java.lang.String" column="FREIGHTMODEL" colType=""/>
+		<map property="validateDate" javaType="java.lang.String" column="VALIDATEDATE" colType=""/>
+		<map property="applyTonNum" javaType="java.lang.String" column="APPLYTONNUM" colType=""/>
+		<map property="freightPrice" javaType="java.lang.String" column="FREIGHTPRICE" colType=""/>
+		<map property="freightAmount" javaType="java.lang.String" column="FREIGHTAMOUNT" colType=""/>
+		<map property="priceId" javaType="java.lang.String" column="PRICEID" colType=""/>
+		<map property="carrierPrice" javaType="java.lang.String" column="CARRIERPRICE" colType=""/>
+		<map property="carrierFreight" javaType="java.lang.String" column="CARRIERFREIGHT" colType=""/>
+		<map property="totalFreight" javaType="java.lang.String" column="TOTALFREIGHT" colType=""/>
+		<map property="planFreightStyle" javaType="java.lang.String" column="PLANFREIGHTSTYLE" colType=""/>
+		<map property="planFreightModel" javaType="java.lang.String" column="PLANFREIGHTMODEL" colType=""/>
+		<map property="planValidateDate" javaType="java.lang.String" column="PLANVALIDATEDATE" colType=""/>
+		<map property="planFreightPrice" javaType="java.lang.String" column="PLANFREIGHTPRICE" colType=""/>
+		<map property="planPriceId" javaType="java.lang.String" column="PLANPRICEID" colType=""/>
+		<map property="planFreight" javaType="java.lang.String" column="PLANFREIGHT" colType=""/>
+		<map property="favourFreight" javaType="java.lang.String" column="FAVOURFREIGHT" colType=""/>
+		<map property="planCarrierPrice" javaType="java.lang.String" column="PLANCARRIERPRICE" colType=""/>
+		<map property="planCarrierFreight" javaType="java.lang.String" column="PLANCARRIERFREIGHT" colType=""/>
+		<map property="freightBalance" javaType="java.lang.String" column="FREIGHTBALANCE" colType=""/>
+		<map property="freightTime" javaType="java.lang.String" column="FREIGHTTIME" colType=""/>
+		<map property="planTotalFreight" javaType="java.lang.String" column="PLANTOTALFREIGHT" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="planTotalCarrierFreight" javaType="java.lang.String" column="PLANTOTALCARRIERFREIGHT" colType=""/>
+		<map property="totalCarrierFreight" javaType="java.lang.String" column="TOTALCARRIERFREIGHT" colType=""/>
+		<map property="orderId" javaType="java.lang.String" column="ORDERID" colType=""/>
+		<map property="orderCode" javaType="java.lang.String" column="ORDERCODE" colType=""/>
+		<map property="itemId" javaType="java.lang.String" column="ITEMID" colType=""/>
+		<map property="estimateStep" javaType="java.lang.String" column="ESTIMATESTEP" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		<map property="customerId" javaType="java.lang.String" column="CUSTOMERID" colType=""/>
+		<map property="areaId" javaType="java.lang.String" column="AREAID" colType=""/>
+		<map property="isEstimate" javaType="java.lang.String" column="ISESTIMATE" colType=""/>
+		<map property="routeId" javaType="java.lang.String" column="ROUTEID" colType=""/>
+		<map property="invoiceFreight" javaType="java.lang.String" column="invoiceFreight" colType=""/>
+	</bean>
+</root>

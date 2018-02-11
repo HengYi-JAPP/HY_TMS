@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.logistics.LogisticsBean">
+		<map property="logisticsId" javaType="int" column="logisticsId"  colType=""/>
+		<map property="logisticsName" javaType="String" column="logisticsName"  colType=""/>
+		<map property="logisticsCode" javaType="String" column="logisticsCode"  colType=""/>
+		<map property="logisticsAddress" javaType="String" column="logisticsAddress"  colType=""/>
+		<map property="logisticsContactor" javaType="String" column="logisticsContactor"  colType=""/>
+		<map property="logisticsTelephone" javaType="String" column="logisticsTelephone"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+</root>

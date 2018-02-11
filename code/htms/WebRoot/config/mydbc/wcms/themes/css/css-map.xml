@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.css.CssBean">
+		<map property="cssId" javaType="java.lang.String" column="CSSID" colType=""/>
+		<map property="ownerId" javaType="java.lang.String" column="OWNERID" colType=""/>
+		<map property="cssName" javaType="java.lang.String" column="CSSNAME" colType=""/>
+		<map property="cssCode" javaType="java.lang.String" column="CSSCODE" colType=""/>
+		<map property="cssContent" javaType="java.lang.String" column="CSSCONTENT" colType=""/>
+		<map property="cssDesc" javaType="java.lang.String" column="CSSDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="showOrder" javaType="java.lang.Integer" column="SHOWORDER" colType=""/>
+	</bean>
+
+</root>

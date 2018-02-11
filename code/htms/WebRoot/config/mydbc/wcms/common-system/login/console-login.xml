@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 用户登录  查询用户信息-->
+	<operation name="LoginAction_of_commonSystem" businessClass="com.zzy.htms.login.HtmsLoginBusiness"
+		invokeMethod="list"  forward="" cacheParams="account" cacheScopes="session" beforeInvoke="beforeHtmsLogin" afterInvoke="afterHtmsLogin">
+		<!-- 按部门分组，同一部门排序号升序 -->
+		<!-- 按部门分组，同一部门排序号升序 -->
+		<sql name="userBeanList" beanClass="com.zzy.htms.user.HtmsUserBean" test="$[is_use_sso]=='false'"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE ACCOUNT=$account
+		]]></sql>	
+		<!-- 单点登录时需要切换的SQL -->	
+		<sql name="userBeanList" beanClass="com.zzy.htms.user.HtmsUserBean"  test="$[is_use_sso]=='true'"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE EMPLOYNO=$account OR OAUSER=$oauser 
+		]]></sql>	
+		<!--<forward name="loadAction">contoller.do?operation=loadUserPrivilege_of_commonSystem</forward>
+		-->
+		
+		<forward name="listPage">contoller.do?operation=loadUserPrivilege_of_commonSystem</forward>
+		<forward name="login">jsp/login.jsp</forward>
+		<forward name="logAction">contoller.do?operation=LogAction_of_commonSystem</forward>
+	</operation>
+	
+	<!-- 用户登录验证通过之后，记录用户登录日志 -->
+	<operation name="LogAction_of_commonSystem" businessClass="com.mobilecn.common.log.LogBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert" caiidTable="TB_WSM_LOGIN_LOG" caiidKey="LOGID"  caiidName="TB_WSM_LOGIN_LOG" caiidVar="newLogId">
+			insert into TB_WSM_LOGIN_LOG 
+			(LOGID,LOGDESC,LOGIP,LOGUSER,LOGTIME,OPERATION,CREATETIME,ISVALIDATE)
+			values
+			($newLogId,$logDesc,$logIp,$account,$logTime,$userOperation,$createTime,1)
+		</sql>		
+		<forward name="listAction">contoller.do?operation=loadUserPrivilege_of_commonSystem</forward>
+	</operation>
+	
+	<!-- 用户登录成功之后加载用户权限 -->
+	<operation name="loadUserPrivilege_of_commonSystem" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="list"  forward="" >
+		<sql name="privilegeList"  beanClass="com.mobilecn.privilege.privilege.PrivilegeBean" cacheName="__SYSTEM_PRIVILEGE_LIST__" cacheScope="session" >
+			SELECT TB_WSM_PRIVILEGE.* FROM TB_WSM_USER,TB_WSM_USER_GROUP,TB_WSM_GROUP_ROLE,TB_WSM_ROLE_PRIVILEGE,TB_WSM_PRIVILEGE 
+				WHERE TB_WSM_USER.ACCOUNT=$account AND 
+				TB_WSM_USER.USERID=TB_WSM_USER_GROUP.USERID AND 
+				TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+				TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_PRIVILEGE.ROLEID AND 
+				TB_WSM_ROLE_PRIVILEGE.PRIVID=TB_WSM_PRIVILEGE.PRIVID
+		</sql>			
+		<!-- jsp/index.jsp -->
+		<forward name="listPage">jsp/console/index.jsp</forward>
+	</operation>
+
+	<operation name="console_of_myportal" businessClass="com.mobilecn.privilege.privilege.PrivilegeBusiness"
+		invokeMethod="list"  forward="" >
+		<sql name="privilegeList"  beanClass="com.mobilecn.privilege.privilege.PrivilegeBean" cacheName="__SYSTEM_PRIVILEGE_LIST__" cacheScope="session" >
+			SELECT TB_WSM_PRIVILEGE.* FROM TB_WSM_USER_GROUP,TB_WSM_GROUP_ROLE,TB_WSM_ROLE_PRIVILEGE,TB_WSM_PRIVILEGE 
+				WHERE 
+				TB_WSM_USER_GROUP.USERID=$userId AND 
+				TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+				TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_PRIVILEGE.ROLEID AND 
+				TB_WSM_ROLE_PRIVILEGE.PRIVID=TB_WSM_PRIVILEGE.PRIVID
+		</sql>			
+		<!-- jsp/index.jsp -->
+		<forward name="listPage">jsp/console/index.jsp</forward>
+	</operation>
+	<!-- 用户end -->
+</root>

@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+	<operation name="viewApplyStatus" businessClass="com.zzy.htms.mobile.ShipBusiness" version="2.0"  forward="" >
+		<method name="view" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="viewApplyStatus" exeOrder="1" version="2.0">
+	
+			<!-- 查看申请状态 -->
+			<sql name="MOBILEVIEWAPPLYSTATUS" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="viewApplyStatusList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIP.*
+						  FROM TB_HTMS_SHIP
+						 WHERE TB_HTMS_SHIP.shipId = $shipId
+					]]></content>
+			</sql>
+			
+		</method>		
+	</operation>
+
+	<operation name="cancelMobileShipApply" businessClass="com.zzy.htms.mobile.ShipBusiness" version="2.0"  forward="" >
+		<method name="beforeModify" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="beforeModify" exeOrder="1" version="2.0">
+		</method>
+		<method name="默认删除" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="cancelAppliedShip" exeOrder="2" version="2.0">
+			<sql name="UPDATEDETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+						SHIPDETAILSTATUS=902,
+						modifier=$userId,
+						modifyTime=$modifyTime
+						where SHIPID=$shipId
+					]]></content>
+			</sql>
+			<sql name="UPDATESHIP"   version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+						APPLYSTATUS=902,						
+						modifier=$userId,
+						modifyTime=$modifyTime 
+						where SHIPID=$shipId
+						and APPLYSTATUS=0
+					]]></content>
+			</sql>
+			<!--查出申请明细，进行订单行项目数据修改 -->
+			<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.*
+						  FROM TB_HTMS_SHIPDETAIL
+						 WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId
+					]]></content>
+			</sql>
+		</method>
+		<method name="默认删除" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="returnCancelAppliedShip" exeOrder="2" version="2.0">
+			<sql name="UPDATEDETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+						SHIPDETAILSTATUS=0,
+						modifier=$userId,
+						modifyTime=$modifyTime
+						where SHIPID=$shipId
+					]]></content>
+			</sql>
+			<sql name="UPDATESHIP"   version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+						APPLYSTATUS=0,						
+						modifier=$userId,
+						modifyTime=$modifyTime 
+						where SHIPID=$shipId
+					]]></content>
+			</sql>
+		</method>
+		<method name="add" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="add" exeOrder="3" version="2.0">
+			<!-- 更新订单明细，把申请数量算回去 -->
+			<sql name="UPDATECODETAIL"  isBatch="true" version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($applyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($applyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]></content>
+			</sql>
+			
+		</method>
+	</operation>
+	
+
+	<operation name="appliedMobileList" businessClass="com.zzy.htms.mobile.ShipBusiness" version="2.0"  forward="" >
+		<method name="已申请列表" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="listApplyed" exeOrder="1" version="2.0">
+			<sql name="SELECTAPPLYED" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="appliedList" cacheScope="request" isEscapeQuotation="true" isEscape="false" version="2.0">
+						<content><![CDATA[
+					SELECT  TB_HTMS_SHIP.SHIPID,TB_HTMS_SHIP.Applystatus,tb_htms_ship.selffetch,
+						tb_htms_ship.fetchdriver,tb_htms_ship.fetchmobile,tb_htms_ship.fetchcar,
+	            		 tb_htms_ship.isurgent,tb_htms_ship.shipnotice,
+	            		TB_HTMS_CUSTORDER.CORDERCODE,
+	            		TB_HTMS_CUSTORDER.CORDERID,
+	                  TB_HTMS_CUSTORDER.CUSTOMERNAME,
+	                  TB_HTMS_CUSTORDER.CUSTOMERCODE,
+	                  TB_HTMS_SHIPDETAIL.CADDRID,
+	                  TB_HTMS_SHIPDETAIL.SHIPDETAILID,
+	                  TB_HTMS_SHIPDETAIL.codetailid,
+	                  TB_HTMS_SHIPDETAIL.APPLYTONNUM,
+	                  TB_HTMS_SHIPDETAIL.APPLYPACKNUM,
+	                  TB_HTMS_SHIPDETAIL.Createtime,
+	                  TB_HTMS_SHIPDETAIL.Productid,
+				      TB_HTMS_SHIPDETAIL.Itemcode,
+				      fac.Factoryid,
+	                  cod.METERIALNO, 
+	                  cod.CODETAILCERTIFICATE,
+	                  cod.CODETAILCERTIFICATEDESC,cod.unitprice,
+	                  caddr.areaId,
+	                  caddr.caddrDetail,caddr.caddrcontactor,caddr.caddrtelephone,
+	                  fac.factoryname,trans.transid,
+	                  trans.transstatus,
+	                  freight.totalfreight
+	                    from TB_HTMS_CUSTORDER ,TB_HTMS_SHIP,TB_HTMS_SHIPDETAIL
+	                      left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_SHIPDETAIL.caddrId 
+	                      left join TB_HTMS_FACTORY fac on fac.factoryid=cod.factoryid 
+	                      left join Tb_Htms_Transfer trans on trans.shipid=tb_htms_shipdetail.shipid
+	                      left join TB_HTMS_FREIGHT freight on freight.sapcode=trans.saptranscode and freight.isvalidate=1    And   freight.isestimate = 0                  
+	                          where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+	                            AND TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+	                      AND Tb_Htms_Shipdetail.Createtime>'$startDate' 
+	                      AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                       ORDER BY   TB_HTMS_SHIP.SHIPID DESC  
+						]]></content>
+				</sql>
+		</method>
+		<method name="运送状态" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="getTransList" exeOrder="2" version="2.0">
+			<sql name="SELECTAPPLYEDSHIP" beanClass="com.zzy.htms.mobile.ShipDriverBean"  cacheType="list" isBatch="true" cacheName="appliedShipList" cacheScope="request" version="2.0">
+						<content><![CDATA[
+				select tb_htms_driver.drivername,tb_htms_driver.drivermobile,vehicle.vehicleno,
+						tb_htms_send.sendstatus,$shippdedId as shipId
+       				from tb_htms_driver,tb_htms_transfer,tb_htms_transport,tb_htms_transportsend,tb_htms_send
+       				left join tb_htms_vehicle vehicle on vehicle.vehicleid=tb_htms_send.vehicleid
+       				where tb_htms_driver.driverid=tb_htms_send.driverid
+       				and tb_htms_send.sendid=tb_htms_transportsend.sendid
+       				and tb_htms_transportsend.transportid=tb_htms_transport.transportid
+       				and tb_htms_transport.transid=tb_htms_transfer.transid
+       				and tb_htms_transfer.shipid=$shippdedId  
+						]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/appliedlist/customerapplication.jsp]]></address>
+		</forward>
+	</operation>
+
+	<operation name="appliedSearch" businessClass="com.zzy.htms.mobile.ShipBusiness" version="2.0"  forward="" >
+		<method name="已申请列表搜索" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="listApplyed" exeOrder="1" version="2.0">
+			<sql name="count" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+				SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_SHIP ,TB_HTMS_CUSTORDER, TB_HTMS_SHIPDETAIL
+				    left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_SHIPDETAIL.caddrId 
+	                      left join TB_HTMS_FACTORY fac on fac.factoryid=cod.factoryid 
+	                      left join Tb_Htms_Transfer trans on trans.shipid=tb_htms_shipdetail.shipid
+	                      left join TB_HTMS_FREIGHT freight on freight.sapcode=trans.saptranscode
+				    where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+               			AND TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+		    			AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+		    			AND (TB_HTMS_CUSTORDER.CORDERCODE like '%$corderCodeSH%' OR TB_HTMS_CUSTORDER.CUSTOMERNAME like '%$corderCodeSH%')
+					]]></content>
+			</sql>
+		<sql name="SELECTAPPLYED" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="appliedList" cacheScope="request" isPage="true" isEscapeQuotation="true" isEscape="false" version="2.0">
+					<content><![CDATA[
+				SELECT  TB_HTMS_SHIP.SHIPID,TB_HTMS_SHIP.Applystatus,tb_htms_ship.selffetch,
+						tb_htms_ship.fetchdriver,tb_htms_ship.fetchmobile,tb_htms_ship.fetchcar,
+	            		 tb_htms_ship.isurgent,tb_htms_ship.shipnotice,
+	            		TB_HTMS_CUSTORDER.CORDERCODE,
+	            		TB_HTMS_CUSTORDER.CORDERID,
+	                  TB_HTMS_CUSTORDER.CUSTOMERNAME,
+	                  TB_HTMS_CUSTORDER.CUSTOMERCODE,
+	                  TB_HTMS_SHIPDETAIL.CADDRID,
+	                  TB_HTMS_SHIPDETAIL.SHIPDETAILID,
+	                  TB_HTMS_SHIPDETAIL.codetailid,
+	                  TB_HTMS_SHIPDETAIL.APPLYTONNUM,
+	                  TB_HTMS_SHIPDETAIL.APPLYPACKNUM,
+	                  TB_HTMS_SHIPDETAIL.Createtime,
+	                  TB_HTMS_SHIPDETAIL.Productid,
+				      TB_HTMS_SHIPDETAIL.Itemcode,
+				      fac.Factoryid,
+	                  cod.METERIALNO, 
+	                  cod.CODETAILCERTIFICATE,
+	                  cod.CODETAILCERTIFICATEDESC,cod.unitprice,
+	                  caddr.areaId,
+	                  caddr.caddrDetail,caddr.caddrcontactor,caddr.caddrtelephone,
+	                  fac.factoryname,trans.transid,
+	                  trans.transstatus,
+	                  freight.totalfreight
+	                    from TB_HTMS_CUSTORDER ,TB_HTMS_SHIP,TB_HTMS_SHIPDETAIL
+	                      left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_SHIPDETAIL.caddrId 
+	                      left join TB_HTMS_FACTORY fac on fac.factoryid=cod.factoryid 
+	                      left join Tb_Htms_Transfer trans on trans.shipid=tb_htms_shipdetail.shipid
+	                      left join TB_HTMS_FREIGHT freight on freight.sapcode=trans.saptranscode and freight.isvalidate=1        And   freight.isestimate = 0                   
+                          where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+                            AND TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+                      AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+                      AND (TB_HTMS_CUSTORDER.CORDERCODE like '%$corderCodeSH%' OR TB_HTMS_CUSTORDER.CUSTOMERNAME like '%$corderCodeSH%')
+                       ORDER BY   TB_HTMS_SHIP.SHIPID DESC  
+					]]></content>
+			</sql>
+		</method>
+		<method name="运送状态" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="getTransList" exeOrder="2" version="2.0">
+			<sql name="SELECTAPPLYEDSHIP" beanClass="com.zzy.htms.mobile.ShipDriverBean"  cacheType="list" isBatch="true" cacheName="appliedShipList" cacheScope="request" version="2.0">
+						<content><![CDATA[
+				select tb_htms_driver.drivername,tb_htms_driver.drivermobile,vehicle.vehicleno,
+						tb_htms_send.sendstatus,$shippdedId as shipId
+       				from tb_htms_driver,tb_htms_transfer,tb_htms_transport,tb_htms_transportsend,tb_htms_send
+       				left join tb_htms_vehicle vehicle on vehicle.vehicleid=tb_htms_send.vehicleid
+       				where tb_htms_driver.driverid=tb_htms_send.driverid
+       				and tb_htms_send.sendid=tb_htms_transportsend.sendid
+       				and tb_htms_transportsend.transportid=tb_htms_transport.transportid
+       				and tb_htms_transport.transid=tb_htms_transfer.transid
+       				and tb_htms_transfer.shipid=$shippdedId  
+						]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/appliedlist/searcustapplied.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 已申请查看调拨单信息 -->
+	<operation name="mobileTransportList" businessClass="com.zzy.htms.mobile.ShipBusiness" version="2.0"  forward="" >
+		<method name="已申请列表搜索" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="getShipInfo" exeOrder="1" version="2.0">
+			<sql name="SELECTMOBILESHIPINFO" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="shipInfo" cacheScope="request" isEscape="false" version="2.0">
+					<content><![CDATA[
+				SELECT  TB_HTMS_SHIP.SHIPID,TB_HTMS_SHIP.Applystatus,tb_htms_ship.selffetch,
+						tb_htms_ship.fetchdriver,tb_htms_ship.fetchmobile,tb_htms_ship.fetchcar,
+	            		 tb_htms_ship.isurgent,tb_htms_ship.shipnotice,
+	            		TB_HTMS_CUSTORDER.CORDERCODE,
+	                  TB_HTMS_CUSTORDER.CUSTOMERNAME,
+	                  TB_HTMS_CUSTORDER.CUSTOMERCODE,
+	                  TB_HTMS_SHIPDETAIL.CADDRID,
+	                  TB_HTMS_SHIPDETAIL.SHIPDETAILID,
+	                  TB_HTMS_SHIPDETAIL.codetailid,
+	                  TB_HTMS_SHIPDETAIL.APPLYTONNUM,
+	                  TB_HTMS_SHIPDETAIL.APPLYPACKNUM,
+	                  TB_HTMS_SHIPDETAIL.Createtime,
+	                  cod.METERIALNO, 
+	                  cod.CODETAILCERTIFICATE,
+	                  cod.CODETAILCERTIFICATEDESC,cod.unitprice,
+	                  caddr.areaId,
+	                  caddr.caddrDetail,caddr.caddrcontactor,caddr.caddrtelephone,
+	                  fac.factoryname,trans.transid,
+	                  trans.transstatus
+	                    from TB_HTMS_CUSTORDER ,TB_HTMS_SHIP,TB_HTMS_SHIPDETAIL
+                        left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+                        left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_SHIPDETAIL.caddrId 
+                        left join TB_HTMS_FACTORY fac on fac.factoryid=cod.factoryid 
+                        left join Tb_Htms_Transfer trans on trans.shipid=tb_htms_shipdetail.shipid                  
+                            where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+                              AND TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+                              AND TB_HTMS_SHIPDETAIL.SHIPID=$shipId
+					]]></content>
+			</sql>
+		</method>
+		<method name="调拨单列表" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="getTransportInfo" exeOrder="2" version="2.0">
+		<sql name="SELECTMOBILETRANSPORTINFO" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="transportList" cacheScope="request" isEscapeQuotation="true" isEscape="false" version="2.0">
+					<content><![CDATA[
+				select tb_htms_transferdetail.applytonnum,tb_htms_transferdetail.applypacknum,tb_htms_transferdetail.transid,
+        			cod.CODETAILCERTIFICATE,cod.CODETAILCERTIFICATEDESC,cod.unitprice,
+        			TB_HTMS_SHIPDETAIL.Shipdetailid,
+        			$shipId as shipId       
+        			from tb_htms_transferdetail,TB_HTMS_SHIPDETAIL       
+       					left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+            			left join TB_HTMS_TRANSFER trans on trans.shipid = Tb_Htms_Shipdetail.Shipid 
+   
+       					where tb_htms_transferdetail.shipid=$shipId
+       						and tb_htms_transferdetail.shipdetailid=TB_HTMS_SHIPDETAIL.Shipdetailid 
+						]]></content>
+			</sql>
+		</method>
+		<method name="运送状态" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="getTransportList" exeOrder="3" version="2.0">
+			<sql name="SELECTMOBILETRANSPORTLIST" beanClass="com.zzy.htms.mobile.ShipDriverBean"  cacheType="list" isBatch="true" cacheName="appliedTransportList" cacheScope="request" version="2.0">
+						<content><![CDATA[
+				select tb_htms_driver.drivername,tb_htms_driver.drivermobile,vehicle.vehicleno,
+            	tb_htms_send.sendstatus,
+            	$transId as transId
+               		from tb_htms_driver,tb_htms_transfer,tb_htms_transport,tb_htms_transportsend,tb_htms_send
+               			left join tb_htms_vehicle vehicle on vehicle.vehicleid=tb_htms_send.vehicleid
+              			 where tb_htms_driver.driverid=tb_htms_send.driverid
+               				and tb_htms_send.sendid=tb_htms_transportsend.sendid
+               				and tb_htms_transportsend.transportid=tb_htms_transport.transportid
+               				and tb_htms_transport.transid=tb_htms_transfer.transid
+               				and tb_htms_transfer.transid=$transId 
+						]]></content>
+			</sql>
+		</method>
+		<method name="运费" businessClass="com.zzy.htms.mobile.ShipBusiness"  invokeMethod="getTransportFreight" exeOrder="4" version="2.0">
+			<sql name="SELECTMOBILETRANSPORTFREIGHT" beanClass="com.zzy.htms.mobile.ShipDriverBean"  cacheType="list" isBatch="true" cacheName="appliedTransportFreight" cacheScope="request" version="2.0">
+						<content><![CDATA[
+				select tb_htms_freight.totalfreight,$transId as transId from tb_htms_freight,tb_htms_transfer
+       				where Tb_Htms_Freight.Sapcode=tb_htms_transfer.saptranscode
+       				and tb_htms_transfer.transid=$transId
+       				and tb_htms_freight.isvalidate=1    And   tb_htms_freight.isestimate = 0      
+						]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/appliedlist/transferdetail.jsp]]></address>
+		</forward>
+	</operation>
+
+</root>

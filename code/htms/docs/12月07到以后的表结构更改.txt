@@ -1,0 +1,26 @@
+alter table TB_HTMS_CUSTORDER add modifytime VARCHAR2(30)  ;
+
+alter table tb_htms_custorderdetail add modifytime VARCHAR2(30)  ;
+
+
+
+alter table TB_HTMS_CUSTOMER add FEEID  NUMBER(38);
+alter table TB_HTMS_CUSTOMER add MANAGEMENTFEE  VARCHAR2(30);
+alter table TB_HTMS_CUSTOMER add ISFEE  NUMBER(38) default 0;
+
+
+alter table TB_HTMS_ShipDetail add   applyTonNum_backUp     VARCHAR2(30) ;
+alter table TB_HTMS_ShipDetail add   applyPackNum_backUp    VARCHAR2(30) ;
+
+
+
+alter table TB_WSM_USER  add    SYNCEMPLOYNO  VARCHAR2(200)  ;
+
+alter table TB_HTMS_custorder  add    SYNCEMPLOYNO  VARCHAR2(30)  ;
+
+update  tb_wsm_user set SYNCEMPLOYNO = employno where  employno is not null ;
+
+
+alter table TB_HTMS_transfer  add    DATARESOURCE  VARCHAR2(10)  ;
+
+alter table TB_HTMS_location  add    ISSIGN   VARCHAR2(10) ;

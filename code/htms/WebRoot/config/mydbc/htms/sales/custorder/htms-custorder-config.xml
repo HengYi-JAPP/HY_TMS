@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 订单列表查询    如果是自备车自提用户  需要按照客户编号做订单的过滤   -->
+	<operation name="listCustOrder" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" loadCacheForm="custOrderForm" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[
+					SELECT COUNT(*) AS totalCount 
+				    FROM   TB_HTMS_CUSTORDER,TB_HTMS_CUSTORDERDETAIL 
+					WHERE TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+					AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+					AND TB_HTMS_CUSTORDER.corderCode LIKE '%$corderCodeSH%' 
+					and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+					AND TB_HTMS_CUSTORDER.createtime LIKE '%$orderTimeSH%' 
+					and (TB_HTMS_CUSTORDER.deliveryStatus IS NULL OR TB_HTMS_CUSTORDER.deliveryStatus<>'C') 
+					and (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				    AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+   				    AND TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC LIKE '%$codetailCertificateDescSH%' 
+		            and TB_HTMS_CUSTORDER.isvalidate=1
+		            and TB_HTMS_CUSTORDERDETAIL.isvalidate=1
+		            <if test="$[user_customer_code]!=''">
+                         AND  TB_HTMS_CUSTORDER.CUSTOMERCODE  IN  ($user_customer_code)
+                    </if>
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="list" cacheName="custOrderList" cacheScope="request" isPage="true"  version="2.0" isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+					SELECT TB_HTMS_CUSTORDER.*,
+					TB_HTMS_CUSTORDERDETAIL.ORDERAMOUNT,
+			        TB_HTMS_CUSTORDERDETAIL.METERIALNO,
+			        TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATE,
+			        TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC,
+					TB_HTMS_CUSTORDERDETAIL.CODETAILID,
+					TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+					TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+					TB_HTMS_CUSTORDERDETAIL.FREIGHT,
+					TB_HTMS_CUSTORDERDETAIL.UNITPRICE,  
+					TB_HTMS_CUSTORDERDETAIL.PROJECTVOLUME,
+					factory.factoryName,  
+					product.productName
+					FROM TB_HTMS_CUSTORDER,TB_HTMS_CUSTORDERDETAIL 
+					left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.factoryId
+					left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productId
+					WHERE TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+					AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+					and (TB_HTMS_CUSTORDER.deliveryStatus IS NULL OR TB_HTMS_CUSTORDER.deliveryStatus<>'C') 
+					and (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				    AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+					and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+					AND TB_HTMS_CUSTORDER.corderCode LIKE '%$corderCodeSH%' 
+					AND TB_HTMS_CUSTORDER.createtime LIKE '%$orderTimeSH%' 
+					AND TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC LIKE '%$codetailCertificateDescSH%' 
+		            and TB_HTMS_CUSTORDER.isvalidate=1
+		            and TB_HTMS_CUSTORDERDETAIL.isvalidate=1
+		            <if test="$[user_customer_code]!=''">
+                         AND  TB_HTMS_CUSTORDER.CUSTOMERCODE  IN  ($user_customer_code)
+                    </if>
+					ORDER BY TB_HTMS_CUSTORDER.createtime DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/custorder/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 转向发货申请 -->
+	<operation name="toApplyShip" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			
+			<!-- 订单信息 -->
+			<sql name="orderBean" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="bean"  refCols="customerCode" refNames="refCustomerCode"  cacheName="custOrderViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT  *
+			            FROM TB_HTMS_CUSTORDER 
+			            WHERE  corderId= $corderId  
+					]]></content>
+			</sql>
+			<!-- 订单行项目，明细 -->
+			<sql name="detailLit" beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean" cacheType="list" cacheName="orderDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT  TB_HTMS_CUSTORDERDETAIL.*,factory.factoryName,product.productname
+                  FROM TB_HTMS_CUSTORDERDETAIL
+                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.Factoryid
+                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productid
+                  WHERE  corderId= $corderId  
+                  and (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				  AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+                  order by CODETAILCERTIFICATE
+					]]></content>
+			</sql>
+			
+			<!-- 订单中已经申请未审批通过的信息以及，已经审批通过，但未在SAP成生调拨单的信息-->
+			<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_HTMS_SHIPDETAIL.Itemcode, sum(to_number(TB_HTMS_SHIPDETAIL.Applytonnum)) AS applyTonNum
+						 FROM TB_HTMS_SHIPDETAIL,TB_HTMS_SHIP
+						 WHERE
+							 TB_HTMS_SHIP.corderId= $corderId
+				             and  TB_HTMS_SHIP.Applystatus=0
+							 and TB_HTMS_SHIPDETAIL.shipId = TB_HTMS_SHIP.shipId
+				             group by TB_HTMS_SHIPDETAIL.Itemcode
+					]]></content>
+			</sql>
+			<!-- 订单中已经审批未生成调拨单的信息以及，已经审批通过的，但未在SAP成生调拨单的数量-->
+			<sql name="transferDetailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="transferDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT tb_htms_transferdetail.Itemcode, sum(to_number(tb_htms_transferdetail.Applytonnum)) AS applyTonNum
+			             FROM tb_htms_transferdetail,tb_htms_transfer
+			             WHERE
+			               tb_htms_transfer.corderId= $corderId
+			               and  tb_htms_transfer.saptranscode is  null
+			               and tb_htms_transferdetail.transid = tb_htms_transfer.transid
+			                     group by tb_htms_transferdetail.Itemcode
+					]]></content>
+			</sql>
+			<!-- 客户列表 -->
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT *  FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.customerId DESC 
+					]]></content>
+			</sql>
+			<!-- 客户地址列表 -->
+			<sql name="CUSTOMERADDR" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="list" cacheName="customeraddrList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_HTMS_CUSTOMERADDR.*
+					        FROM TB_HTMS_CUSTOMER, TB_HTMS_CUSTOMERADDR
+					       WHERE TB_HTMS_CUSTOMER.CUSTOMERID = TB_HTMS_CUSTOMERADDR.CUSTOMERID
+					         AND TB_HTMS_CUSTOMER.CUSTOMERCODE = $customerCode
+					         AND TB_HTMS_CUSTOMERADDR.isValidate='1'
+					         ORDER BY TB_HTMS_CUSTOMERADDR.ISDEFAULT desc
+					]]></content>
+			</sql>
+			<sql name="fetch_privilege" beanClass="com.zzy.htms.user.HtmsUserBean" cacheType="list" cacheName="fetchList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_WSM_USER.USERID, TB_HTMS_FACTORY.FACTORYID, FACTORYNAME
+						  From TB_WSM_USER, TB_HTMS_USER_FACTORY, TB_HTMS_FACTORY
+						 WHERE TB_WSM_USER.USERID = TB_HTMS_USER_FACTORY.USERID
+						   AND TB_HTMS_FACTORY.FACTORYID = TB_HTMS_USER_FACTORY.FACTORYID
+						   AND TB_WSM_USER.CUSTOMERTYPE = '1' AND TB_WSM_USER.USERID = $userId
+					]]></content>
+			</sql>
+			<sql name="selfFetchCarList" beanClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBean" cacheType="list" cacheName="selfFetchCarList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SELFFETCHCAR.customerCode, TB_HTMS_SELFFETCHCAR.vehicleNo FROM TB_HTMS_SELFFETCHCAR
+					     Where TB_HTMS_SELFFETCHCAR.isvalidate = '1' and TB_HTMS_SELFFETCHCAR.customerCode = $refCustomerCode
+					    ORDER BY TB_HTMS_SELFFETCHCAR.vehicleNo Asc
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/custorder/apply.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="getRoute" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="getRoute" exeOrder="" version="2.0">
+		</method>
+	</operation>
+	
+	<operation name="ajaxCalculationFreight" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="ajaxCalculationFreight" exeOrder="" version="2.0">
+		</method>
+	</operation>
+	
+	<operation name="ajaxGetDefultDriverAndMobile" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="ajaxGetDefultDriverAndMobile" exeOrder="" version="2.0">
+		    <sql name="shipFetchCarInfo" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="shipFetchCarInfo" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * from tb_htms_ship where (selffetch=2 or selffetch=10)  And fetchcar= $fetchCar  And customerid = $customerId  And Rownum =1   Order By shipid Desc
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	
+	<operation name="doShipApply" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0"   forward="">
+		<method name="checkCustOrderDetail" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="checkCustOrderDetail" exeOrder="1" version="2.0">
+	        
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listShip]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performDoShipApply]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="getCustOrderById"  businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  >
+		<sql name="getCustOrderById"  beanClass="com.zzy.htms.sales.custorder.CustOrderBean"   >
+		    <![CDATA[
+			    	SELECT  *  FROM TB_HTMS_CUSTORDER  WHERE  corderId= $corderId  
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="getCustOrderDetailById"  businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  >
+		<sql name="getCustOrderDetailById"  beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean"   >
+		    <![CDATA[
+			    SELECT  TB_HTMS_CUSTORDERDETAIL.*
+                  FROM TB_HTMS_CUSTORDERDETAIL
+                  WHERE  corderId= $corderId  
+                  and (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				  AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation    name="getShipDetailById"  businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" >
+			<!--申请了，但未审批的数量  -->
+			<sql name="getShipDetailById"  beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean"   >
+		    <![CDATA[
+	              SELECT TB_HTMS_SHIPDETAIL.Itemcode, sum(to_number(TB_HTMS_SHIPDETAIL.Applytonnum)) AS applyTonNum
+						 FROM TB_HTMS_SHIPDETAIL,TB_HTMS_SHIP
+						 WHERE
+						     TB_HTMS_SHIPDETAIL.shipId = TB_HTMS_SHIP.shipId
+							 and  TB_HTMS_SHIP.corderId= $corderId
+				             and  TB_HTMS_SHIP.Applystatus=0
+				             group by TB_HTMS_SHIPDETAIL.Itemcode 
+				     ]]>
+		      </sql>
+		      
+		    <!-- 订单中已经审批未生成调拨单的信息以及，已经审批通过的，但未在SAP成生调拨单的数量-->
+			<sql name="transferDetailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="transferDetailList" cacheScope="request"  version="2.0">
+					<![CDATA[
+						 SELECT tb_htms_transferdetail.Itemcode, sum(to_number(tb_htms_transferdetail.Applytonnum)) AS applyTonNum
+			             FROM tb_htms_transferdetail,tb_htms_transfer
+			             WHERE
+			               tb_htms_transfer.corderId= $corderId
+			               and  tb_htms_transfer.saptranscode is  null
+			               and tb_htms_transferdetail.transid = tb_htms_transfer.transid
+			                     group by tb_htms_transferdetail.Itemcode
+					]]>
+			</sql>
+	</operation>
+	
+	<!-- 保存发货申请 -->
+	<operation name="performDoShipApply" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="addShipApply" exeOrder="" version="2.0">
+			<sql name="INSERT"  caiidTable="TB_HTMS_SHIP" caiidKey="shipId" caiidName="shipId" caiidVar="shipId"  version="2.0">
+				<content><![CDATA[
+				INSERT INTO TB_HTMS_SHIP (shipId, corderId,caddrId,orderCode,shipCode,applyTonNum, applyPackNum, shipNotice,applyStatus,
+				selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent,creator,createTime,customerId) 
+		        VALUES($shipId,$corderId,$caddrId,$orderCode,$shipCode,$applyTonNum,$applyPackNum,$ordreNotice,0,
+		        $selfFetch,$fetchDriver,$fetchMobile,$fetchCar,$isUrgent,$userId,to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),$customerId) 
+				]]></content>
+			</sql>
+			<sql name="updateSelfFetchCar"   version="2.0">
+				<content><![CDATA[
+				    update TB_HTMS_SHIP  set fetchCar='',fetchDriver='',fetchMobile=''  where shipId=$shipId  and selfFetch='0'
+ 				]]></content>
+			</sql>
+			<sql name="INSERT"  isBatch="true" caiidTable="TB_HTMS_SHIPDETAIL" caiidKey="shipDetailId" caiidName="shipDetailId" caiidVar="shipDetailId"  version="2.0" test="'$[applyTonNum]'!=''&amp;&amp;$[applyTonNum]!=0">
+				<content><![CDATA[
+				<if test="$[applyTonNum]!='0'">
+				INSERT INTO TB_HTMS_SHIPDETAIL(shipDetailId,shipId,caddrId,codetailId,productId,factoryId,itemCode,applyTonNum,applyPackNum,shipDetailNotice,shipDetailStatus,creator,createTime,applyTonNum_backUp,applyPackNum_backUp) 
+		        VALUES($shipDetailId,$shipId,$caddrId,$codetailId,$productId,$factoryId,$itemCode,$applyTonNum,$applyPackNum,$shipNotice,0,$userId,$createTime,$applyTonNum,$applyPackNum)
+		        </if> 
+				]]></content>
+			</sql>
+			<sql name="updateAmount"  isBatch="true"  version="2.0">
+				<content><![CDATA[
+				UPDATE TB_HTMS_CUSTORDERDETAIL SET
+				     appliableAmount =to_number(appliableAmount)- to_number($applyTonNum), 
+				     appliedAmount = to_number(appliedAmount)+ to_number($applyTonNum) 
+		    	WHERE codetailId = $codetailId 
+				]]></content>
+			</sql>
+			<sql name="updateTon"    version="2.0">
+				<content><![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyTonNum= (SELECT SUM(to_number(applyTonNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE shipId = $shipId 
+				]]></content>
+			</sql>
+			<sql name="updatePack"    version="2.0">
+				<content><![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyPackNum= (SELECT SUM(to_number(applyPackNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE TB_HTMS_SHIP.shipId = $shipId 
+				]]></content>
+			</sql>
+			<sql name="shipViewBean" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="shipViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						select tb_htms_ship.*,tb_htms_custorder.cordercode  from tb_htms_ship left join tb_htms_custorder on tb_htms_ship.corderid= tb_htms_custorder.corderid 
+						 where shipid = $shipId
+					]]></content>
+			</sql>
+			<sql name="shipDetailViewBean" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						select tb_htms_shipdetail.*,tb_htms_custorderdetail.CODETAILCERTIFICATEDESC,tb_htms_custorderdetail.METERIALNO  from tb_htms_shipdetail Left Join tb_htms_custorderdetail On 
+						tb_htms_shipdetail.CODETAILID = tb_htms_custorderdetail.CODETAILID 
+						 where tb_htms_shipdetail.shipid = $shipId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[OPERATION_RESULT]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=deleteAppliedShip]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[OPERATION_RESULT]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=listShip]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="deleteAppliedShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="deleteAppliedShip" exeOrder="2" version="2.0">
+			<sql name="UPDATEDETAIL"  version="2.0">
+					<content><![CDATA[
+						delete from  TB_HTMS_SHIPDETAIL where SHIPID=$shipId
+					]]></content>
+			</sql>
+			<sql name="UPDATESHIP"   version="2.0">
+					<content><![CDATA[
+						delete from TB_HTMS_SHIP  where SHIPID=$shipId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listShip]]></address>
+		</forward>
+	</operation>
+	
+</root>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.user.HtmsUserBean">
+		
+		
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		<map property="account" javaType="java.lang.String" column="ACCOUNT" colType=""/>
+		<map property="userName" javaType="java.lang.String" column="USERNAME" colType=""/>
+		<map property="sex" javaType="java.lang.String" column="SEX" colType=""/>
+		<map property="photo" javaType="java.lang.String" column="PHOTO" colType=""/>
+		<map property="tel" javaType="java.lang.String" column="TEL" colType=""/>
+		<map property="mobile" javaType="java.lang.String" column="MOBILE" colType=""/>
+		<map property="email" javaType="java.lang.String" column="EMAIL" colType=""/>
+		<map property="qq" javaType="java.lang.String" column="QQ" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="isAuth" javaType="java.lang.String" column="ISAUTH" colType=""/>
+		<map property="department" javaType="java.lang.String" column="DEPARTMENT" colType=""/>
+		<map property="subDepartment" javaType="java.lang.String" column="CARRIERID" colType=""/>
+		<map property="password" javaType="java.lang.String" column="PASSWORD" colType=""/>
+		<map property="userType" javaType="java.lang.String" column="USERTYPE" colType=""/>
+		<map property="orderId" javaType="java.lang.String" column="ORDERID" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="salesNo" javaType="java.lang.String" column="SALESNO" colType=""/>
+		<map property="dicId" javaType="java.lang.String" column="dicId" colType=""/>
+		<map property="dicName" javaType="java.lang.String" column="DICNAME" colType=""/>
+		
+		<map property="carrierId" javaType="java.lang.String" column="CARRIERID" colType=""/>
+		<map property="customerType" javaType="int" column="CUSTOMERTYPE" colType=""/>
+		
+		<map property="employNo" javaType="int" column="employNo" colType=""/>
+		
+		<map property="factoryId" javaType="java.lang.String" column="FACTORYID" colType=""/>
+		<map property="factoryName" javaType="java.lang.String" column="FACTORYNAME" colType=""/>
+		
+		<map property="customerCode" javaType="java.lang.String" column="CUSTOMERCODE" colType=""/>
+		<map property="isFee" javaType="java.lang.String" column="ISFEE" colType=""/>
+		<map property="managementFee" javaType="java.lang.String" column="MANAGEMENTFEE" colType=""/>
+		
+		<map property="syncEmployNo" javaType="java.lang.String" column="SYNCEMPLOYNO" colType=""/>
+		
+	</bean>
+</root>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+	<operation name="loadUserThemesDefineType" businessClass="com.mobilecn.themes.loader.DefineTypeLoader" invokeMethod="list" forward="" >
+			<!-- 用户自定义的风格 -->
+		<sql name="loadUserThemesDefineType"  beanClass="com.mobilecn.themes.definetype.DefineTypeBean" cacheName="__USER_DETYPE_TYPE_LIST___" cacheScope="session" >
+			
+		</sql>
+	</operation>
+</root>

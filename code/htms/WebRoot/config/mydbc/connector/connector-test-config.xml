@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!--连接器部署样例 -->
+	<operation name="publishConnectorApi" businessClass="connector.test.ConnectorServerBusiness"
+		invokeMethod="list" beforeInvoke="beforeServiceInvoke" afterInvoke="afterServiceInvoke">
+		<sql name="dbInfoList"  cacheName="dbInfoList" cacheType="list" isPublish="true">
+			<![CDATA[SELECT * FROM TB_WSM_USER WHERE USERID=$user_id AND ISVALIDATE=1 ORDER BY USERID DESC]]>
+		</sql>
+		<sql name="businessBean"  cacheName="businessBean" cacheType="bean" isPublish="true"></sql>
+		<sql name="singleValue"  cacheName="singleValue" cacheType="single" isPublish="true"></sql>
+	</operation>
+
+	<!-- 游戏组end -->
+</root>

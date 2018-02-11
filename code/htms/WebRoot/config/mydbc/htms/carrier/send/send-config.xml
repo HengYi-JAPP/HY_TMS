@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="viewSendToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="bean" cacheName="sendViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+			SELECT TB_HTMS_SEND.*,TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,TB_HTMS_VEHICLE.VEHICLENO
+	            FROM TB_HTMS_SEND ,TB_HTMS_DRIVER,TB_HTMS_VEHICLE
+	            WHERE TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID 
+	            AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+				    AND TB_HTMS_SEND.sendId = $sendId 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSPORT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="list" cacheName="transportList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.transportId ,TB_HTMS_TRANSPORT.carrierId 
+				        ,TB_HTMS_TRANSPORT.transId ,TB_HTMS_TRANSPORT.transportCode 
+				        ,TB_HTMS_TRANSPORT.planTime ,TB_HTMS_TRANSPORT.applyTonNum 
+				        ,TB_HTMS_TRANSPORT.applyPackNum ,TB_HTMS_TRANSPORT.actaulTonNum 
+				        ,TB_HTMS_TRANSPORT.actaulPackNum ,TB_HTMS_TRANSPORT.planFreight 
+				        ,TB_HTMS_TRANSPORT.actaulFreight ,TB_HTMS_TRANSPORT.freightUnit 
+				        ,TB_HTMS_TRANSPORT.transportStatus ,TB_HTMS_TRANSPORT.creator 
+				        ,TB_HTMS_TRANSPORT.createTime ,TB_HTMS_TRANSPORT.modifier 
+				        ,TB_HTMS_TRANSPORT.modifyTime ,TB_HTMS_TRANSPORT.isValidate 
+				    FROM TB_HTMS_TRANSPORT ORDER BY TB_HTMS_TRANSPORT.transportId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				        ,TB_HTMS_CARRIER.carrierCode ,TB_HTMS_CARRIER.carrierArea 
+				        ,TB_HTMS_CARRIER.carrierContactor 
+				        ,TB_HTMS_CARRIER.carrierTelephone ,TB_HTMS_CARRIER.isValidate 
+				    FROM TB_HTMS_CARRIER ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.transId ,TB_HTMS_TRANSFER.shipId 
+				        ,TB_HTMS_TRANSFER.logisticsId ,TB_HTMS_TRANSFER.corderId 
+				        ,TB_HTMS_TRANSFER.customerId ,TB_HTMS_TRANSFER.shipCode 
+				        ,TB_HTMS_TRANSFER.applyTonNum ,TB_HTMS_TRANSFER.applyPackNum 
+				        ,TB_HTMS_TRANSFER.actualTonNum ,TB_HTMS_TRANSFER.actualPackNum 
+				        ,TB_HTMS_TRANSFER.planFreight ,TB_HTMS_TRANSFER.actualFreight 
+				        ,TB_HTMS_TRANSFER.freightUnit ,TB_HTMS_TRANSFER.shipNotice 
+				        ,TB_HTMS_TRANSFER.transStatus ,TB_HTMS_TRANSFER.creator 
+				        ,TB_HTMS_TRANSFER.createTime ,TB_HTMS_TRANSFER.modifier 
+				        ,TB_HTMS_TRANSFER.modifyTime ,TB_HTMS_TRANSFER.isValidate 
+				    FROM TB_HTMS_TRANSFER ORDER BY TB_HTMS_TRANSFER.transId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_TRANSPORT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="bean" cacheName="transportViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.transportId ,TB_HTMS_TRANSPORT.carrierId 
+				        ,TB_HTMS_TRANSPORT.transId ,TB_HTMS_TRANSPORT.transportCode 
+				        ,TB_HTMS_TRANSPORT.planTime ,TB_HTMS_TRANSPORT.applyTonNum 
+				        ,TB_HTMS_TRANSPORT.applyPackNum ,TB_HTMS_TRANSPORT.actaulTonNum 
+				        ,TB_HTMS_TRANSPORT.actaulPackNum ,TB_HTMS_TRANSPORT.planFreight 
+				        ,TB_HTMS_TRANSPORT.actaulFreight ,TB_HTMS_TRANSPORT.freightUnit 
+				        ,TB_HTMS_TRANSPORT.transportStatus ,TB_HTMS_TRANSPORT.creator 
+				        ,TB_HTMS_TRANSPORT.createTime ,TB_HTMS_TRANSPORT.modifier 
+				        ,TB_HTMS_TRANSPORT.modifyTime ,TB_HTMS_TRANSPORT.isValidate 
+				    FROM TB_HTMS_TRANSPORT , TB_HTMS_SEND 
+				    WHERE TB_HTMS_TRANSPORT.transportId =TB_HTMS_SEND.transportId AND 
+				        TB_HTMS_SEND.sendId = $sendId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="bean" cacheName="carrierViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				        ,TB_HTMS_CARRIER.carrierCode ,TB_HTMS_CARRIER.carrierArea 
+				        ,TB_HTMS_CARRIER.carrierContactor 
+				        ,TB_HTMS_CARRIER.carrierTelephone ,TB_HTMS_CARRIER.isValidate 
+				    FROM TB_HTMS_CARRIER , TB_HTMS_SEND 
+				    WHERE TB_HTMS_CARRIER.carrierId =TB_HTMS_SEND.carrierId AND 
+				        TB_HTMS_SEND.sendId = $sendId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="bean" cacheName="transferViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.transId ,TB_HTMS_TRANSFER.shipId 
+				        ,TB_HTMS_TRANSFER.logisticsId ,TB_HTMS_TRANSFER.corderId 
+				        ,TB_HTMS_TRANSFER.customerId ,TB_HTMS_TRANSFER.shipCode 
+				        ,TB_HTMS_TRANSFER.applyTonNum ,TB_HTMS_TRANSFER.applyPackNum 
+				        ,TB_HTMS_TRANSFER.actualTonNum ,TB_HTMS_TRANSFER.actualPackNum 
+				        ,TB_HTMS_TRANSFER.planFreight ,TB_HTMS_TRANSFER.actualFreight 
+				        ,TB_HTMS_TRANSFER.freightUnit ,TB_HTMS_TRANSFER.shipNotice 
+				        ,TB_HTMS_TRANSFER.transStatus ,TB_HTMS_TRANSFER.creator 
+				        ,TB_HTMS_TRANSFER.createTime ,TB_HTMS_TRANSFER.modifier 
+				        ,TB_HTMS_TRANSFER.modifyTime ,TB_HTMS_TRANSFER.isValidate 
+				    FROM TB_HTMS_TRANSFER , TB_HTMS_SEND 
+				    WHERE TB_HTMS_TRANSFER.transId =TB_HTMS_SEND.transId AND 
+				        TB_HTMS_SEND.sendId = $sendId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/carrier/send/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/carrier/send/modify.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="modifySendToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SEND 
+				    SET transportId = $transportId ,vehicleId = $vehicleId ,driverId = 
+				        $driverId ,carrierId = $carrierId ,transId = $transId ,sendCode 
+				        = $sendCode ,planTime = $planTime ,applyTonNum = $applyTonNum 
+				        ,applyPackNum = $applyPackNum ,actaulTonNum = $actaulTonNum 
+				        ,actaulPackNum = $actaulPackNum ,planFreight = $planFreight 
+				        ,actaulFreight = $actaulFreight ,freightUnit = $freightUnit 
+				        ,sendStatus = $sendStatus ,signProof = $signProof ,creator = 
+				        $creator ,createTime = $createTime ,modifier = $modifier 
+				        ,modifyTime = $modifyTime ,isValidate = $isValidate 
+				    WHERE TB_HTMS_SEND.sendId = $sendId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteSendToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_SEND 
+				    WHERE TB_HTMS_SEND.sendId = $sendId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddSendToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_TRANSPORT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="list" cacheName="transportList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.transportId ,TB_HTMS_TRANSPORT.carrierId 
+				        ,TB_HTMS_TRANSPORT.transId ,TB_HTMS_TRANSPORT.transportCode 
+				        ,TB_HTMS_TRANSPORT.planTime ,TB_HTMS_TRANSPORT.applyTonNum 
+				        ,TB_HTMS_TRANSPORT.applyPackNum ,TB_HTMS_TRANSPORT.actaulTonNum 
+				        ,TB_HTMS_TRANSPORT.actaulPackNum ,TB_HTMS_TRANSPORT.planFreight 
+				        ,TB_HTMS_TRANSPORT.actaulFreight ,TB_HTMS_TRANSPORT.freightUnit 
+				        ,TB_HTMS_TRANSPORT.transportStatus ,TB_HTMS_TRANSPORT.creator 
+				        ,TB_HTMS_TRANSPORT.createTime ,TB_HTMS_TRANSPORT.modifier 
+				        ,TB_HTMS_TRANSPORT.modifyTime ,TB_HTMS_TRANSPORT.isValidate 
+				    FROM TB_HTMS_TRANSPORT ORDER BY TB_HTMS_TRANSPORT.transportId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_VEHICLE" beanClass="com.zzy.htms.logistic.vehicle.VehicleBean" cacheType="list" cacheName="vehicleList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_VEHICLE.vehicleId ,TB_HTMS_VEHICLE.carrierId 
+				        ,TB_HTMS_VEHICLE.vehicleCode ,TB_HTMS_VEHICLE.vehicleNo 
+				        ,TB_HTMS_VEHICLE.vehicleMaxTon ,TB_HTMS_VEHICLE.vehicleLength 
+				        ,TB_HTMS_VEHICLE.vehicleWidth ,TB_HTMS_VEHICLE.vehicleHeight 
+				        ,TB_HTMS_VEHICLE.vehiclePersonNum ,TB_HTMS_VEHICLE.vehicleDesc 
+				        ,TB_HTMS_VEHICLE.isValidate 
+				    FROM TB_HTMS_VEHICLE ORDER BY TB_HTMS_VEHICLE.vehicleId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_DRIVER" beanClass="com.zzy.htms.logistic.driver.DriverBean" cacheType="list" cacheName="driverList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_DRIVER.driverId ,TB_HTMS_DRIVER.carrierId 
+				        ,TB_HTMS_DRIVER.driverCode ,TB_HTMS_DRIVER.driverName 
+				        ,TB_HTMS_DRIVER.driverSex ,TB_HTMS_DRIVER.driverYear 
+				        ,TB_HTMS_DRIVER.driverIdNum ,TB_HTMS_DRIVER.driverAddress 
+				        ,TB_HTMS_DRIVER.driverMobile ,TB_HTMS_DRIVER.driverWeiXin 
+				        ,TB_HTMS_DRIVER.driverNotice ,TB_HTMS_DRIVER.isValidate 
+				    FROM TB_HTMS_DRIVER ORDER BY TB_HTMS_DRIVER.driverId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				        ,TB_HTMS_CARRIER.carrierCode ,TB_HTMS_CARRIER.carrierArea 
+				        ,TB_HTMS_CARRIER.carrierContactor 
+				        ,TB_HTMS_CARRIER.carrierTelephone ,TB_HTMS_CARRIER.isValidate 
+				    FROM TB_HTMS_CARRIER ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.transId ,TB_HTMS_TRANSFER.shipId 
+				        ,TB_HTMS_TRANSFER.logisticsId ,TB_HTMS_TRANSFER.corderId 
+				        ,TB_HTMS_TRANSFER.customerId ,TB_HTMS_TRANSFER.shipCode 
+				        ,TB_HTMS_TRANSFER.applyTonNum ,TB_HTMS_TRANSFER.applyPackNum 
+				        ,TB_HTMS_TRANSFER.actualTonNum ,TB_HTMS_TRANSFER.actualPackNum 
+				        ,TB_HTMS_TRANSFER.planFreight ,TB_HTMS_TRANSFER.actualFreight 
+				        ,TB_HTMS_TRANSFER.freightUnit ,TB_HTMS_TRANSFER.shipNotice 
+				        ,TB_HTMS_TRANSFER.transStatus ,TB_HTMS_TRANSFER.creator 
+				        ,TB_HTMS_TRANSFER.createTime ,TB_HTMS_TRANSFER.modifier 
+				        ,TB_HTMS_TRANSFER.modifyTime ,TB_HTMS_TRANSFER.isValidate 
+				    FROM TB_HTMS_TRANSFER ORDER BY TB_HTMS_TRANSFER.transId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/carrier/send/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addSendToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_SEND" caiidKey="sendId" caiidName="sendId" caiidVar="sendId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_SEND ( sendId, transportId, vehicleId, driverId, 
+				        carrierId, transId, sendCode, planTime, applyTonNum, 
+				        applyPackNum, actaulTonNum, actaulPackNum, planFreight, 
+				        actaulFreight, freightUnit, sendStatus, signProof, creator, 
+				        createTime, modifier, modifyTime, isValidate) 
+				        VALUES($sendId,$transportId,$vehicleId,$driverId,$carrierId,$transId,$sendCode,$planTime,$applyTonNum,$applyPackNum,$actaulTonNum,$actaulPackNum,$planFreight,$actaulFreight,$freightUnit,$sendStatus,$signProof,$creator,$createTime,$modifier,$modifyTime,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+	</operation>
+	<operation name="listSendToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" loadCacheForm="sendForm" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_SEND ,tb_htms_transportsend,TB_HTMS_DRIVER,TB_HTMS_VEHICLE,TB_HTMS_TRANSPORT,tb_htms_transfer,tb_htms_customer
+		            WHERE 
+		            TB_HTMS_TRANSPORT.TRANSPORTID=tb_htms_transportsend.transportid AND
+		            tb_htms_transportsend.sendid=TB_HTMS_SEND.sendid
+		            and tb_htms_transportsend.transportid in(
+		            	select transportid from  TB_HTMS_TRANSPORT WHERE TB_HTMS_TRANSPORT.carrierId like '%$carrierIdSH%'
+		            )
+		            
+		            AND TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID    
+		            AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+		              and  TB_HTMS_TRANSPORT.transid = tb_htms_transfer.transid 
+		            and tb_htms_transfer.customerid = tb_htms_customer.customerid 	
+		            <if test="$[sapCodeSH]!=''">
+					   AND  tb_htms_transfer.sapTransCode  LIKE'%$sapCodeSH%'
+					</if>
+					<if test="$[customerNameSH]!=''">
+					   AND  tb_htms_customer.customerName   LIKE'%$customerNameSH%'
+					</if>
+		            <if test="$[sendCodeSH]!=''">
+					 AND  TB_HTMS_SEND.SENDCODE LIKE'%$sendCodeSH%'
+					</if>
+					<if test="$[driverNameSH]!=''">
+					 AND  TB_HTMS_DRIVER.DRIVERNAME LIKE'%$driverNameSH%'
+					</if>
+					<if test="$[vehicleNoSH]!=''">
+					 AND  TB_HTMS_VEHICLE.VEHICLENO LIKE'%$vehicleNoSH%'
+					</if>				    
+					<if test="$[sendStatusSH]!=''&&$[sendStatusSH]!='102'">
+					 AND  TB_HTMS_SEND.sendstatus=$sendStatusSH
+					</if>
+					<if test="$[sendStatusSH]=='102'">
+					 AND  TB_HTMS_TRANSPORT.TRANSPORTSTATUS=$sendStatusSH
+					</if>
+				   	<if test="$[transportCodeSH]!=''">
+					    AND  TB_HTMS_TRANSPORT.TRANSPORTcode  like '%$transportCodeSH%'
+					</if>
+		           
+					]]></content>
+			</sql>
+			<!--<sql name="SELECT" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="list" cacheName="sendList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+				SELECT TB_HTMS_SEND.*,SPORT.TRANSPORTCODE,TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,TB_HTMS_VEHICLE.VEHICLENO
+		            FROM TB_HTMS_SEND,TB_HTMS_TRANSPORTSEND
+		            LEFT JOIN TB_HTMS_TRANSPORT SPORT ON SPORT.transportId=TB_HTMS_TRANSPORTSEND.transportId
+		            ,TB_HTMS_DRIVER,TB_HTMS_VEHICLE
+		            WHERE 
+		            TB_HTMS_SEND.SENDID=TB_HTMS_TRANSPORTSEND.SENDID
+		            AND TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID  
+		            AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+				    ORDER BY TB_HTMS_SEND.sendId DESC 
+					]]></content>
+			</sql>
+			--><sql name="SELECT" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="list" cacheName="sendList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+				SELECT TB_HTMS_SEND.*,TB_HTMS_TRANSPORT.TRANSPORTCODE,TB_HTMS_TRANSPORT.TRANSPORTSTATUS,tb_htms_transfer.saptranscode,tb_htms_customer.customerName,
+				TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,TB_HTMS_VEHICLE.VEHICLENO
+		            FROM tb_htms_transportsend,TB_HTMS_SEND,TB_HTMS_DRIVER,TB_HTMS_VEHICLE,TB_HTMS_TRANSPORT,tb_htms_transfer,tb_htms_customer
+		            WHERE 
+		            TB_HTMS_TRANSPORT.TRANSPORTID=tb_htms_transportsend.transportid AND
+		            tb_htms_transportsend.sendid=TB_HTMS_SEND.sendid
+		            and tb_htms_transportsend.transportid in(
+		            	select transportid from  TB_HTMS_TRANSPORT WHERE TB_HTMS_TRANSPORT.carrierId like '%$carrierIdSH%'
+		            )
+		            AND TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID    
+		            AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+		              and  TB_HTMS_TRANSPORT.transid = tb_htms_transfer.transid 
+		            and tb_htms_transfer.customerid = tb_htms_customer.customerid 	
+		             <if test="$[sapCodeSH]!=''">
+					   AND  tb_htms_transfer.sapTransCode  LIKE'%$sapCodeSH%'
+					</if>
+					<if test="$[customerNameSH]!=''">
+					   AND  tb_htms_customer.customerName   LIKE'%$customerNameSH%'
+					</if>
+		           <if test="$[sendCodeSH]!=''">
+					 AND  TB_HTMS_SEND.SENDCODE LIKE'%$sendCodeSH%'
+					</if>
+					<if test="$[driverNameSH]!=''">
+					 AND  TB_HTMS_DRIVER.DRIVERNAME LIKE'%$driverNameSH%'
+					</if>
+					<if test="$[vehicleNoSH]!=''">
+					 AND  TB_HTMS_VEHICLE.VEHICLENO LIKE'%$vehicleNoSH%'
+					</if>				    
+					<if test="$[sendStatusSH]!=''&&$[sendStatusSH]!='102'">
+					 AND  TB_HTMS_SEND.sendstatus=$sendStatusSH
+					</if>
+					<if test="$[sendStatusSH]=='102'">
+					 AND  TB_HTMS_TRANSPORT.TRANSPORTSTATUS=$sendStatusSH
+					</if>
+					<if test="$[transportCodeSH]!=''">
+					    AND  TB_HTMS_TRANSPORT.TRANSPORTcode  like '%$transportCodeSH%'
+					</if>
+				    ORDER BY TB_HTMS_SEND.sendstatus,to_number(TB_HTMS_TRANSPORT.TRANSPORTSTATUS),TB_HTMS_SEND.sendId DESC 
+					]]></content>
+			</sql>
+			<sql name="carrierList" beanClass="com.zzy.htms.logistic.carrier.CarrierBean"  cacheType="list" cacheName="carrierList" cacheScope="request" version="2.0" >
+					<content><![CDATA[  
+	                   SELECT TB_HTMS_CARRIER.CARRIERID,TB_HTMS_CARRIER.CARRIERNAME 
+						FROM  TB_HTMS_CARRIER 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/carrier/send/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="doSendCarToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"     forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="checkSendStatusSend"  exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+						
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+		   <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+		<forward name="checkSendStatusAction" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performDoSendCarToLogistics]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 派车确认 -->
+	<!-- 
+	1、更新派车单状态
+	2、更新运单及明细状态；
+	 -->
+	<operation name="performDoSendCarToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"   forward="">
+		<method name="beforeSend" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="beforeSend" exeOrder="1" version="2.0">
+		</method>
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="view" exeOrder="2" version="2.0">
+			<!-- 插入派车单 -->
+			<!-- 派车单列表sendStatus=0,在派车中，sendStatus=1已经派车，在提货中，sendStatus=2，已经提货，在送货中，sendStatus=5货已经到，并签收 -->
+			<sql name="UPDATESEND"  isBatch="true">
+				<content><![CDATA[
+					UPDATE TB_HTMS_SEND SET 
+						sendStatus=1,
+						modifier=$userId,
+						modifyTime=$modifyTime,
+						sendTime=$modifyTime
+				    WHERE SENDID=$checkSendId 
+				]]></content>
+			</sql>
+			
+			
+			<!-- 更新[运单]状态:已经派车  transportStatus=0未排车，transportStatus=1已排车，但未派车，transportStatus=2已排车且派车了-->
+			<sql name="UPDATE_TRANSPORT" isBatch="true" >
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSPORT  SET 
+					transportStatus=2
+				    ,modifier=$userId,modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORT.TRANSPORTID IN(
+				    	SELECT transportId FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$checkSendId  
+				    )
+					]]></content>
+			</sql>
+			<!-- 更新[运单明细]状态 ：已排车且派车-->
+			<sql name="UPDATE_TRANSPORTDETAIL"  isBatch="true" >
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSPORTDETAIL  SET 
+						transDetailStatus=2,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORTDETAIL.TRANSPORTID IN(
+				    	SELECT TRANSPORTID FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$checkSendId  
+				    )
+					]]></content>
+			</sql>
+			
+			
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="getSendBeanByIdToLogistics"  businessClass="com.zzy.htms.logistic.send.SendBusiness"  >
+		<sql name="getSendBeanById"  beanClass="com.zzy.htms.logistic.send.SendBean"   >
+		    <![CDATA[
+			     select *  from TB_HTMS_SEND where sendId=$sendId
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="canncelSendCarToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"     forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="checkSendStatusCancel"  exeOrder="" version="2.0">
+			<!-- 插入初始、默认的虚拟调拨单 -->
+						
+		</method>
+		
+		<forward name="listAction" forwardStyle="1" version="2.0">
+		   <condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+		<forward name="checkSendStatusAction" forwardStyle="1" version="2.0">
+		    <condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performCanncelSendCarToLogistics]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 派车确认 -->
+	<!-- 
+	1、更新派车单状态
+	2、更新运单及明细状态；
+	 -->
+	<operation name="performCanncelSendCarToLogistics" businessClass="com.zzy.htms.logistic.send.SendBusiness" version="2.0"   forward="">
+		<method name="beforeSend" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="beforeSend" exeOrder="1" version="2.0">
+		</method>
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.send.SendBusiness"  invokeMethod="view" exeOrder="2" version="2.0">
+			<!-- 插入派车单 -->
+			<!-- 派车单列表sendStatus=0,在派车中，sendStatus=1已经派车，在提货中，sendStatus=2，已经提货，在送货中，sendStatus=5货已经到，并签收 -->
+			<sql name="UPDATESEND" >
+				<content><![CDATA[
+					UPDATE TB_HTMS_SEND SET 
+						sendStatus=0,
+						modifier=$userId,
+						modifyTime=$modifyTime,
+				    	sendTime=''
+				    WHERE SENDID=$sendId 
+				]]></content>
+			</sql>
+			
+			
+			<!-- 更新[运单]状态:已经派车  transportStatus=0未排车，transportStatus=1已排车，但未派车，transportStatus=2已排车且派车了-->
+			<sql name="UPDATE_TRANSPORT" isBatch="true" >
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSPORT  SET 
+					transportStatus=1,
+					modifier=$userId,
+					modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORT.TRANSPORTID IN(
+				    	SELECT transportId FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$sendId  
+				    )
+					]]></content>
+			</sql>
+			<!-- 更新[运单明细]状态 ：已排车且派车-->
+			<sql name="UPDATE_TRANSPORTDETAIL"  isBatch="true" >
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSPORTDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORTDETAIL.TRANSPORTID IN(
+				    	SELECT TRANSPORTID FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$sendId  
+				    )
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendToLogistics]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 从排车管理列表中查看已经分配运单及分配情况查看 -->
+	<operation name="toViewSendTransportToLogistics" businessClass="com.zzy.htms.logistic.transport.TransportBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transport.TransportBusiness"  invokeMethod="view" exeOrder="2" version="2.0">
+			<!-- 运单列表 -->
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="list" cacheName="transportList" cacheScope="request"   version="2.0"  isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[  
+					 SELECT 
+	                    TB_HTMS_TRANSPORT.*,
+				        
+							TB_HTMS_CUSTORDER.CORDERCODE,
+							TB_HTMS_CUSTORDER.CUSTOMERNAME,                  
+							caddr.areaId,
+							caddr.caddrDetail,
+						  TB_HTMS_TRANSFER.transfercode
+						FROM 
+							TB_HTMS_CUSTORDER, TB_HTMS_TRANSPORT,TB_HTMS_TRANSFER
+							left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+						 
+						WHERE  TB_HTMS_TRANSPORT.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+						    AND TB_HTMS_TRANSFER.transid=TB_HTMS_TRANSPORT.Transid
+							AND TB_HTMS_TRANSPORT.transportId IN(SELECT transportId FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$sendId)
+							ORDER BY TB_HTMS_TRANSPORT.transportId DESC 
+					
+					]]></content>
+			</sql>
+			
+			<sql name="detailList" beanClass="com.zzy.htms.logistic.transportdetail.TransportDetailBean" cacheType="list" cacheName="detailList" cacheScope="request"   version="2.0"  isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[ 					
+					 SELECT 
+	                    	TB_HTMS_TRANSPORTDETAIL.*,	                    	
+					       factory.factoryName,
+					       product.productname
+					FROM 
+						TB_HTMS_TRANSPORTDETAIL					  						  					  
+	                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_TRANSPORTDETAIL.Factoryid
+	                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_TRANSPORTDETAIL.productid 
+					 
+					WHERE 
+						  TRANSPORTID IN(SELECT transportId FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$sendId)
+						ORDER BY SPORTDETAILID  
+					]]></content>
+			</sql>
+			<sql name="SENDBEAN" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="bean" cacheName="sendBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					SELECT TB_HTMS_SEND.*,TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,TB_HTMS_DRIVER.driverIdNum,TB_HTMS_VEHICLE.VEHICLENO
+		            FROM TB_HTMS_SEND ,TB_HTMS_DRIVER,TB_HTMS_VEHICLE
+		            WHERE
+		            TB_HTMS_SEND.SENDID=$sendId 
+		            AND TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID  
+		            AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+				    ORDER BY TB_HTMS_SEND.sendId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/carrier/send/view.jsp]]></address>
+		</forward>
+	</operation>
+</root>

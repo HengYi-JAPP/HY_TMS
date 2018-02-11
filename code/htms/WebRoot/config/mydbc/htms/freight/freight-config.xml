@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!--获得计算运费所需要的信息  -->
+	<!-- 
+		主要信息有：
+		1）调拨单及明细；
+		2）申请单；
+		3）订单单及明细；
+		4）调拨单运价；
+		5）申请单运价；
+		6）申请单运价相关的所有申请单及申请单明细
+	 -->
+	<operation name="getCalculateFreightInfo" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		<!-- 获得引用ID -->
+		<sql name="transRefId"  refCols="freightTransId,freightCorderId,freightShipId" refNames="freightTransId,freightCorderId,freightShipId">
+			SELECT 
+			TB_HTMS_TRANSFER.TRANSID AS freightTransId,
+			TB_HTMS_TRANSFER.CORDERID as freightCorderId,
+			TB_HTMS_TRANSFER.SHIPID AS freightShipId
+			 FROM TB_HTMS_TRANSFER WHERE TB_HTMS_TRANSFER.SAPTRANSCODE=$sapTransferCode 
+		</sql>
+		<sql name="orderBean"  beanClass="com.zzy.htms.sales.custorder.CustOrderBean">
+			SELECT TB_HTMS_CUSTORDER.*
+			FROM TB_HTMS_CUSTORDER
+			WHERE CORDERID=$freightCorderId
+		</sql>
+		<sql name="transferBean"  beanClass="com.zzy.htms.logistic.transfer.TransferBean">
+			SELECT TB_HTMS_TRANSFER.*,
+			       TB_HTMS_CUSTOMERADDR.AREAID
+			FROM TB_HTMS_TRANSFER,TB_HTMS_CUSTOMERADDR 
+			WHERE 
+			  TB_HTMS_TRANSFER.CADDRID=TB_HTMS_CUSTOMERADDR.CADDRID
+			  AND TB_HTMS_TRANSFER.TRANSID=$freightTransId 
+		</sql>
+		<sql name="transDetailList"  beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean">
+			SELECT TB_HTMS_TRANSFERDETAIL.* FROM TB_HTMS_TRANSFERDETAIL,TB_HTMS_TRANSFER 
+			WHERE TB_HTMS_TRANSFER.SAPTRANSCODE=$sapTransferCode
+			AND TB_HTMS_TRANSFERDETAIL.TRANSID=TB_HTMS_TRANSFER.TRANSID
+		</sql>
+		<!-- 如果是手工生成运费，默认调拨单对应的最新一个运价为手工运费运价，其他计算方式不变。2017-10-01 -->
+		<sql name="transPriceBean"  beanClass="com.zzy.htms.logistic.transferprice.TransferPriceBean">
+			SELECT TB_HTMS_TRANSFER_PRICE.* FROM TB_HTMS_TRANSFER_PRICE 
+			WHERE TB_HTMS_TRANSFER_PRICE.TRANSID=$freightTransId ORDER BY PRICEID DESC
+		</sql>
+		<sql name="shipBean"  beanClass="com.zzy.htms.sales.ship.ShipBean">
+			SELECT TB_HTMS_SHIP.* FROM TB_HTMS_SHIP 
+			WHERE TB_HTMS_SHIP.SHIPID=$freightShipId 
+		</sql>		
+		<sql name="shipDetailList"  beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean">
+			SELECT TB_HTMS_SHIPDETAIL.* FROM TB_HTMS_SHIPDETAIL 
+			WHERE TB_HTMS_SHIPDETAIL.SHIPID=$freightShipId 
+		</sql>
+	</operation>
+	
+	<operation name="getCustemerSelfFetchFreight" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness"   >
+		<sql  name="customerBean"  beanClass="com.zzy.htms.sales.customer.CustomerBean">
+			SELECT  * from TB_HTMS_CUSTOMER where  (customerId=$customerId or customerCode = $customerCode)  and isvalidate = 1  and feeid is not null 
+		</sql>
+	</operation>
+	
+	<operation    name="getTransferMergeDataByGroup"  businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" >
+		<sql name="getTransferMergeDataByGroup" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferBeanList" cacheScope="request"  version="2.0"  isEscapeQuotation="true" isEscape="false">
+				<![CDATA[
+						SELECT TB_HTMS_TRANSFER.*,Tb_Htms_Transferdetail.factoryid,Tb_Htms_Transferdetail.productid,
+					    TB_HTMS_TRANSFERDETAIL.applyTonNum as  detailApplyTonNum,
+					    TB_HTMS_TRANSFERDETAIL.applyPackNum as  detailApplyPackNum,
+					    TB_HTMS_TRANSFERDETAIL.codetailid,
+					    TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+						TB_HTMS_CUSTORDER.CORDERCODE,
+	                    TB_HTMS_CUSTORDER.CUSTOMERNAME,    
+	                    TB_HTMS_CUSTORDER.saleMan,
+			            caddr.areaId,
+			            caddr.caddrDetail,		
+			            TB_HTMS_TRANSFER.createTime as approveAgreeTime,			           
+			            TB_HTMS_SHIP.createTime as shipApplyTime 
+                     FROM 
+                        TB_HTMS_CUSTORDER , TB_HTMS_TRANSFER 
+                      left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+                      left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+                     WHERE   TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+                          AND TB_HTMS_TRANSFER.SELFFETCH = '0'  
+                          AND TB_HTMS_TRANSFER.mergerGroup = '$mergerGroup'
+				]]>
+		 </sql>
+	</operation>
+	
+	
+	<operation name="saveFreightInfo" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		<sql name="updateFreight"  isBatch="true" >
+			UPDATE TB_HTMS_FREIGHT SET ISVALIDATE=0 WHERE SAPCODE=$sapCode
+		</sql>
+		<!-- 获得引用ID -->
+		<sql name="saveFreightInfo"  isBatch="true" caiidTable="TB_HTMS_FREIGHT" caiidKey="FREIGHTID" caiidName="FREIGHTID" caiidVar="freightId">
+			INSERT INTO TB_HTMS_FREIGHT(
+				freightId,shipId,transferId,sapCode,itemCode,subItemCode,freightType,freightStyle,freightModel,
+				validateDate,applyTonNum,freightPrice,freightAmount,priceId,carrierPrice,carrierFreight,totalFreight,totalCarrierFreight,
+				planFreightStyle,planFreightModel,planValidateDate,planFreightPrice,planPriceId,planFreight,
+				planTotalFreight,planTotalCarrierFreight,favourFreight,planCarrierPrice,planCarrierFreight,freightBalance,freightTime,isValidate,
+				isEstimate,areaId,routeId
+			)VALUES(
+				$freightId,$shipId,$transferId,$sapCode,$itemCode,$subItemCode,$freightType,$freightStyle,$freightModel,
+				$validateDate,$applyTonNum,$freightPrice,$freightAmount,$priceId,$carrierPrice,$carrierFreight,$totalFreight,$totalCarrierFreight,
+				$planFreightStyle,$planFreightModel,$planValidateDate,$planFreightPrice,$planPriceId,$planFreight,
+				$planTotalFreight,$planTotalCarrierFreight,$favourFreight,$planCarrierPrice,$planCarrierFreight,$freightBalance,$freightTime,1,
+				$isEstimate,$areaId,$routeId
+			)
+		</sql>
+		
+	</operation>
+	
+	<operation name="getTransPriceBean" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		<sql name="transPriceBean"  beanClass="com.zzy.htms.logistic.transferprice.TransferPriceBean">
+			SELECT TB_HTMS_TRANSFER_PRICE.* FROM TB_HTMS_TRANSFER_PRICE 
+			WHERE TB_HTMS_TRANSFER_PRICE.TRANSID=$transId 
+		</sql>
+	</operation>
+	<operation name="saveEstimateFreight" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		
+		<!-- 获得引用ID -->
+		<sql name="saveEstimateFreight"  isBatch="true" caiidTable="ESTIMATE_FREIGHT" caiidKey="ESTIMATEID" caiidName="ESTIMATEID" caiidVar="freightId">
+			INSERT INTO TB_HTMS_ESTIMATE_FREIGHT(
+				freightId,orderId,orderCode,itemCode,itemId,shipId,transferId,freightType,freightStyle,
+				freightModel,validateDate,applyTonNum,freightPrice,freightAmount,priceId,
+				freightTime,userId,areaId,routeId,customerId,estimateStep,totalFreight,carrierPrice,totalCarrierFreight,carrierFreight,isValidate
+			)VALUES(
+				$freightId,$orderId,$orderCode,$itemCode,$itemId,$shipId,$transferId,$freightType,$freightStyle,
+				$freightModel,$validateDate,$applyTonNum,$freightPrice,$freightAmount,$priceId,
+				$freightTime,$userId,$areaId,$routeId,$customerId,$estimateStep,$totalFreight,$carrierPrice,$totalCarrierFreight,$carrierFreight,1
+			)
+		</sql>
+		
+	</operation>
+	
+	<operation name="saveWrongFreight" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		
+		<!-- 获得引用ID -->
+		<sql name="saveWrongFreight"  isBatch="true" caiidTable="TB_HTMS_WRONG_FREIGHT" caiidKey="wrongId" caiidName="wrongId" caiidVar="wrongId">
+			INSERT INTO TB_HTMS_WRONG_FREIGHT(
+				wrongId,SapCode,wrongTime,isValidate
+			)VALUES(
+				$wrongId,$sapCode,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),1
+			)
+		</sql>
+		
+	</operation>
+</root>

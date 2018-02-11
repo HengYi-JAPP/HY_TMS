@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	
+	<!-- 加载用户的系统列表 -->
+	<operation name="updateSystem_of_commonSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="modify"  forward="" >
+		<!-- 删除用户原有的系统定义信息 -->
+		<sql name="deleteUserSystem"  isBatch="true" >
+			DELETE FROM TB_WSM_USER_SYSTEM WHERE USERID=$userId AND SYSID=$_sysId
+		</sql>	
+		<!-- 记录用户当前的系统定义信息 -->
+		<!-- __USER_SYSTEM_LIST___  修改之后要修改mydbc-xml-conf.properties文件中的__USER_SYSTEM_LIST变量值 -->
+		<sql name="updateUserSystem"  isBatch="true" >
+			INSERT INTO TB_WSM_USER_SYSTEM (USERID,SYSID,USERORDER,ISSELECTED,ISSHOW)
+			VALUES($userId,$_sysId,$_userOrder,$_isSelect,$_isShow)
+		</sql>	
+		<forward name="listAction">jsp/portal/website/pesonal/system/list.jsp</forward>
+	</operation>
+	
+	
+	<!-- 用户end -->
+</root>

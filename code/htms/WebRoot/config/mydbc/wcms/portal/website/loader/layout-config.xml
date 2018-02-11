@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 加载当前频道的布局列表 -->
+	<operation name="loadLayout_of_commonSystem" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="list"  forward="" >
+		<!-- 系统定义的当前频道的布局列表 -->
+		<!-- __LAYOUT_LIST___  修改之后要修改mydbc-xml-conf.properties文件中的__LAYOUT_LIST变量值 -->
+		<sql name="layoutList"  beanClass="com.mobilecn.portal.layout.LayoutBean" cacheName="__LAYOUT_LIST___" cacheScope="session" >
+			SELECT TB_WSM_LAYOUT.* FROM TB_WSM_LAYOUT WHERE
+			 TB_WSM_LAYOUT.CHANNELID=$channelId AND 
+			 TB_WSM_LAYOUT.DEFAULTSHOW=1 AND 
+			 TB_WSM_LAYOUT.ISVALIDATE = 1  
+			 ORDER BY TB_WSM_LAYOUT.DEFAULTORDER		 
+		</sql>	
+		<sql name="userLayoutList"  beanClass="com.mobilecn.portal.layout.LayoutBean" cacheName="userLayoutList" cacheScope="session" >
+			SELECT TB_WSM_USER_LAYOUT.* FROM TB_WSM_USER_LAYOUT WHERE
+			 TB_WSM_USER_LAYOUT.CHANNELID=$channelId AND 
+			 TB_WSM_USER_LAYOUT.USERID=$userId 
+			 ORDER BY TB_WSM_USER_LAYOUT.SHOWORDER		 
+		</sql>	
+		<sql name="channelHeight"  cacheType="single" cacheName="channelShowHeight" cacheScope="request" >
+			SELECT SHOWHEIGHT AS channelShowHeight FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>	
+		<forward name="listPage">jsp/index.jsp</forward>
+	</operation>
+	
+	<!-- 用户end -->
+</root>

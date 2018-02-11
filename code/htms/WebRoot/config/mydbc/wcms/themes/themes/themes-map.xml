@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.themes.ThemesBean">
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="sysCode" javaType="java.lang.String" column="SYSCODE" colType=""/>
+		<map property="themesId" javaType="java.lang.String" column="THEMESID" colType=""/>
+		<map property="themesName" javaType="java.lang.String" column="THEMESNAME" colType=""/>
+		<map property="themesCode" javaType="java.lang.String" column="THEMESCODE" colType=""/>
+		<map property="themesDesc" javaType="java.lang.String" column="THEMESDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="isDefault" javaType="java.lang.String" column="ISDEFAULT" colType=""/>
+		<map property="showOrder" javaType="java.lang.Integer" column="SHOWORDER" colType=""/>
+	</bean>
+
+</root>

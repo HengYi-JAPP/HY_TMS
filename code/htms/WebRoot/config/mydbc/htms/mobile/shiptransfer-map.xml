@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.mobile.ShipTransferBean">
+		<map property="shipId" javaType="int" column="shipId"  colType=""/>
+		<map property="shipDetailId" javaType="String" column="shipDetailId"  colType=""/>
+		
+		<map property="applyStatus" javaType="int" column="applyStatus"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		<map property="corderCode" javaType="String" column="corderCode"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+		<map property="caddrDetail" javaType="String" column="caddrDetail"  colType=""/>
+		<map property="unitPrice" javaType="String" column="unitPrice"  colType=""/>
+		<map property="caddrContactor" javaType="String" column="caddrContactor"  colType=""/>
+		<map property="caddrTelephone" javaType="String" column="caddrTelephone"  colType=""/>
+		<map property="factoryName" javaType="String" column="factoryName"  colType=""/>
+		
+		<map property="selfFetch" javaType="String" column="selfFetch"  colType=""/>		
+		<map property="fetchDriver" javaType="String" column="fetchDriver"  colType=""/>		
+		<map property="fetchMobile" javaType="String" column="fetchMobile"  colType=""/>		
+		<map property="fetchCar" javaType="String" column="fetchCar"  colType=""/>		
+		<map property="isUrgent" javaType="String" column="isUrgent"  colType=""/>
+		
+		<map property="transStatus" javaType="int" column="transStatus"  colType=""/>
+		<map property="transId" javaType="String" column="transId"  colType=""/>
+		
+		<map property="shipNotice" javaType="String" column="shipNotice"  colType=""/>
+		<map property="sendStatus" javaType="String" column="sendStatus"  colType=""/>
+		
+		<map property="freightPrice" javaType="String" column="freightPrice"  colType=""/>
+		<map property="freight" javaType="String" column="freight"  colType=""/>
+		<map property="freightModel" javaType="String" column="freightModel"  colType=""/>
+		
+	</bean>
+</root>

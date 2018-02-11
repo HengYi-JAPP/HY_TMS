@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+ 	<operation name="loadAllScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="list">
+		<sql name="loadAllScheduleTask" beanClass="com.zzy.privilege.task.ScheduleTaskBean" cacheName="scheduleTaskList" cacheScope="request" ><![CDATA[
+			SELECT * FROM TB_HTMS_TASKSCHEDULE WHERE TASKNAME LIKE '%$taskNameSH%' AND ISVALIDATE=1 ORDER BY TASKID DESC
+		]]></sql>
+	</operation>
+	
+	
+	 <!-- [ScheduleTaskBean] 新增  -->
+	 <operation name="addScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="add" afterInvoke="reloadTask">
+		<sql name="insert" caiidTable="TB_HTMS_TASKSCHEDULE" caiidKey="TASKID" caiidName="TASKID" caiidVar="taskId" ><![CDATA[
+			INSERT INTO TB_HTMS_TASKSCHEDULE(TASKID,TASKNAME,TASKDESC,TASKINTERVAL,TASKTIMEUNIT,TASKCLASS,ISUSE,STARTDATETIME,EDNDATETIME,ISVALIDATE,TASKTYPE,TASKVALUE)
+			VALUES($taskId,$taskName,$taskDesc,$taskInterval,$taskTimeUnit,$taskClass,$isUse,$startDatetime,$ednDateTime,$isValidate,$taskType,$taskValue)
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listScheduleTask]]></forward>
+	</operation>
+
+	 <!-- [ScheduleTaskBean] 列表查询  -->
+	 <operation name="listScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="list">
+		<sql name="count"><![CDATA[
+			SELECT COUNT(*) AS total   FROM TB_HTMS_TASKSCHEDULE WHERE TASKNAME LIKE '%$taskNameSH%' AND ISVALIDATE=1
+		]]></sql>
+		<sql name="list" beanClass="com.zzy.privilege.task.ScheduleTaskBean" cacheName="scheduleTaskList" cacheScope="request" isPage="true" pageField=""><![CDATA[
+			SELECT * FROM TB_HTMS_TASKSCHEDULE WHERE TASKNAME LIKE '%$taskNameSH%' AND ISVALIDATE=1 ORDER BY TASKID DESC
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/privilege/task/list.jsp]]></forward>
+	</operation>
+
+	 <!-- [ScheduleTaskBean] 查看/预览  -->
+	 <operation name="viewScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="view">
+		<sql name="view" beanClass="com.zzy.privilege.task.ScheduleTaskBean" cacheName="scheduleTaskBean" cacheScope="request" ><![CDATA[
+			SELECT *  FROM TB_HTMS_TASKSCHEDULE WHERE TASKID=$taskId
+		]]></sql>
+		<forward name="modifyPage"><![CDATA[jsp/privilege/task/modify.jsp]]></forward>
+		<forward name="viewPage"><![CDATA[jsp/privilege/task/view.jsp]]></forward>
+	</operation>
+
+	 <!-- [ScheduleTaskBean] 修改 -->
+	 <operation name="modifyScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="modify"  afterInvoke="reloadTask">
+		<sql name="modify" ><![CDATA[
+			UPDATE TB_HTMS_TASKSCHEDULE SET
+				TASKID=$taskId,
+				TASKNAME=$taskName,
+				TASKDESC=$taskDesc,
+				TASKINTERVAL=$taskInterval,
+				TASKTIMEUNIT=$taskTimeUnit,
+				TASKCLASS=$taskClass,
+				ISUSE=$isUse,
+				STARTDATETIME=$startDatetime,
+				EDNDATETIME=$ednDateTime,
+				ISVALIDATE=$isValidate,
+				TASKTYPE=$taskType,
+				TASKVALUE=$taskValue
+			WHERE TASKID=$taskId
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listScheduleTask]]></forward>
+	</operation>
+	
+	 <operation name="doScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="list" afterInvoke="afterDoScheduleTask" >
+		<sql name="view"  beanClass="com.zzy.privilege.task.ScheduleTaskBean" cacheName="scheduleTaskBean" cacheScope="request" ><![CDATA[
+			SELECT *  FROM TB_HTMS_TASKSCHEDULE WHERE TASKID=$taskId
+		]]></sql>
+		<forward name="listPage"><![CDATA[contoller.do?operation=listScheduleTask]]></forward>
+	</operation>
+
+	 <!-- [ScheduleTaskBean] 删除  -->
+	 <operation name="deleteScheduleTask" businessClass="com.zzy.privilege.task.ScheduleTaskBusiness" invokeMethod="delete" afterInvoke="reloadTask">
+		<sql name="delete">
+			DELETE FROM  TB_HTMS_TASKSCHEDULE WHERE TASKID=$checkTaskId
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listScheduleTask]]></forward>
+	</operation>
+</root>

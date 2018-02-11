@@ -1,0 +1,11 @@
+#for tests only !
+#Sat Jan 20 15:28:20 CST 2018
+jco.destination.pool_capacity=30
+jco.client.lang=zh
+jco.client.ashost=192.168.0.225
+jco.client.user=RFC_EOS
+jco.destination.peak_limit=10
+jco.client.sysnr=00
+jco.destination.expiration_time=50000
+jco.client.passwd=RFC_EOS
+jco.client.client=222

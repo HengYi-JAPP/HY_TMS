@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toAddWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' AND SYSID IN(
+			  SELECT TB_WSM_COLUMN.SYSID FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webRef'  AND TB_WSM_COLUMN.ISVALIDATE=1
+			  )
+			   ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webRef'  AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/portal/console/plugins/webref/add.jsp]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_REF WHERE INFOID IN (SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId)
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId
+		</sql>	
+		<sql name="insert"   caiidName="TB_WSM_INFO_COLUMN" caiidVar="refColumnInfoId">
+		INSERT INTO TB_WSM_INFO_REF (INFOID,REFNAME,REFLINK,REFDESC,CREATOR,CREATETIME,ISVALIDATE)
+		VALUES($refColumnInfoId,$refName,$refLink,$refDesc,$userId,$createTime,$isValidate)
+		</sql>
+		<sql name="insert"  >
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($refColumnInfoId,$columnId,0,0,0,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listWebRef</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="list" forward="" cacheParams="columnIdSH,refNameSH,curpage" cacheScopes="page,page,session">
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' AND SYSID IN(
+			  SELECT TB_WSM_COLUMN.SYSID FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webRef' AND TB_WSM_COLUMN.ISVALIDATE=1
+			  )
+			   ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webRef' AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		
+		<sql name="count">
+			 SELECT COUNT(TB_WSM_INFO_REF.INFOID) AS total 
+			FROM TB_WSM_INFO_REF,TB_WSM_INFO_COLUMN 
+			WHERE  TB_WSM_INFO_COLUMN.COLUMNID LIKE '%$columnIdSH%' AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_REF.INFOID AND TB_WSM_INFO_REF.REFNAME LIKE '%$refNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.webref.WebRefBean"
+			cacheName="webRefList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_REF.* 
+				FROM TB_WSM_INFO_REF,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID LIKE '%$columnIdSH%' AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_REF.INFOID AND TB_WSM_INFO_REF.REFNAME LIKE '%$refNameSH%' 
+				ORDER BY TB_WSM_INFO_REF.CREATETIME DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/webref/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_REF WHERE INFOID=$checkInfoId
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE INFOID=$checkInfoId
+		</sql>		
+		<forward name="listAction">contoller.do?operation=listWebRef</forward>
+	</operation>
+	
+	<!--webref实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="toViewWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="view" forward="">
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' AND SYSID IN(
+			  SELECT TB_WSM_COLUMN.SYSID FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webRef' AND TB_WSM_COLUMN.ISVALIDATE=1
+			  )
+			   ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webRef'  AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT TB_WSM_COLUMN.*  FROM TB_WSM_COLUMN,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_COLUMN.COLUMNID=TB_WSM_COLUMN.COLUMNID AND TB_WSM_INFO_COLUMN.INFOID=$infoId
+		</sql>
+		<forward name="modifyPage"><![CDATA[contoller.do?operation=viewWebRef]]></forward>
+		<forward name="viewPage"><![CDATA[contoller.do?operation=viewWebRef]]></forward>
+	</operation>
+	<operation name="viewWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.webref.WebRefBean"
+			cacheName="webRefViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_INFO_REF WHERE  INFOID=$infoId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/webref/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/webref/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifyWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_REF SET 	
+		 	REFNAME=$refName,
+		 	REFLINK=$refLink,
+		 	REFDESC=$refDesc,
+		 	MODIFIER=$userId,
+			MODIFYTIME=$modifyTime
+		 WHERE  INFOID=$infoId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listWebRef]]></forward>
+	</operation>
+</root>

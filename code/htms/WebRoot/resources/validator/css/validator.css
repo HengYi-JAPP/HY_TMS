@@ -1,0 +1,52 @@
+
+
+
+.normal-messsbox-validator{
+	heigth:24px;
+	line-heigth:24px;
+	position:absolute;
+	float:left;
+	text-align:left;
+	vertical-align:middle;
+	display:block;
+	paddig-left:20px;	
+	font-size:12px; 
+	font-family:宋体; 
+	font-weight:bold;
+	font-color:black;
+	letter-spacing:2px;
+	color:black;
+}
+.correct-messsbox-validator{
+	heigth:24px;
+	line-heigth:24px;
+	position:absolute;
+	float:left;
+	text-align:left;
+	vertical-align:middle;
+	background:white;
+	display:block;
+	paddig-left:20px;	
+	font-size:12px; 
+	font-family:宋体; 
+	font-weight:bold;
+	font-color:green;
+	letter-spacing:2px;
+	color:green;
+}
+.error-messsbox-validator{
+	heigth:24px;
+	line-heigth:24px;
+	position:absolute;
+	float:left;
+	text-align:left;
+	vertical-align:middle;
+	display:block;
+	paddig-left:20px;	
+	font-size:12px; 
+	font-family:宋体; 
+	font-weight:bold;
+	font-color:red;
+	letter-spacing:2px;
+	color:red;
+}

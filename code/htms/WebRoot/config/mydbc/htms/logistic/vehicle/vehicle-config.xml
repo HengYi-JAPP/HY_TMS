@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+
+	<!-- 新增派车单时查询车辆信息 -->
+	<operation name="checkVehicleExist" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list"   forward="" >
+		<sql name="vehicleList" beanClass="com.zzy.htms.logistic.vehicle.VehicleBean" cacheType="list" cacheName="vehicleList" cacheScope="request">
+			<![CDATA[
+					SELECT TB_HTMS_VEHICLE.* 
+			    FROM TB_HTMS_VEHICLE 
+			    WHERE 
+			    vehicleNo=$vehicleNo
+			    AND carrierId=$login_user_carrier_id
+				]]>
+			</sql>
+	</operation>
+	<!-- 新增派车单时如果车辆信息不存在，则插入车辆信息 -->
+	<operation name="addNewVehicle" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list"   forward="" >
+		<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_VEHICLE" caiidKey="vehicleId" caiidName="vehicleId" caiidVar="vehicleId" >
+			<![CDATA[
+				INSERT INTO TB_HTMS_VEHICLE ( vehicleId, carrierId, vehicleCode, vehicleNo,  isValidate) 
+		        VALUES($vehicleId,$login_user_carrier_id,$vehicleCode,$vehicleNo,1) 
+			]]>
+		</sql>
+		<sql name="vehicleList" beanClass="com.zzy.htms.logistic.vehicle.VehicleBean" cacheType="list" cacheName="vehicleList" cacheScope="request">
+		<![CDATA[
+				SELECT TB_HTMS_VEHICLE.* 
+		    FROM TB_HTMS_VEHICLE 
+		    WHERE 
+		    vehicleNo=$vehicleNo 
+		    AND vehicleCode=$vehicleCode 
+		    AND carrierId=$login_user_carrier_id
+			]]>
+			</sql>
+	</operation>
+	
+	<operation name="addVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_VEHICLE" caiidKey="vehicleId" caiidName="vehicleId" caiidVar="vehicleId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_VEHICLE ( vehicleId, carrierId, vehicleCode, 
+				        vehicleNo, vehicleMaxTon, vehicleLength, vehicleWidth, 
+				        vehicleHeight, vehiclePersonNum, vehicleDesc, isValidate) 
+				        VALUES($vehicleId,$carrierId,$vehicleCode,$vehicleNo,$vehicleMaxTon,$vehicleLength,$vehicleWidth,$vehicleHeight,$vehiclePersonNum,$vehicleDesc,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listVehicle]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				        ,TB_HTMS_CARRIER.carrierCode ,TB_HTMS_CARRIER.carrierArea 
+				        ,TB_HTMS_CARRIER.carrierContactor 
+				        ,TB_HTMS_CARRIER.carrierTelephone ,TB_HTMS_CARRIER.isValidate 
+				    FROM TB_HTMS_CARRIER ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/vehicle/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="listVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" loadCacheForm="vehicleForm">
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_VEHICLE 
+				    WHERE TB_HTMS_VEHICLE.vehicleCode LIKE'%$vehicleCodeSH%' AND 
+				        TB_HTMS_VEHICLE.vehicleNo LIKE'%$vehicleNoSH%' AND TB_HTMS_VEHICLE.CARRIERID=$login_user_carrier_id
+				        AND TB_HTMS_VEHICLE.ISVALIDATE='1'
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.vehicle.VehicleBean" cacheType="list" cacheName="vehicleList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_VEHICLE.vehicleId ,TB_HTMS_VEHICLE.carrierId 
+				        ,TB_HTMS_VEHICLE.vehicleCode ,TB_HTMS_VEHICLE.vehicleNo 
+				        ,TB_HTMS_VEHICLE.vehicleMaxTon ,TB_HTMS_VEHICLE.vehicleLength 
+				        ,TB_HTMS_VEHICLE.vehicleWidth ,TB_HTMS_VEHICLE.vehicleHeight 
+				        ,TB_HTMS_VEHICLE.vehiclePersonNum ,TB_HTMS_VEHICLE.vehicleDesc 
+				        ,TB_HTMS_VEHICLE.isValidate 
+				    FROM TB_HTMS_VEHICLE 
+				    WHERE TB_HTMS_VEHICLE.vehicleCode LIKE'%$vehicleCodeSH%' AND 
+				        TB_HTMS_VEHICLE.vehicleNo LIKE'%$vehicleNoSH%' AND TB_HTMS_VEHICLE.CARRIERID=$login_user_carrier_id
+				        AND TB_HTMS_VEHICLE.ISVALIDATE='1'
+				    ORDER BY TB_HTMS_VEHICLE.vehicleId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/vehicle/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="viewVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.logistic.VehicleBean" cacheType="bean" cacheName="vehicleViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_VEHICLE.vehicleId ,TB_HTMS_VEHICLE.carrierId 
+				        ,TB_HTMS_VEHICLE.vehicleCode ,TB_HTMS_VEHICLE.vehicleNo 
+				        ,TB_HTMS_VEHICLE.vehicleMaxTon ,TB_HTMS_VEHICLE.vehicleLength 
+				        ,TB_HTMS_VEHICLE.vehicleWidth ,TB_HTMS_VEHICLE.vehicleHeight 
+				        ,TB_HTMS_VEHICLE.vehiclePersonNum ,TB_HTMS_VEHICLE.vehicleDesc 
+				        ,TB_HTMS_VEHICLE.isValidate 
+				    FROM TB_HTMS_VEHICLE 
+				    WHERE TB_HTMS_VEHICLE.vehicleId = $vehicleId 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				        ,TB_HTMS_CARRIER.carrierCode ,TB_HTMS_CARRIER.carrierArea 
+				        ,TB_HTMS_CARRIER.carrierContactor 
+				        ,TB_HTMS_CARRIER.carrierTelephone ,TB_HTMS_CARRIER.isValidate 
+				    FROM TB_HTMS_CARRIER ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_CARRIER" beanClass="com.zzy.htms.logistic.CarrierBean" cacheType="bean" cacheName="carrierViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				        ,TB_HTMS_CARRIER.carrierCode ,TB_HTMS_CARRIER.carrierArea 
+				        ,TB_HTMS_CARRIER.carrierContactor 
+				        ,TB_HTMS_CARRIER.carrierTelephone ,TB_HTMS_CARRIER.isValidate 
+				    FROM TB_HTMS_CARRIER , TB_HTMS_VEHICLE 
+				    WHERE TB_HTMS_CARRIER.carrierId =TB_HTMS_VEHICLE.carrierId AND 
+				        TB_HTMS_VEHICLE.vehicleId = $vehicleId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/logistic/vehicle/modify.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/logistic/vehicle/view.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_VEHICLE 
+				    SET isValidate = '0'
+				    WHERE TB_HTMS_VEHICLE.vehicleId = $vehicleId 
+					]]></content>
+			</sql>
+			<sql name="INSERT" caiidTable="TB_HTMS_VEHICLE" caiidKey="vehicleId" caiidName="vehicleId" caiidVar="vehicleId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_VEHICLE ( vehicleId, carrierId, vehicleCode, 
+				        vehicleNo, vehicleMaxTon, vehicleLength, vehicleWidth, 
+				        vehicleHeight, vehiclePersonNum, vehicleDesc, isValidate) 
+				        VALUES($vehicleId,$carrierId,$vehicleCode,$vehicleNo,$vehicleMaxTon,$vehicleLength,$vehicleWidth,$vehicleHeight,$vehiclePersonNum,$vehicleDesc,'1') 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listVehicle]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="UPDATE"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_VEHICLE 
+				    SET isValidate = '0'
+				    WHERE TB_HTMS_VEHICLE.vehicleId = $vehicleId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listVehicle]]></address>
+		</forward>
+	</operation>
+</root>

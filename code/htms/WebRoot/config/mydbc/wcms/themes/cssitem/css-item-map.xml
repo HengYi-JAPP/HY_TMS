@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.cssitem.CssItemBean">
+		<map property="cssId" javaType="java.lang.String" column="CSSID" colType=""/>
+		<map property="itemId" javaType="java.lang.String" column="ITEMID" colType=""/>
+		<map property="itemValue" javaType="java.lang.String" column="ITEMVALUE" colType=""/>
+		<map property="itemCode" javaType="java.lang.String" column="ITEMCODE" colType=""/>
+		<map property="itemVar" javaType="java.lang.String" column="ITEMVAR" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+
+</root>

@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="addSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"  caiidTable="TB_SYSTEM" caiidKey="SYSID"  caiidName="TB_SYSTEM" caiidVar="sysId">
+		INSERT INTO TB_SYSTEM (SYSID,SYSCODE,SYSNAME,SYSPATH,SYSDESC,SHOWORDER,ISVALIDATE,ISINSIDE)
+		VALUES($sysId,$sysCode,$sysName,$sysPath,$sysDesc,$showOrder,$isValidate,$isInside)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSystem</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="list" forward="" cacheParams="sysNameSH,sysCodeSH,curpage" cacheScopes="session,session,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_SYSTEM WHERE  SYSNAME LIKE '%$sysNameSH%' AND SYSCODE LIKE '%$sysCodeSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request" isPage="true" pageField="SYSID"><![CDATA[
+			    SELECT * FROM TB_SYSTEM WHERE SYSNAME LIKE '%$sysNameSH%' AND SYSCODE LIKE '%$sysCodeSH%' ORDER BY SHOWORDER
+		]]></sql>
+		<forward name="listPage">jsp/privilege/system/list.jsp</forward>
+	</operation>
+
+	<!-- 删除系统，同时要删除相关的资源、栏目、频道、权限、角色、用户组及相关关系,删除站点文件、样式 -->
+	<operation name="deleteSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="delete" forward="">
+		
+		
+		<!-- 清除系统相关的信息 -->
+		<sql name="deleteNews" isBatch="true">
+			DELETE FROM TB_WSM_INFO_NEWS WHERE INFOID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteWebRef" isBatch="true">
+			DELETE FROM TB_WSM_INFO_REF WHERE INFOID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteWebPart" isBatch="true">
+			DELETE FROM TB_WSM_INFO_WEB WHERE INFOID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteSqlQueryList" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY_LIST WHERE QUERYID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteSqlQueryParams" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY_PARAMS WHERE QUERYID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteSqlQuery" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY WHERE QUERYID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		
+		<sql name="deleteServiceList" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE_LIST WHERE SERVICEID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteServiceParams" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE_PARAMS WHERE SERVICEID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		<sql name="deleteService" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE WHERE SERVICEID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>
+		
+		<sql name="deleteLink" isBatch="true">
+			DELETE FROM TB_WSM_LINK WHERE LINKID IN(SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId))
+		</sql>		
+		<sql name="deleteLinkGroup" isBatch="true">
+			DELETE FROM TB_WSM_LINK_GROUP WHERE  SYSID=$checkSysId
+		</sql>
+		<sql name="deleteLinkType" isBatch="true">
+			DELETE FROM TB_WSM_LINK_TYPE WHERE SYSID=$checkSysId
+		</sql>
+		<sql name="deleteInfoColumn" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId)
+		</sql>
+		<!-- 删除布局单元、布局、组合频道、栏目、频道 -->
+		<sql name="deleteUnitColumn" isBatch="true">
+			DELETE FROM TB_WSM_UNIT_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteUnit" isBatch="true">
+			DELETE FROM TB_WSM_UNIT WHERE LAYOUTID IN(SELECT LAYOUTID FROM TB_WSM_LAYOUT WHERE CHANNELID IN(SELECT CHANNELID FROM TB_WSM_CHANNEL WHERE SYSID=$checkSysId))
+		</sql>		
+		<sql name="deleteLayout" isBatch="true">
+			DELETE  FROM TB_WSM_LAYOUT WHERE CHANNELID IN(SELECT CHANNELID FROM TB_WSM_CHANNEL WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteChannelColumn" isBatch="true">
+			DELETE  FROM TB_WSM_CHANNEL_COLUMN WHERE SYSID=$checkSysId
+		</sql>
+		<sql name="deleteColumnParams" isBatch="true">
+			DELETE  FROM TB_WSM_COLUMN_PARAMS WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId)
+		</sql>
+		<!-- 清除用户权限及个性化信息 -->
+		<sql name="deleteColumnRole" isBatch="true">
+			DELETE  FROM tb_wsm_role_column WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteChannelRole" isBatch="true">
+			DELETE  FROM tb_wsm_role_channel WHERE CHANNELID IN(SELECT CHANNELID FROM TB_WSM_CHANNEL WHERE SYSID=$checkSysId)
+		</sql>
+		
+		<sql name="deleteUserSystem" isBatch="true">
+			DELETE  FROM tb_wsm_user_system WHERE SYSID=$checkSysId
+		</sql>		
+		<sql name="deleteUserChannel" isBatch="true">
+			DELETE  FROM tb_wsm_user_channel WHERE CHANNELID IN(SELECT CHANNELID FROM TB_WSM_CHANNEL WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteUserLayout" isBatch="true">
+			DELETE  FROM tb_wsm_user_layout WHERE CHANNELID IN(SELECT CHANNELID FROM TB_WSM_CHANNEL WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteUserColumn" isBatch="true">
+			DELETE  FROM tb_wsm_user_column WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId)
+		</sql>
+		
+		<sql name="deleteColumn" isBatch="true">
+			DELETE  FROM TB_WSM_COLUMN WHERE SYSID=$checkSysId
+		</sql>		
+		<sql name="deleteChannel" isBatch="true">
+			DELETE  FROM TB_WSM_CHANNEL WHERE SYSID=$checkSysId
+		</sql>
+		
+		<!-- 清除系统关联主题 -->
+		<sql name="deleteSystemThemes" isBatch="true">
+			DELETE FROM TB_WSM_SYS_THEMES WHERE SYSID=$checkSysId
+		</sql>
+		<!-- 清除系统权限 -->
+		<sql name="deleteUserGroup" isBatch="true">
+			DELETE FROM TB_WSM_USER_GROUP WHERE GROUPID IN(SELECT GROUPID FROM TB_WSM_GROUP WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteGroupRole" isBatch="true">
+			DELETE FROM TB_WSM_GROUP_ROLE WHERE GROUPID IN(SELECT GROUPID FROM TB_WSM_GROUP WHERE SYSID=$checkSysId)
+		</sql>
+		<sql name="deleteRolePriv" isBatch="true">
+			DELETE FROM TB_WSM_ROLE_PRIVILEGE WHERE ROLEID IN(SELECT ROLEID FROM TB_WSM_ROLE WHERE SYSID=$checkSysId)
+		</sql>		
+		<sql name="deleteRole" isBatch="true">
+			DELETE FROM TB_WSM_ROLE WHERE SYSID=$checkSysId
+		</sql>	
+		<sql name="deleteGroup" isBatch="true">
+			DELETE FROM TB_WSM_GROUP WHERE SYSID=$checkSysId
+		</sql>	
+		<sql name="deletePriv" isBatch="true">
+			DELETE FROM TB_WSM_PRIVILEGE WHERE SYSID=$checkSysId
+		</sql>
+		<sql name="deleteSysConf" isBatch="true">
+			DELETE FROM TB_WSM_SYS_CONF WHERE SYSID = $checkSysId
+		</sql>
+		<sql name="deleteBackGroup" isBatch="true">
+			DELETE FROM TB_WSM_SYS_BACKGROUND WHERE SYSID = $checkSysId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_SYSTEM WHERE SYSID = $checkSysId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSystem</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemViewBean" cacheScope="request">
+			 SELECT *   FROM TB_SYSTEM WHERE SYSID = $sysId
+		</sql>
+		<forward name="modifyPage">jsp/privilege/system/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/system/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_SYSTEM SET 
+			SYSCODE=$sysCode,
+			SYSNAME=$sysName,
+			SYSPATH=$sysPath,
+			SYSDESC=$sysDesc,
+			SHOWORDER=$showOrder,			
+			ISINSIDE=$isInside
+		 WHERE  SYSID = $sysId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSystem</forward>
+	</operation>
+	
+	
+	<!-- 为系统绑定默认用户组  start-->
+	<!-- 下面的SQL用了比较多的IN 和GROUP BY，在数据量大的情况可能会比较慢-->
+	<operation name="toBindGroupForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view"   forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemViewBean" cacheScope="request">
+			  SELECT *   FROM TB_SYSTEM WHERE SYSID = $checkSysId
+		</sql>
+		<sql name="groupOfSystem" beanClass="com.mobilecn.privilege.user.UserBean"  isEscape="false"
+			cacheName="groupOfSystem" cacheScope="request">
+			 SELECT  TB_WSM_GROUP.*  FROM TB_WSM_GROUP WHERE TB_WSM_GROUP.SYSID = $checkSysId AND ISDEFAULT='1' 
+		</sql>
+		<sql name="canSelectGroup" beanClass="com.mobilecn.privilege.user.UserBean"  isEscape="false"
+			cacheName="canSelectUser" cacheScope="request">
+			   SELECT  TB_WSM_GROUP.*  FROM TB_WSM_GROUP  WHERE TB_WSM_GROUP.SYSID = $privSysId AND TB_WSM_GROUP.GROUPID NOT IN (SELECT  TB_WSM_GROUP.DEFAULTID  FROM TB_WSM_GROUP WHERE TB_WSM_GROUP.SYSID = $checkSysId AND ISDEFAULT='1' )
+		</sql>
+		<forward name="viewPage">jsp/privilege/system/bindGroup.jsp</forward>
+	</operation>
+	
+	<operation name="doBindGroupForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="delete"    forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_GROUP WHERE  TB_WSM_GROUP.SYSID = $privSysId AND ISDEFAULT='1' 
+		</sql>	
+		<forward name="listAction">contoller.do?operation=bindGroupForSystem</forward>
+	</operation>
+	<operation name="bindGroupForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="add" beforeInvoke="rebuildLevelRelative" forward="" >		
+		<sql name="insert" caiidName="TB_WSM_GROUP" caiidVar="groupId"><!-- 由于是复制，需要重新生成ID并调整层级关系 -->
+		INSERT INTO TB_WSM_GROUP(GROUPID,GROUPNAME,GROUPPARENTID,GROUPDESC,SHOWORDER,ISVALIDATE,SYSID,ISDEFAULT,DEFAULTID)
+		 VALUES($groupId,$groupName,$groupParentId,$groupDesc,$showOrder,'1',$sysId,'1',$oldGroupId)		 
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSystem</forward>
+	</operation>
+	<!-- 为系统绑定默认用户组  end -->
+	
+	
+	<!-- 为系统初始化权限，包括：用户组、角色、权限  start-->
+	<!-- 
+	
+	子系统的权限按如下结构初始化：
+	系统管理
+	 |____用户组管理(_subsystem_group_manage)
+	 |         |____ 新增(_subsystem_group_manage_new)
+	 |                 |__保存(_subsystem_group_manage_new_save)
+	 |                 |__返回(_subsystem_group_manage_new_return)
+	 |         |____ 删除(_subsystem_group_manage_delete)
+	 |         |____ 修改(_subsystem_group_manage_modify)
+	 |                 |__保存(_subsystem_group_manage_modify_save)
+	 |                 |__返回(_subsystem_group_manage_modify_return)
+	 |         |____ 查看(_subsystem_group_manage_view)
+	 |                 |__返回(_subsystem_group_manage_view_return)
+	 |         |____ 有效(_subsystem_group_manage_isvalidate)
+	 |         |____ 搜索(_subsystem_group_manage_search)
+	 |         |____ 重置(_subsystem_group_manage_reset)
+	 |         |____ 增加用户(_subsystem_group_manage_adduser)
+	 |                 |__保存(_subsystem_group_manage_adduser_save)
+	 |                 |__返回(_subsystem_group_manage_adduser_return)
+	 |         |____ 分配角色(_subsystem_group_manage_assignrole)
+	 |                 |__保存(_subsystem_group_manage_assignrole_save)
+	 |                 |__返回(_subsystem_group_manage_assignrole_return)
+	 |
+	 |____角色管理(_subsystem_role_manage)
+	 |         |____ 新增(_subsystem_role_manage_new)
+	 |                 |__保存(_subsystem_role_manage_new_save)
+	 |                 |__返回(_subsystem_role_manage_new_return)
+	 |         |____ 删除(_subsystem_role_manage_delete)
+	 |         |____ 修改(_subsystem_role_manage_modify)
+	 |                 |__保存(_subsystem_role_manage_modify_save)
+	 |                 |__返回(_subsystem_role_manage_modify_return)
+	 |         |____ 查看(_subsystem_role_manage_view)
+	 |                 |__返回(_subsystem_role_manage_view_return)
+	 |         |____ 有效(_subsystem_role_manage_isvalidate)
+	 |         |____ 搜索(_subsystem_role_manage_search)
+	 |         |____ 重置(_subsystem_role_manage_reset)
+	 |         |____ 分配权限(_subsystem_role_manage_assignprivilege)
+	 |                 |__保存(_subsystem_role_manage_assignprivilege_save)
+	 |                 |__返回(_subsystem_role_manage_assignprivilege_return)
+	 |
+	 |____权限管理(_subsystem_privilege_manage)
+	           |____ 新增(_subsystem_privilege_manage_new)
+	                   |__保存(_subsystem_privilege_manage_new_save)
+	                   |__返回(_subsystem_privilege_manage_new_retrun)
+	           |____ 删除(_subsystem_privilege_manage_delete)
+	           |____ 修改(_subsystem_privilege_manage_modify)
+	                   |__保存(_subsystem_privilege_manage_modify_save)
+	                   |__返回(_subsystem_privilege_manage_modify_return)
+	           |____ 查看(_subsystem_privilege_manage_view)
+	                   |__返回(_subsystem_privilege_manage_view_return)
+	           |____ 有效(_subsystem_privilege_manage_isvalidate)
+	           |____ 搜索(_subsystem_privilege_manage_search)
+	           |____ 重置(_subsystem_privilege_manage_reset)
+ 	
+ 	为了便于子系统的权限分配与验证，上述权限的各个项的权限编码均编写为硬代码
+	           
+	            
+	 -->
+	<operation name="toInitPrivilegeForSubsystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemViewBean" cacheScope="request"><![CDATA[
+			 SELECT * FROM TB_SYSTEM WHERE SYSID = $checkSysId
+		]]></sql>		
+		<forward name="viewPage">contoller.do?operation=initPrivilegeForSubsystem</forward>
+	</operation>
+	<operation name="initPrivilegeForSubsystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view" beforeInvoke="beforeInitSystemPrivilege"  forward="" >
+		<!-- 初始化权限之前先删除系统相关的信息-->
+		<sql name="deleteGroupUser" ><![CDATA[
+			  DELETE  FROM TB_WSM_USER_GROUP WHERE TB_WSM_USER_GROUP.GROUPID IN( SELECT GROUPID FROM TB_WSM_GROUP WHERE TB_WSM_GROUP.SYSID = $checkSysId)
+		]]></sql>
+		<sql name="deleteGroupRole" ><![CDATA[
+			  DELETE  FROM TB_WSM_GROUP_ROLE WHERE TB_WSM_GROUP_ROLE.GROUPID IN( SELECT GROUPID FROM TB_WSM_GROUP WHERE TB_WSM_GROUP.SYSID = $checkSysId)
+		]]></sql>
+		<sql name="deleteRole" ><![CDATA[
+			  DELETE  FROM TB_WSM_ROLE_PRIVILEGE WHERE TB_WSM_ROLE_PRIVILEGE.ROLEID IN( SELECT ROLEID FROM TB_WSM_ROLE WHERE TB_WSM_ROLE.SYSID = $checkSysId)
+		]]></sql>		
+		<sql name="deleteRole" ><![CDATA[
+			  DELETE  FROM TB_WSM_ROLE WHERE SYSID = $checkSysId
+		]]></sql>
+		<sql name="deleteRole" ><![CDATA[
+			  DELETE  FROM TB_WSM_GROUP WHERE SYSID = $checkSysId
+		]]></sql>
+		<sql name="deleteRole" ><![CDATA[
+			  DELETE  FROM TB_WSM_PRIVILEGE WHERE SYSID = $checkSysId
+		]]></sql>
+		
+		<sql name="privSystemId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privSystemId"><![CDATA[		 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privSystemId, CONCAT($sysName,'{$mydbc.system.init.manager#}'), CONCAT($sysCode,'._manage'), CONCAT($sysName,'{$mydbc.system.init.privilege.manager#}'), '/', '-1', $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<!-- 初始化权限系统相关的信息:只插入基础信息，其他关联信息（组中用户、组的角色，和其他角色与权限）需要权限系统管理员手工分配-->
+		<sql name="privManageId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privManageId"><![CDATA[		 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privManageId, '{$mydbc.system.init.system.manager#}', CONCAT($sysCode,'._role_manage'), CONCAT($sysName,'{$mydbc.system.init.privilege.manager#}'), '/', $privSystemId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupId, '{$mydbc.system.init.usergroup.manager#}', CONCAT($sysCode,'._subsystem_group_manage'), '{$mydbc.system.init.usergroup.manager#}', concat('contoller.do?operation=listSubSystemGroup&curpage=1&groupNameSH=&sysId=',$checkSysId), $privManageId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAddId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAddId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAddId, '{$mydbc.system.init.add#}', CONCAT($sysCode,'._subsystem_group_manage_new'), '{$mydbc.system.init.usergroup.add#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAddSaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAddSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAddSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_group_manage_new_save'), '{$mydbc.system.init.usergroup.add.save#}', '/', $privGroupAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAddReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAddReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAddReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_group_manage_new_return'), '{$mydbc.system.init.usergroup.add.return#}', '/', $privGroupAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>	
+		<sql name="privGroupDeleteId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupDeleteId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupDeleteId, '{$mydbc.system.init.delete#}', CONCAT($sysCode,'._subsystem_group_manage_delete'), '{$mydbc.system.init.usergroup.delete#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupModifyId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupModifyId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupModifyId, '{$mydbc.system.init.modify#}', CONCAT($sysCode,'._subsystem_group_manage_modify'), '{$mydbc.system.init.usergroup.modify#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupModifySaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupModifySaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupModifySaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_group_manage_modify_save'), '{$mydbc.system.init.usergroup.save#}', '/', $privGroupModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupModifyReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupModifyReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupModifyReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_group_manage_modify_return'), '{$mydbc.system.init.usergroup.modify.return#}', '/', $privGroupModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupViewId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupViewId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupViewId, '{$mydbc.system.init.view#}', CONCAT($sysCode,'._subsystem_group_manage_view'), '{$mydbc.system.init.usergroup.view#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupViewRetrunId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupViewRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupViewRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_group_manage_view_return'), '{$mydbc.system.init.usergroup.view.return#}', '/', $privGroupViewId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupIsValidateId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupIsValidateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupIsValidateId, '{$mydbc.system.init.isvalidate#}', CONCAT($sysCode,'._subsystem_group_manage_isvalidate'), '{$mydbc.system.init.isvalidate#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>		
+		<sql name="privGroupSearchId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupSearchId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupSearchId, '{$mydbc.system.init.search#}', CONCAT($sysCode,'._subsystem_group_manage_search'), '{$mydbc.system.init.usergroup.search#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupResetId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupResetId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupResetId, '{$mydbc.system.init.reset#}', CONCAT($sysCode,'._subsystem_group_manage_reset'), '{$mydbc.system.init.usergroup.reset#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAddUserId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAddUserId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAddUserId, '{$mydbc.system.init.user.add#}', CONCAT($sysCode,'._subsystem_group_manage_adduser'), '{$mydbc.system.init.usergroup.adduser#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAddUserSaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAddUserSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAddUserSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_group_manage_adduser_save'), '{$mydbc.system.init.usergroup.adduser.save#}', '/', $privGroupAddUserId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAddUserReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAddUserReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAddUserReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_group_manage_adduser_return'), '{$mydbc.system.init.usergroup.adduser.return#}', '/', $privGroupAddUserId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAssignRoleId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAssignRoleId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAssignRoleId, '{$mydbc.system.init.role.asign#}', CONCAT($sysCode,'._subsystem_group_manage_assignrole'), '{$mydbc.system.init.usergroup.asign#}', '/', $privGroupId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAssignRoleSaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAssignRoleSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAssignRoleSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_group_manage_assignrole_save'), '{$mydbc.system.init.usergroup.asign.save#}', '/', $privGroupAssignRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privGroupAssignRoleRetrunId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privGroupAssignRoleRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privGroupAssignRoleRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_group_manage_assignrole_return'), '{$mydbc.system.init.usergroup.asign.return#}', '/', $privGroupAssignRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		
+		 
+		<sql name="privRoleId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleId, '{$mydbc.system.init.role.manager#}', CONCAT($sysCode,'._subsystem_role_manage'), '{$mydbc.system.init.role.manager#}', concat('contoller.do?operation=listSubSystemRole&curpage=1&roleNameSH=&sysId=',$checkSysId), $privManageId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleAddId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleAddId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleAddId, '{$mydbc.system.init.add#}', CONCAT($sysCode,'._subsystem_role_manage_new'), '{$mydbc.system.init.add#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleAddSaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleAddSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleAddSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_role_manage_new_save'), '{$mydbc.system.init.save#}', '/', $privRoleAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleAddReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleAddReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleAddReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_role_manage_new_return'), '{$mydbc.system.init.return#}', '/', $privRoleAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleDeleteId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleDeleteId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleDeleteId, '{$mydbc.system.init.delete#}', CONCAT($sysCode,'._subsystem_role_manage_delete'), '{$mydbc.system.init.delete#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleModifyId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleModifyId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleModifyId, '{$mydbc.system.init.modify#}', CONCAT($sysCode,'._subsystem_role_manage_modify'), '{$mydbc.system.init.modify#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleModifySaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleModifySaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleModifySaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_role_manage_modify_save'), '{$mydbc.system.init.save#}', '/', $privRoleModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleModifyReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleModifyReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleModifyReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_role_manage_modify_return'), '{$mydbc.system.init.return#}', '/', $privRoleModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>		
+		<sql name="privRoleViewId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleViewId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleViewId, '{$mydbc.system.init.view#}', CONCAT($sysCode,'._subsystem_role_manage_view'), '{$mydbc.system.init.view#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleViewReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleViewReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleViewReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_role_manage_view_return'), '{$mydbc.system.init.return#}', '/', $privRoleViewId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleIsValidateId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleIsValidateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleIsValidateId, '{$mydbc.system.init.isvalidate#}', CONCAT($sysCode,'._subsystem_role_manage_isvalidate'), '{$mydbc.system.init.isvalidate#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleSearchId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleSearchId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleSearchId, '{$mydbc.system.init.search#}', CONCAT($sysCode,'._subsystem_role_manage_search'), '{$mydbc.system.init.search#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleResetId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleResetId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleResetId, '{$mydbc.system.init.reset#}', CONCAT($sysCode,'._subsystem_role_manage_reset'), '{$mydbc.system.init.reset#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleAssignPrivilegeId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleAssignPrivilegeId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleAssignPrivilegeId, '{$mydbc.system.init.privilege.asign#}', CONCAT($sysCode,'._subsystem_role_manage_assignprivilege'), '{$mydbc.system.init.privilege.asign#}', '/', $privRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleAssignPrivilegeSaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleAssignPrivilegeSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleAssignPrivilegeSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_role_manage_assignprivilege_save'), '{$mydbc.system.init.save#}', '/', $privRoleAssignPrivilegeId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privRoleAssignPrivilegeReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privRoleAssignPrivilegeReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privRoleAssignPrivilegeReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_role_manage_assignprivilege_return'), '{$mydbc.system.init.return#}', '/', $privRoleAssignPrivilegeId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+		<sql name="privPrivId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivId, '{$mydbc.system.init.privilege.manager#}', CONCAT($sysCode,'._subsystem_privilege_manage'), '{$mydbc.system.init.privilege.manager#}', concat('contoller.do?operation=listSubSystemPrivilege&curpage=1&privNameSH=&sysId=',$checkSysId), $privManageId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivAddId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivAddId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivAddId, '{$mydbc.system.init.add#}', CONCAT($sysCode,'._subsystem_privilege_manage_new'), '{$mydbc.system.init.add#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivAddSaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivAddSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivAddSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_privilege_manage_new_save'), '{$mydbc.system.init.save#}', '', $privPrivAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivAddRetrunId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivAddRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivAddRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_privilege_manage_new_retrun'), '{$mydbc.system.init.return#}', '', $privPrivAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivDeleteId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivDeleteId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivDeleteId, '{$mydbc.system.init.delete#}', CONCAT($sysCode,'._subsystem_privilege_manage_delete'), '{$mydbc.system.init.delete#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivModifyId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivModifyId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivModifyId, '{$mydbc.system.init.modify#}', CONCAT($sysCode,'._subsystem_privilege_manage_modify'), '{$mydbc.system.init.modify#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivModifySaveId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivModifySaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivModifySaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_privilege_manage_modify_save'), '{$mydbc.system.init.save#}(', '', $privPrivModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivModifyReturnId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivModifyReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivModifyReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_privilege_manage_modify_return'), '{$mydbc.system.init.return#}', '', $privPrivModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+		<sql name="privPrivViewId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivViewId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivViewId, '{$mydbc.system.init.view#}', CONCAT($sysCode,'._subsystem_privilege_manage_view'), '{$mydbc.system.init.view#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivViewRetrunId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivViewRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivViewRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_privilege_manage_view_return'), '{$mydbc.system.init.return#}', '', $privPrivViewId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivIsValidateId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivIsValidateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivIsValidateId, '{$mydbc.system.init.validate#}', CONCAT($sysCode,'._subsystem_privilege_manage_isvalidate'), '{$mydbc.system.init.validate#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivSearchId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivSearchId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivSearchId, '{$mydbc.system.init.search#}', CONCAT($sysCode,'._subsystem_privilege_manage_search'), '{$mydbc.system.init.search#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="privPrivResetId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="privPrivResetId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($privPrivResetId, '{$mydbc.system.init.reset#}', CONCAT($sysCode,'._subsystem_privilege_manage_reset'), '{$mydbc.system.init.reset#}', '', $privPrivId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+		
+		<!-- 
+	
+	子系统的权限按如下结构初始化：
+	门户配置管理(_subsystem_portal_manage)
+	 |____频道管理(_subsystem_channel_manage)
+	 |         |____ 新增(_subsystem_channel_manage_new)
+	 |                 |__保存(_subsystem_channel_manage_new_save)
+	 |                 |__返回(_subsystem_channel_manage_new_return)
+	 |         |____ 删除(_subsystem_channel_manage_delete)
+	 |         |____ 修改(_subsystem_channel_manage_modify)
+	 |                 |__保存(_subsystem_channel_manage_modify_save)
+	 |                 |__返回(_subsystem_channel_manage_modify_return)
+	 |         |____ 查看(_subsystem_channel_manage_view)
+	 |                 |__返回(_subsystem_channel_manage_view_return)
+	 |         |____ 有效(_subsystem_channel_manage_isvalidate)
+	 |         |____ 搜索(_subsystem_channel_manage_search)
+	 |         |____ 重置(_subsystem_channel_manage_reset)
+	 |         |____ 分配角色(_subsystem_channel_manage_assignrole)
+	 |         |       |__保存(_subsystem_channel_manage_assignrole_save)
+	 |         |       |__返回(_subsystem_channel_manage_assignrole_return)
+	 |         |____ 布局管理(_subsystem_layout_manage)
+	 |                 |____ 新增(_subsystem_layout_manage_new)
+	 |                 |       |__保存(_subsystem_layout_manage_new_save)
+	 |                 |       |__返回(_subsystem_layout_manage_new_return)
+	 |                 |____ 删除(_subsystem_layout_manage_delete)
+	 |                 |____ 修改(_subsystem_layout_manage_modify)
+	 |                 |       |__保存(_subsystem_layout_manage_modify_save)
+	 |                 |       |__返回(_subsystem_layout_manage_modify_return)
+	 |                 |____ 查看(_subsystem_layout_manage_view)
+	 |                 |       |__返回(_subsystem_layout_manage_view_return)
+	 |                 |____ 有效(_subsystem_layout_manage_isvalidate)
+	 |                 |____ 搜索(_subsystem_layout_manage_search)
+	 |                 |____ 重置(_subsystem_layout_manage_reset)
+	 |                 |____ 布局设计(_subsystem_layout_designer)
+	 |                         |__向上插入行(_subsystem_layout_designer_up_row)
+	 |                         |__向下插入行(_subsystem_layout_designer_down_row)	
+	 |                         |__向左插入列(_subsystem_layout_designer_left_col)
+	 |                         |__向右插入列(_subsystem_layout_designer_right_col)
+	 |                         |__拆成行(_subsystem_layout_designer_split_row)
+	 |                         |__拆成列(_subsystem_layout_designer_split_col)
+	 |                         |__向上合并(_subsystem_layout_designer_up_merge)
+	 |                         |__向下合并(_subsystem_layout_designer_down_merge)
+	 |                         |__向左合并(_subsystem_layout_designer_left_merge)
+	 |                         |__向右合并(_subsystem_layout_designer_right_merge)
+	 |                         |__删除行(_subsystem_layout_designer_delete_row)
+	 |                         |__删除列(_subsystem_layout_designer_delete_col)
+	 |                         |__保存模板(_subsystem_layout_designer_save_template)
+	 |                         |__发布模板(_subsystem_layout_designer_publish_template)
+	 |                         |__定制栏目(_subsystem_layout_designer_define_column)
+	 |____栏目管理(_subsystem_column_manage)
+	           |____ 新增(_subsystem_column_manage_new)
+	                   |__保存(_subsystem_column_manage_new_save)
+	                   |__返回(_subsystem_column_manage_new_return)
+	           |____ 删除(_subsystem_column_manage_delete)
+	           |____ 修改(_subsystem_column_manage_modify)
+	                   |__保存(_subsystem_column_manage_modify_save)
+	                   |__返回(_subsystem_column_manage_modify_return)
+	           |____ 查看(_subsystem_column_manage_view)
+	                   |__返回(_subsystem_column_manage_view_return)
+	           |____ 有效(_subsystem_column_manage_isvalidate)
+	           |____ 搜索(_subsystem_column_manage_search)
+	           |____ 重置(_subsystem_column_manage_reset)
+	           |____ 分配角色(_subsystem_column_manage_assignrole)
+	                   |__保存(_subsystem_column_manage_assignrole_save)
+	                   |__返回(_subsystem_column_manage_assignrole_return)
+	 -->
+	<sql name="portalManageId"  caiidName="TB_WSM_PRIVILEGE" caiidVar="portalManageId"><![CDATA[		 
+			INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+			VALUES ($portalManageId, '{$mydbc.system.portal.config#}', CONCAT($sysCode,'_subsystem_portal_manage'), CONCAT($sysName,'{$mydbc.system.init.privilege.manager#}'), '/', $privSystemId, $funPrivTypeId, '1', '1', $checkSysId)
+	]]></sql>
+	<sql name="channelManageId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelManageId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelManageId, '{$mydbc.system.portal.channel.manager#}', CONCAT($sysCode,'._subsystem_channel_manage'), '{$mydbc.system.portal.channel.manager#}', concat('contoller.do?operation=listSubSystemChannel&curpage=1&channelNameSH=&sysId=',$checkSysId), $portalManageId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelAddId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelAddId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelAddId, '{$mydbc.system.init.add#}', CONCAT($sysCode,'._subsystem_channel_manage_new'), '{$mydbc.system.portal.channel.add#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelAddSaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelAddSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelAddSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_channel_manage_new_save'), '{$mydbc.system.portal.channel.add.save#}', '/', $channelAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelAddReturnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelAddReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelAddReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_channel_manage_new_return'), '{$mydbc.system.portal.channel.add.return#}', '/', $channelAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelDeleteId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelDeleteId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelDeleteId, '{$mydbc.system.init.delete#}', CONCAT($sysCode,'._subsystem_channel_manage_delete'), '{$mydbc.system.portal.channel.delete#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelModifyId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelModifyId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelModifyId, '{$mydbc.system.init.modify#}', CONCAT($sysCode,'._subsystem_channel_manage_modify'), '{$mydbc.system.portal.channel.modify#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelModifySaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelModifySaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelModifySaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_channel_manage_modify_save'), '{$mydbc.system.portal.channel.modify.save#}', '/', $channelModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelModifyReturnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelModifyReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelModifyReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_channel_manage_modify_return'), '{$mydbc.system.portal.channel.modify.return#}', '/', $channelModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelViewId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelViewId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelViewId, '{$mydbc.system.init.view#}', CONCAT($sysCode,'._subsystem_channel_manage_view'), '{$mydbc.system.portal.channel.view#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelViewRetrunId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelViewRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelViewRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_channel_manage_view_return'), '{$mydbc.system.portal.channel.view.return#}', '/', $channelViewId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelIsValidateId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelIsValidateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelIsValidateId, '{$mydbc.system.init.isvalidate#}', CONCAT($sysCode,'._subsystem_channel_manage_isvalidate'), '{$mydbc.system.init.isvalidate#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelSearchId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelSearchId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelSearchId, '{$mydbc.system.init.search#}', CONCAT($sysCode,'._subsystem_channel_manage_search'), '{$mydbc.system.portal.channel.search#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelResetId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelResetId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelResetId, '{$mydbc.system.init.reset#}', CONCAT($sysCode,'._subsystem_channel_manage_reset'), '{$mydbc.system.portal.channel.reset#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="channelAssignRoleId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelAssignRoleId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelAssignRoleId, '{$mydbc.system.init.role.asign#}', CONCAT($sysCode,'._subsystem_channel_manage_assignrole'), '{$mydbc.system.portal.channel.asign#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelAssignRoleSaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelAssignRoleSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelAssignRoleSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_channel_manage_assignrole_save'), '{$mydbc.system.portal.channel.asign.save#}', '/', $channelAssignRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="channelAssignRoleRetrunId" caiidName="TB_WSM_PRIVILEGE" caiidVar="channelAssignRoleRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($channelAssignRoleRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_channel_manage_assignrole_return'), '{$mydbc.system.portal.channel.asign.return#}', '/', $channelAssignRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutManageId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutManageId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutManageId, '{$mydbc.system.portal.layout.manager#}', CONCAT($sysCode,'._subsystem_layout_manage'), '{$mydbc.system.portal.layout.manager#}', '/', $channelManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="layoutAddId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutAddId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutAddId, '{$mydbc.system.init.add#}', CONCAT($sysCode,'._subsystem_layout_manage_new'), '{$mydbc.system.portal.layout.add#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutAddSaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutAddSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutAddSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_layout_manage_new_save'), '{$mydbc.system.portal.layout.add.save#}', '/', $layoutAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutAddReturnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutAddReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutAddReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_layout_manage_new_return'), '{$mydbc.system.portal.layout.add.return#}', '/', $layoutAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutDeleteId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutDeleteId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutDeleteId, '{$mydbc.system.init.delete#}', CONCAT($sysCode,'._subsystem_layout_manage_delete'), '{$mydbc.system.portal.layout.delete#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutModifyId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutModifyId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutModifyId, '{$mydbc.system.init.modify#}', CONCAT($sysCode,'._subsystem_layout_manage_modify'), '{$mydbc.system.portal.layout.modify#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutModifySaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutModifySaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutModifySaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_layout_manage_modify_save'), '{$mydbc.system.portal.layout.modify.save#}', '/', $layoutModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutModifyReturnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutModifyReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutModifyReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_layout_manage_modify_return'), '{$mydbc.system.portal.layout.modify.return#}', '/', $layoutModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutViewId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutViewId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutViewId, '{$mydbc.system.init.view#}', CONCAT($sysCode,'._subsystem_layout_manage_view'), '{$mydbc.system.portal.layout.view#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutViewRetrunId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutViewRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutViewRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_layout_manage_view_return'), '{$mydbc.system.portal.layout.view.return#}', '/', $layoutViewId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutIsValidateId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutIsValidateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutIsValidateId, '{$mydbc.system.init.isvalidate#}', CONCAT($sysCode,'._subsystem_layout_manage_isvalidate'), '{$mydbc.system.init.isvalidate#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutSearchId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutSearchId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutSearchId, '{$mydbc.system.init.search#}', CONCAT($sysCode,'._subsystem_layout_manage_search'), '{$mydbc.system.portal.layout.search#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutResetId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutResetId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutResetId, '{$mydbc.system.init.reset#}', CONCAT($sysCode,'._subsystem_layout_manage_reset'), '{$mydbc.system.portal.layout.reset#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="layoutDesignerId" caiidName="TB_WSM_PRIVILEGE" caiidVar="layoutDesignerId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($layoutDesignerId, '{$mydbc.system.portal.layout.design#}', CONCAT($sysCode,'._subsystem_layout_designer'), '{$mydbc.system.portal.layout.design#}', '/', $layoutManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerUpInsertRowId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerUpInsertRowId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerUpInsertRowId, '{$mydbc.system.portal.layout.design.insert.row.up#}', CONCAT($sysCode,'._subsystem_layout_designer_up_row'), '{$mydbc.system.portal.layout.design.insert.row.up#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerUpDownRowId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerUpDownRowId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerUpDownRowId, '{$mydbc.system.portal.layout.design.insert.row.down#}', CONCAT($sysCode,'._subsystem_layout_designer_down_row'), '{$mydbc.system.portal.layout.design.insert.row.down#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="designerLeftColId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerLeftColId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerLeftColId, '{$mydbc.system.portal.layout.design.insert.col.left#}', CONCAT($sysCode,'._subsystem_layout_designer_left_col'), '{$mydbc.system.portal.layout.design.insert.col.left#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="designerRightColId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerRightColId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerRightColId, '{$mydbc.system.portal.layout.design.insert.col.right#}', CONCAT($sysCode,'._subsystem_layout_designer_right_col'), '{$mydbc.system.portal.layout.design.insert.col.right#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerSplitRowId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerSplitRowId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerSplitRowId, '{$mydbc.system.portal.layout.design.split.row#}', CONCAT($sysCode,'._subsystem_layout_designer_split_row'), '{$mydbc.system.portal.layout.design.split.row#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerSplitColId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerSplitColId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerSplitColId, '{$mydbc.system.portal.layout.design.split.col#}', CONCAT($sysCode,'._subsystem_layout_designer_split_col'), '{$mydbc.system.portal.layout.design.split.col#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerUpMergeId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerUpMergeId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerUpMergeId, '{$mydbc.system.portal.layout.design.merge.up#}', CONCAT($sysCode,'._subsystem_layout_designer_up_merge'), '{$mydbc.system.portal.layout.design.merge.up#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerDownMergeId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerDownMergeId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerDownMergeId, '{$mydbc.system.portal.layout.design.merge.down#}', CONCAT($sysCode,'._subsystem_layout_designer_down_merge'), '{$mydbc.system.portal.layout.design.merge.down#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerLeftMergeId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerLeftMergeId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerLeftMergeId, '{$mydbc.system.portal.layout.design.merge.left#}', CONCAT($sysCode,'._subsystem_layout_designer_left_merge'), '{$mydbc.system.portal.layout.design.merge.left#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerRightMergeId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerRightMergeId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerRightMergeId, '{$mydbc.system.portal.layout.design.merge.right#}', CONCAT($sysCode,'._subsystem_layout_designer_right_merge'), '{$mydbc.system.portal.layout.design.merge.right#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="designerDeleteRowId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerDeleteRowId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerDeleteRowId, '{$mydbc.system.portal.layout.design.delete.row#}', CONCAT($sysCode,'._subsystem_layout_designer_delete_row'), '{$mydbc.system.portal.layout.design.delete.row#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerDeleteColId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerDeleteColId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerDeleteColId, '{$mydbc.system.portal.layout.design.delete.col#}', CONCAT($sysCode,'._subsystem_layout_designer_delete_col'), '{$mydbc.system.portal.layout.design.delete.col#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerSaveTemplateId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerSaveTemplateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerSaveTemplateId, '{$mydbc.system.portal.layout.design.tmpl.save#}', CONCAT($sysCode,'._subsystem_layout_designer_save_template'), '{$mydbc.system.portal.layout.design.tmpl.save#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerPublishTemplateId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerPublishTemplateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerPublishTemplateId, '{$mydbc.system.portal.layout.design.tmpl.publish#}', CONCAT($sysCode,'._subsystem_layout_designer_publish_template'), '{$mydbc.system.portal.layout.design.tmpl.publish#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="designerDefineColumnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="designerDefineColumnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($designerDefineColumnId, '{$mydbc.system.portal.layout.design.column#}', CONCAT($sysCode,'._subsystem_layout_designer_define_column'), '{$mydbc.system.portal.layout.design.column#}', '/', $layoutDesignerId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnManageId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnManageId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnManageId, '{$mydbc.system.portal.column.manager#}', CONCAT($sysCode,'._subsystem_column_manage'), '{$mydbc.system.portal.column.manager#}', concat('contoller.do?operation=listSubSystemColumn&curpage=1&columnNameSH=&sysId=',$checkSysId), $portalManageId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="columnAddId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnAddId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnAddId, '{$mydbc.system.init.add#}', CONCAT($sysCode,'._subsystem_column_manage_new'), '{$mydbc.system.portal.column.add#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnAddSaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnAddSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnAddSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_column_manage_new_save'), '{$mydbc.system.portal.column.add.save#}', '/', $columnAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnAddReturnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnAddReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnAddReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_column_manage_new_return'), '{$mydbc.system.portal.column.add.return#}', '/', $columnAddId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnDeleteId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnDeleteId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnDeleteId, '{$mydbc.system.init.delete#}', CONCAT($sysCode,'._subsystem_column_manage_delete'), '{$mydbc.system.portal.column.delete#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnModifyId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnModifyId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnModifyId, '{$mydbc.system.init.modify#}', CONCAT($sysCode,'._subsystem_column_manage_modify'), '{$mydbc.system.portal.column.modify#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnModifySaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnModifySaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnModifySaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_column_manage_modify_save'), '{$mydbc.system.portal.column.modify.save#}', '/', $columnModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnModifyReturnId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnModifyReturnId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnModifyReturnId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_column_manage_modify_return'), '{$mydbc.system.portal.column.modify.return#}', '/', $columnModifyId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnViewId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnViewId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnViewId, '{$mydbc.system.init.view#}', CONCAT($sysCode,'._subsystem_column_manage_view'), '{$mydbc.system.portal.column.view#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnViewRetrunId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnViewRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnViewRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_column_manage_view_return'), '{$mydbc.system.portal.column.view.return#}', '/', $columnViewId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+
+	<sql name="columnIsValidateId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnIsValidateId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnIsValidateId, '{$mydbc.system.init.isvalidate#}', CONCAT($sysCode,'._subsystem_column_manage_isvalidate'), '{$mydbc.system.init.isvalidate#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnSearchId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnSearchId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnSearchId, '{$mydbc.system.init.search#}', CONCAT($sysCode,'._subsystem_column_manage_search'), '{$mydbc.system.portal.column.search#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnResetId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnResetId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnResetId, '{$mydbc.system.init.reset#}', CONCAT($sysCode,'._subsystem_column_manage_reset'), '{$mydbc.system.portal.column.reset#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnAssignRoleId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnAssignRoleId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnAssignRoleId, '{$mydbc.system.init.role.asign#}', CONCAT($sysCode,'._subsystem_column_manage_assignrole'), '{$mydbc.system.portal.column.asign#}', '/', $columnManageId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnAssignRoleSaveId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnAssignRoleSaveId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnAssignRoleSaveId, '{$mydbc.system.init.save#}', CONCAT($sysCode,'._subsystem_column_manage_assignrole_save'), '{$mydbc.system.portal.column.asign.save#}', '/', $columnAssignRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>
+	<sql name="columnAssignRoleRetrunId" caiidName="TB_WSM_PRIVILEGE" caiidVar="columnAssignRoleRetrunId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($columnAssignRoleRetrunId, '{$mydbc.system.init.return#}', CONCAT($sysCode,'._subsystem_column_manage_assignrole_return'), '{$mydbc.system.portal.column.asign.return#}', '/', $columnAssignRoleId, $operationPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>	
+		
+		
+	<sql name="informationManageId" caiidName="TB_WSM_PRIVILEGE" caiidVar="informationManageId"><![CDATA[			 
+				INSERT INTO TB_WSM_PRIVILEGE (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID)
+				VALUES ($informationManageId, '{$mydbc.system.portal.info.manage#}', CONCAT($sysCode,'._subsystem_information_manage'), '{$mydbc.system.portal.info.manage#}', '/', $privSystemId, $funPrivTypeId, '1', '1', $checkSysId)
+		]]></sql>	
+		
+				
+		<sql name="insertRole"  caiidName="TB_WSM_ROLE" caiidVar="newSysytemRoleId"><![CDATA[		 
+				insert into TB_WSM_ROLE (ROLEID, ROLENAME, ROLEDESC, ISVALIDATE, SYSID,ISDEFAULT)
+				values ($newSysytemRoleId,  CONCAT($sysName,'{$mydbc.system.init.role.admin#}'), CONCAT($sysName,'{$mydbc.system.init.role.admin#}'), '1', $checkSysId,'1')
+		]]></sql>
+		<sql name="insertGroup"  caiidName="TB_WSM_group" caiidVar="newSystemgroupId"><![CDATA[		 
+				insert into TB_WSM_group (GROUPID, GROUPNAME, GROUPPARENTID, GROUPDESC, ISVALIDATE, SHOWORDER, SYSID)
+				values ($newSystemgroupId, CONCAT($sysName,'{$mydbc.system.init.usergroup#}'), '-1', '', '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="insertManageGroup"  caiidName="TB_WSM_group" caiidVar="newSystemManageGroupId"><![CDATA[	 
+				insert into TB_WSM_group (GROUPID, GROUPNAME, GROUPPARENTID, GROUPDESC, ISVALIDATE, SHOWORDER, SYSID)
+				values ($newSystemManageGroupId,'{$mydbc.system.init.admingroup#}', $newSystemgroupId, '', '1', '1', $checkSysId)
+		]]></sql>
+		<sql name="insertGroupRole"  ><![CDATA[	 
+				insert into TB_WSM_group_role (GROUPID, ROLEID)
+				values ($newSystemManageGroupId, $newSysytemRoleId)
+		]]></sql>
+		<sql name="bindRolePrivilege"  >	<![CDATA[
+				insert into TB_WSM_role_privilege (ROLEID, PRIVID)
+				select  $newSysytemRoleId, PRIVID from TB_WSM_PRIVILEGE where SYSID=$checkSysId AND ISVALIDATE='1'
+		]]></sql>
+		<forward name="viewPage">contoller.do?operation=listSystem</forward>
+	</operation>
+	
+	<!-- 为系统初始化权限 end -->
+	
+	<!-- 绑定系统主题 -->
+	<operation name="toAddThemesForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view"   forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="sysViewBean" cacheScope="request">
+			  SELECT  TB_SYSTEM.*  FROM TB_SYSTEM  WHERE SYSID = $checkSysId
+		</sql>
+		<sql name="themesOfSystem" beanClass="com.mobilecn.themes.themes.ThemesBean" 
+			cacheName="themesOfSystem" cacheScope="request">
+			  SELECT  TB_WSM_THEMES.*  FROM TB_WSM_THEMES WHERE TB_WSM_THEMES.THEMESID IN (
+			  SELECT  TB_WSM_THEMES.THEMESID  
+			  FROM TB_WSM_SYS_THEMES,TB_WSM_THEMES  
+			  WHERE TB_WSM_SYS_THEMES.THEMESID=TB_WSM_THEMES.THEMESID AND TB_WSM_SYS_THEMES.SYSID =$checkSysId) ORDER BY TB_WSM_THEMES.THEMESID
+		</sql>
+		<sql name="canSelectThemes" beanClass="com.mobilecn.themes.themes.ThemesBean"  
+			cacheName="canSelectThemes" cacheScope="request">
+			 SELECT  TB_WSM_THEMES.*  FROM  TB_WSM_THEMES WHERE TB_WSM_THEMES.ISVALIDATE='1' AND TB_WSM_THEMES.THEMESID NOT IN (
+			  SELECT  TB_WSM_THEMES.THEMESID  
+			  FROM TB_WSM_SYS_THEMES,TB_WSM_THEMES  
+			  WHERE TB_WSM_SYS_THEMES.THEMESID=TB_WSM_THEMES.THEMESID AND TB_WSM_SYS_THEMES.SYSID =$checkSysId) ORDER BY TB_WSM_THEMES.THEMESID
+		</sql>
+		<forward name="viewPage">jsp/privilege/system/bindThemes.jsp</forward>
+	</operation>
+	
+	<operation name="doAddThemesForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="delete"    forward="" >
+		<sql name="delete" >
+			  DELETE FROM  TB_WSM_SYS_THEMES WHERE  SYSID = $checkSysId
+		</sql>
+		<forward name="listAction">contoller.do?operation=addThemesForSystem</forward>
+	</operation>
+	<operation name="addThemesForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true" >
+			 INSERT INTO TB_WSM_SYS_THEMES(SYSID,THEMESID) VALUES($checkSysId,$selectedThemes)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSystem</forward>
+	</operation>
+	
+	<!-- 绑定系统背景 -->
+	<operation name="toAddBackgroundForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view"   forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="sysViewBean" cacheScope="request">
+			  SELECT  TB_SYSTEM.*  FROM TB_SYSTEM  WHERE SYSID = $checkSysId
+		</sql>
+		<sql name="backgroundOfSystem" beanClass="com.mobilecn.themes.background.BackgroundBean" 
+			cacheName="backgroundOfSystem" cacheScope="request">
+			  SELECT  TB_WSM_BACKGROUND.*  FROM TB_WSM_BACKGROUND WHERE TB_WSM_BACKGROUND.BGDID IN (
+			  SELECT  TB_WSM_BACKGROUND.BGDID  
+			  FROM TB_WSM_SYS_BACKGROUND,TB_WSM_BACKGROUND  
+			  WHERE TB_WSM_SYS_BACKGROUND.BGDID=TB_WSM_BACKGROUND.BGDID AND TB_WSM_SYS_BACKGROUND.SYSID =$checkSysId) ORDER BY TB_WSM_BACKGROUND.BGDID
+		</sql>
+		<sql name="canSelectBackground" beanClass="com.mobilecn.themes.background.BackgroundBean"  
+			cacheName="canSelectBackground" cacheScope="request">
+			 SELECT  TB_WSM_BACKGROUND.*  FROM  TB_WSM_BACKGROUND WHERE TB_WSM_BACKGROUND.ISVALIDATE='1' AND TB_WSM_BACKGROUND.BGDID NOT IN (
+			  SELECT  TB_WSM_BACKGROUND.BGDID  
+			  FROM TB_WSM_SYS_BACKGROUND,TB_WSM_BACKGROUND  
+			  WHERE TB_WSM_SYS_BACKGROUND.BGDID=TB_WSM_BACKGROUND.BGDID AND TB_WSM_SYS_BACKGROUND.SYSID =$checkSysId) ORDER BY TB_WSM_BACKGROUND.BGDID
+		</sql>
+		<forward name="viewPage">jsp/privilege/system/bindBackground.jsp</forward>
+	</operation>
+	
+	<operation name="doAddBackgroundForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="delete"    forward="" >
+		<sql name="delete" >
+			  DELETE FROM  TB_WSM_SYS_BACKGROUND WHERE  SYSID = $checkSysId
+		</sql>
+		<forward name="listAction">contoller.do?operation=addBackgroundForSystem</forward>
+	</operation>
+	<operation name="addBackgroundForSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_SYS_BACKGROUND(SYSID,BGDID) VALUES($checkSysId,$selectedBackground)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSystem</forward>
+	</operation>
+	<!-- 用户end -->
+</root>

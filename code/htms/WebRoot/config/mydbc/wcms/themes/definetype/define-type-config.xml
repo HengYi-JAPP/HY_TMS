@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 增加 -->
+	<operation name="addDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_THEMES_DEFINE_TYPE" caiidKey="TDTID"  caiidName="THEMES_DEFINE_TYPE" caiidVar="themeStdtId" >
+		INSERT INTO TB_WSM_THEMES_DEFINE_TYPE (TDTID,TDTCODE,TDTNAME,TDTDESC,TDTICON,THEMESID,ISDEFAULT,SHOWORDER,ISVALIDATE)
+		VALUES($themeStdtId,$tdtCode,$tdtName,$tdtDesc,$tdtIcon,$themesId,$isDefault,$showOrder,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDefineType</forward>
+	</operation>
+
+	<!-- 查询 -->
+	<operation name="listDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="list" forward="" cacheParams="tdtNameSH,tdtCodeSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			SELECT COUNT(*) AS total  FROM TB_WSM_THEMES_DEFINE_TYPE WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId AND TB_WSM_THEMES_DEFINE_TYPE.TDTCODE LIKE '%$tdtCodeSH%' AND  TB_WSM_THEMES_DEFINE_TYPE.TDTNAME LIKE '%$tdtNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.themes.definetype.DefineTypeBean"
+			cacheName="tdtList" cacheScope="request" isPage="true" pageField="TDTID"><![CDATA[
+			SELECT TB_WSM_THEMES_DEFINE_TYPE.*  FROM TB_WSM_THEMES_DEFINE_TYPE  WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId AND TB_WSM_THEMES_DEFINE_TYPE.TDTCODE LIKE '%$tdtCodeSH%'  AND  TB_WSM_THEMES_DEFINE_TYPE.TDTNAME LIKE '%$tdtNameSH%' ORDER BY TB_WSM_THEMES_DEFINE_TYPE.SHOWORDER DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/definetype/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_THEMES_DEFINE_TYPE WHERE TDTID=$checkDefineTypeId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDefineType</forward>
+	</operation>
+	
+	<!-- 查看 -->
+	<operation name="viewDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.definetype.DefineTypeBean"
+			cacheName="tdtViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_THEMES_DEFINE_TYPE WHERE TDTID=$tdtId
+		</sql>	
+		
+		<forward name="modifyPage">jsp/portal/themes/definetype/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/definetype/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改 -->
+	<operation name="modifyDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_THEMES_DEFINE_TYPE SET 
+			TDTNAME=$tdtName,
+			TDTCODE=$tdtCode,
+			TDTDESC=$tdtDesc,
+			TDTICON=$tdtIcon,
+			ISVALIDATE=$isValidate,
+			SHOWORDER=$showOrder,
+			ISDEFAULT=$isDefault
+		 WHERE TDTID=$tdtId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listDefineType]]></forward>
+	</operation>
+	
+	<!-- 排序 -->
+	
+	<operation name="orderDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="list" forward="">
+		<sql name="list" beanClass="com.mobilecn.themes.definetype.DefineTypeBean"
+			cacheName="tdtList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_THEMES_DEFINE_TYPE.*  FROM TB_WSM_THEMES_DEFINE_TYPE  WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId AND TB_WSM_THEMES_DEFINE_TYPE.ISVALIDATE=1 ORDER BY TB_WSM_THEMES_DEFINE_TYPE.SHOWORDER				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/definetype/orderDefineType.jsp</forward>
+	</operation>
+	
+	<operation name="updateDefineTypeOrder" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify" isBatch="true">		
+		 UPDATE TB_WSM_THEMES_DEFINE_TYPE SET 
+			SHOWORDER=$showOrder
+		 WHERE TDTID=$tdtId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=orderDefineType]]></forward>
+	</operation>
+	
+</root>

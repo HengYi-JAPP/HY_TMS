@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="saveHtmsSystemLogs" businessClass="com.zzy.htms.logistic.carrier.CarrierBusiness" invokeMethod="add"  >
+		<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_SYSTEM_LOG" caiidKey="LOGID" caiidName="LOGID" caiidVar="logId"  >
+			INSERT INTO TB_HTMS_SYSTEM_LOG (logId,logCode,logAddress,logDesc,logUser,logTime,logResult,logIp,logMac,isValidate) 
+	        VALUES($logId,$logCode,$logAddress,$logDesc,$logUser,$logTime,$logResult,$logIp,'',1) 
+		</sql>
+	</operation>
+	<operation name="listLog" businessClass="com.zzy.htms.log.HtmsLogBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.log.HtmsLogBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM tb_htms_system_log 
+				    WHERE tb_htms_system_log.logDesc LIKE'%$logDescSH%'
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.log.HtmsLogBean" cacheType="list" cacheName="logList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+			select * from tb_htms_system_log
+				  where  tb_htms_system_log.logDesc LIKE'%$logDescSH%' 
+				    ORDER BY tb_htms_system_log.logTime DESC
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/privilege/log/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="viewLog" businessClass="com.zzy.htms.log.HtmsLogBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.log.HtmsLogBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.log.HtmsLogBean" cacheType="bean" cacheName="logViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT *
+				    FROM tb_htms_system_log 
+				    WHERE tb_htms_system_log.logId = $logId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/privilege/log/view.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteLog" businessClass="com.zzy.htms.log.HtmsLogBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.log.HtmsLogBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM tb_htms_system_log 
+				    WHERE tb_htms_system_log.logId = $logId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listLog]]></address>
+		</forward>
+	</operation>
+</root>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.infotype.InfoTypeBean">
+		<map property="infoTypeId" javaType="java.lang.String" column="INFOTYPEID" colType=""/>
+		<map property="infoTypeName" javaType="java.lang.String" column="INFOTYPENAME" colType=""/>
+		<map property="infoTypeCode" javaType="java.lang.String" column="INFOTYPECODE" colType=""/>
+		<map property="infoTypeDesc" javaType="java.lang.String" column="INFOTYPEDESC" colType=""/>
+		<map property="listLink" javaType="java.lang.String" column="LISTLINK" colType=""/>
+		<map property="indexContentLink" javaType="java.lang.String" column="INDEXCONTENTLINK" colType=""/>
+		<map property="detailContentLink" javaType="java.lang.String" column="DETAILCONTENTLINK" colType=""/>
+		<map property="manageLink" javaType="java.lang.String" column="MANAGELINK" colType=""/>
+		<map property="isImport" javaType="int" column="ISIMPORT" colType=""/>
+		<map property="isDeploy" javaType="int" column="ISDEPLOY" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+
+</root>

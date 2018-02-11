@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="viewCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.customerprice.CustomerPriceBean" cacheType="bean" cacheName="customerPriceBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER_PRICE.*,TB_HTMS_CUSTOMER.CUSTOMERID,TB_HTMS_CUSTOMER.CUSTOMERNAME,tb_dictionary.dicName,tb_dic_type.typeName
+            FROM TB_HTMS_CUSTOMER_PRICE,tb_htms_factory,tb_dictionary,tb_dic_type,TB_HTMS_CUSTOMER
+            WHERE TB_HTMS_CUSTOMER_PRICE.priceId =$priceId AND TB_HTMS_CUSTOMER_PRICE.priceUnit=TB_DICTIONARY.dicId 
+            AND TB_HTMS_CUSTOMER_PRICE.CUSTOMERID=TB_HTMS_CUSTOMER.CUSTOMERID AND TB_HTMS_CUSTOMER_PRICE.priceType=TB_DIC_TYPE.typeId
+					]]></content>
+			</sql>
+			<sql name="priceTypeBean" beanClass="com.zzy.htms.dictionary.transprice.TransPriceBean" cacheType="list" cacheName="priceTypeBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DIC_TYPE WHERE TYPECODE='priceType' ORDER BY TYPEID
+					]]></content>
+			</sql>
+			<sql name="priceUnitBean" beanClass="com.zzy.htms.dictionary.transprice.DicBean" cacheType="list" cacheName="priceUnitBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TB_DIC_TYPE.TYPECODE='priceType' ORDER BY SHOWORDER
+					]]></content>
+			</sql>
+			<sql name="routeViewBean" beanClass="com.zzy.htms.dictionary.transprice.TransPriceBean" cacheType="list" cacheName="routeViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productName,TB_HTMS_FACTORY.factoryName ,TB_HTMS_AREA.areaName,TB_HTMS_ROUTE.routeId
+				         FROM TB_HTMS_ROUTE, TB_HTMS_PRODUCT,TB_HTMS_AREA,TB_HTMS_FACTORY
+				            WHERE TB_HTMS_PRODUCT.productId=TB_HTMS_ROUTE.productId
+								        AND TB_HTMS_AREA.areaId=TB_HTMS_ROUTE.areaId AND TB_HTMS_FACTORY.factoryId=TB_HTMS_ROUTE.factoryId 
+				                AND TB_HTMS_ROUTE.ROUTEID=$checkRouteId
+								    ORDER BY TB_HTMS_ROUTE.routeId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/sales/customerprice/modify.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/sales/customerprice/view.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="listCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" loadCacheForm="customerPriceForm">
+		<method name="默认查询" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_FACTORY" beanClass="com.zzy.htms.dictionary.factory.FactoryBean" cacheType="list" cacheName="factoryList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_FACTORY.factoryId ,TB_HTMS_FACTORY.factoryName 
+				        ,TB_HTMS_FACTORY.factoryCode ,TB_HTMS_FACTORY.factoryDesc 
+				        ,TB_HTMS_FACTORY.factoryAddress 
+				        ,TB_HTMS_FACTORY.factoryContactor 
+				        ,TB_HTMS_FACTORY.factoryTelphone ,TB_HTMS_FACTORY.isVlidate 
+				    FROM TB_HTMS_FACTORY ORDER BY TB_HTMS_FACTORY.factoryId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCT" beanClass="com.zzy.htms.dictionary.product.ProductBean" cacheType="list" cacheName="productList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.CUSTOMERID,TB_HTMS_CUSTOMER.CUSTOMERNAME  FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.CUSTOMERID DESC  
+					]]></content>
+			</sql>
+			</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/customerprice/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="deleteCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<!--<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM  TB_HTMS_CUSTOMER_PRICE 
+				    WHERE TB_HTMS_CUSTOMER_PRICE.priceId = $priceId 
+					]]></content>
+			</sql>
+			-->
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTOMER_PRICE SET
+							isValidate='0'
+						WHERE TB_HTMS_CUSTOMER_PRICE.priceId=$priceId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomerPrice]]></address>
+		</forward>
+	</operation>
+	
+	
+	<!--<operation name="toAddCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.CUSTOMERID,TB_HTMS_CUSTOMER.CUSTOMERNAME  FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.CUSTOMERID DESC  
+					]]></content>
+			</sql>
+			<sql name="price_type_list" beanClass="com.zzy.htms.sales.customerprice.CustomerPriceBean" cacheType="list" cacheName="price_type_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DIC_TYPE WHERE TYPECODE='priceType' ORDER BY TYPEID
+					]]></content>
+			</sql>
+			<sql name="price_unit_list" beanClass="com.zzy.htms.dictionary.transprice.DicBean" cacheType="list" cacheName="price_unit_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TB_DIC_TYPE.TYPECODE='priceType' ORDER BY SHOWORDER
+					]]></content>
+			</sql>
+			<sql name="routeViewBean" beanClass="com.zzy.htms.dictionary.transprice.TransPriceBean" cacheType="list" cacheName="routeViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productName,TB_HTMS_FACTORY.factoryName ,TB_HTMS_AREA.areaName,TB_HTMS_ROUTE.routeId
+				         FROM TB_HTMS_ROUTE, TB_HTMS_PRODUCT,TB_HTMS_AREA,TB_HTMS_FACTORY
+				            WHERE TB_HTMS_PRODUCT.productId=TB_HTMS_ROUTE.productId
+								        AND TB_HTMS_AREA.areaId=TB_HTMS_ROUTE.areaId AND TB_HTMS_FACTORY.factoryId=TB_HTMS_ROUTE.factoryId 
+				                AND TB_HTMS_ROUTE.ROUTEID=$checkRouteId
+								    ORDER BY TB_HTMS_ROUTE.routeId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/customerprice/add.jsp]]></address>
+		</forward>
+	</operation>
+	--><operation name="modifyCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTOMER_PRICE SET
+							priceType = $priceType ,
+							freightModel=$freightModel,
+							CUSTOMERPRICE=$customerPrice,
+							CARRIERPRICE=$carrierPrice,
+							customerOnePrice = $customerOnePrice ,
+							carrierOnePrice=$carrierOnePrice,
+							PRICEUNIT=$priceUnit,
+							VALIDATEDATE=$validateDate,
+							MODIFIER=$userId,
+							MODIFYTIME=$modifyTime,
+							priceStart=$priceStart,
+							priceEnd=$priceEnd
+						WHERE TB_HTMS_CUSTOMER_PRICE.priceId=$priceId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomerPrice]]></address>
+		</forward>
+	</operation>
+	<!--<operation name="addCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTOMER_PRICE" caiidKey="priceId" caiidName="priceId" caiidVar="priceId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTOMER_PRICE(PRICEID,CUSTOMERID,ROUTEID,PRICETYPE,CUSTOMERPRICE,COMPANYPRICE,CARRIERPRICE,PRICESTART,PRICEEND,PRICEUNIT,VALIDATEDATE,CREATOR,CREATETIME,ISVALIDATE)
+			VALUES($priceId,$customerId,$checkRouteId,$priceType,$customerPrice,$companyPrice,$carrierPrice,$priceStart,$priceEnd,$priceUnit,$validateDate,$userId,$createTime,$isValidate)
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomerPrice]]></address>
+		</forward>
+	</operation>
+	
+	--><operation name="listTransferPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"
+		invokeMethod="list" afterInvoke="">
+		<sql name="transprice" beanClass="com.zzy.htms.sales.customer.CustomerBean"><![CDATA[
+			  select TB_HTMS_CUSTOMER_PRICE.*,
+		       TB_HTMS_CUSTOMER.CUSTOMERID,TB_HTMS_CUSTOMER.CUSTOMERNAME,
+		             tb_htms_route.productid,
+		             tb_htms_route.factoryid,
+		             tb_htms_route.areaid,
+		            tb_htms_area.areaname,
+		            tb_htms_product.productname,
+		            tb_htms_factory.factoryname
+		        from TB_HTMS_CUSTOMER_PRICE,TB_HTMS_CUSTOMER, tb_htms_route,tb_htms_area,tb_htms_product,tb_htms_factory
+		         where tb_htms_route.routeid=TB_HTMS_CUSTOMER_PRICE.routeid and TB_HTMS_CUSTOMER_PRICE.CUSTOMERID=TB_HTMS_CUSTOMER.CUSTOMERID and tb_htms_route.areaid=tb_htms_area.areaid and tb_htms_route.factoryid=tb_htms_factory.factoryid and tb_htms_route.productid=tb_htms_product.productid
+		       ORDER BY TB_HTMS_CUSTOMER_PRICE.priceId DESC
+
+		]]></sql>
+	</operation>
+	
+	
+	
+	<!-- ========================================================================================================== -->
+	<!-- 加载所有客户运价表 -->
+	<operation name="loadAllCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"
+		invokeMethod="list" >
+			<sql name="loadAllCustomerPrice" beanClass="com.zzy.htms.sales.customerprice.CustomerPriceBean" cacheType="list" cacheName="transPriceList" cacheScope="request"  >
+					<![CDATA[
+					 SELECT CUST_PRICE.*,
+			            CUSTOMER.CUSTOMERNAME,
+			             CUST_PRICE.ROUTEID AS targeRoutetId,
+			            DIC.DICNAME,
+			            DTYPE.TYPENAME
+			          FROM TB_HTMS_CUSTOMER_PRICE CUST_PRICE
+			          LEFT JOIN TB_HTMS_CUSTOMER CUSTOMER ON CUST_PRICE.CUSTOMERID=CUSTOMER.CUSTOMERID
+			          LEFT JOIN TB_DICTIONARY DIC ON CUST_PRICE.PRICEUNIT = DIC.DICID
+			          LEFT JOIN TB_DIC_TYPE DTYPE ON CUST_PRICE.PRICETYPE = DTYPE.TYPEID
+			          WHERE CUST_PRICE.ISVALIDATE=1
+			             ORDER BY CUST_PRICE.PRICEID DESC
+					]]>
+			</sql>
+	</operation>
+	
+	<!-- 进入批量增加客户运价页面 -->
+	<operation name="toBatchAddCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="searchForPrice" exeOrder="" version="2.0">
+			<sql name="price_type_list" beanClass="com.zzy.htms.sales.customerprice.CustomerPriceBean" cacheType="list" cacheName="price_type_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DIC_TYPE WHERE TYPECODE='priceType' ORDER BY TYPEID
+					]]></content>
+			</sql>
+			<sql name="price_unit_list" beanClass="com.zzy.htms.dictionary.transprice.DicBean" cacheType="list" cacheName="price_unit_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TB_DIC_TYPE.TYPECODE='priceType' ORDER BY SHOWORDER
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.CUSTOMERID,TB_HTMS_CUSTOMER.CUSTOMERNAME  FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.CUSTOMERID DESC  
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_FACTORY" beanClass="com.zzy.htms.dictionary.FactoryBean" cacheType="list" cacheName="factoryList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_FACTORY.factoryId ,TB_HTMS_FACTORY.factoryName 
+				        ,TB_HTMS_FACTORY.factoryCode ,TB_HTMS_FACTORY.factoryDesc 
+				        ,TB_HTMS_FACTORY.factoryAddress 
+				        ,TB_HTMS_FACTORY.factoryContactor 
+				        ,TB_HTMS_FACTORY.factoryTelphone ,TB_HTMS_FACTORY.isVlidate 
+				    FROM TB_HTMS_FACTORY ORDER BY TB_HTMS_FACTORY.factoryId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCT" beanClass="com.zzy.htms.dictionary.ProductBean" cacheType="list" cacheName="productList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/customerprice/batchAdd.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 增加 -->
+	<operation name="addBatchAllCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTOMER_PRICE" caiidKey="custPriceId" caiidName="custPriceId" caiidVar="custPriceId"  version="2.0"  test="$[batchCustomerPrice]!=''||$[batchCarrierPrice]!=''">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTOMER_PRICE ( priceId,customerId, routeId, priceType,freightModel, 
+				        carrierOnePrice,customerOnePrice,priceUnit, creator, createTime, validateDate,isValidate,priceStart,priceEnd) 
+				        
+				        VALUES($custPriceId,$customerId,$bindRouteId,$priceType,$freightModel,
+				        $batchCarrierPrice,$batchCustomerPrice,$priceUnit,$userId,$createTime,$validateDate,1,$priceStart,$priceEnd)
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomerPrice]]></address>
+		</forward>
+	</operation>
+	<operation name="addBatchSingleCustomerPrice" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customerprice.CustomerPriceBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTOMER_PRICE" caiidKey="custPriceId" caiidName="custPriceId" caiidVar="custPriceId"  version="2.0" test="$[batchCustomerPrice]!=''||$[batchCarrierPrice]!=''">
+					
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTOMER_PRICE( priceId,customerId, routeId, priceType,freightModel, 
+				        customerPrice, carrierPrice,  priceUnit, creator, createTime,validateDate, isValidate,priceStart,priceEnd) 
+				        
+				        VALUES($custPriceId,$customerId,$bindRouteId,$priceType,$freightModel,
+				        $batchCustomerPrice,$batchCarrierPrice,$priceUnit,$userId,$createTime,$validateDate,1,$priceStart,$priceEnd) 
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomerPrice]]></address>
+		</forward>
+	</operation>
+</root>

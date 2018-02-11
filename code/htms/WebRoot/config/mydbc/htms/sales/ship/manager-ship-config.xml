@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="managerListShip" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				   from TB_HTMS_CUSTORDER ,TB_HTMS_SHIP
+				     where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+			          AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="shipList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_SHIP.*,
+					TB_HTMS_CUSTORDER.CORDERCODE,
+					TB_HTMS_CUSTORDER.CUSTOMERNAME,
+					TB_HTMS_CUSTORDER.CUSTOMERCODE,
+					TB_HTMS_SHIPDETAIL.CADDRID,
+					TB_HTMS_SHIPDETAIL.SHIPDETAILID,
+					TB_HTMS_SHIPDETAIL.codetailid,
+					cod.METERIALNO, 
+					cod.CODETAILCERTIFICATE,
+					cod.CODETAILCERTIFICATEDESC,
+					caddr.areaId,
+					caddr.caddrDetail
+					from TB_HTMS_CUSTORDER ,TB_HTMS_SHIP,TB_HTMS_SHIPDETAIL
+					left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+					left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_SHIPDETAIL.caddrId
+			          where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+			          AND TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+			          AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+			                    ORDER BY   TB_HTMS_CUSTORDER.CORDERID,TB_HTMS_SHIPDETAIL.codetailid,TB_HTMS_SHIP.SHIPID DESC  
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/ship/manage/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="managerCancelShipApply" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="UPDATE"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($applyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($applyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]></content>
+			</sql>
+			<sql name="UPDATEDETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET SHIPDETAILSTATUS=-1,ISVALIDATE=-1 where TB_HTMS_SHIPDETAIL.SHIPDETAILID=$shipDetailId
+					]]></content>
+			</sql>
+			<sql name="UPDATESHIP"   version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET APPLYSTATUS=-1,ISVALIDATE=-1 where SHIPID=$shipId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=managerListShip]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="managerViewShipApply" businessClass="com.zzy.htms.sales.ship.ShipBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.ship.ShipBusiness"  invokeMethod="viewShipApply" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.customerId ,TB_HTMS_CUSTOMER.customerCode 
+				        ,TB_HTMS_CUSTOMER.customerName ,TB_HTMS_CUSTOMER.customerNotice 
+				        ,TB_HTMS_CUSTOMER.customerAmount ,TB_HTMS_CUSTOMER.creator 
+				        ,TB_HTMS_CUSTOMER.createTime ,TB_HTMS_CUSTOMER.isValidate 
+				    FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.customerId DESC 
+					]]></content>
+			</sql>
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="bean" cacheName="custOrderViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDER.corderId ,TB_HTMS_CUSTORDER.customerId 
+		                ,TB_HTMS_CUSTORDER.corderName ,TB_HTMS_CUSTORDER.corderCode 
+		                ,TB_HTMS_CUSTORDER.customerCode ,TB_HTMS_CUSTORDER.fetchFactory 
+		                 ,TB_HTMS_CUSTORDER.CUSTOMERNAME,
+		                 TB_HTMS_CUSTORDERDETAIL.codetailId
+		            ,TB_HTMS_CUSTORDERDETAIL.ORDERAMOUNT,TB_HTMS_CUSTORDERDETAIL.METERIALNO
+		            ,TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC,TB_HTMS_CUSTORDERDETAIL.APPLIABLEAMOUNT
+		            ,TB_HTMS_CUSTORDERDETAIL.APPLIEDAMOUNT
+		            FROM TB_HTMS_CUSTORDER ,TB_HTMS_CUSTORDERDETAIL
+		            WHERE TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID and
+		            TB_HTMS_CUSTORDER.corderId= $corderId  AND TB_HTMS_CUSTORDERDETAIL.codetailId=$codetailId
+					]]></content>
+			</sql>
+			<sql name="CUSTOMERADDR" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="list" cacheName="customeraddrList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_HTMS_CUSTOMERADDR.CADDRID, TB_HTMS_CUSTOMERADDR.AREAID, TB_HTMS_CUSTOMERADDR.CADDRDETAIL
+					        FROM TB_HTMS_CUSTOMER, TB_HTMS_CUSTOMERADDR
+					       WHERE TB_HTMS_CUSTOMER.CUSTOMERID = TB_HTMS_CUSTOMERADDR.CUSTOMERID
+					         AND TB_HTMS_CUSTOMER.CUSTOMERCODE = $customerCode
+					         ORDER BY TB_HTMS_CUSTOMERADDR.ISDEFAULT desc
+					]]></content>
+			</sql>
+			<sql name="SHIPDETAIL" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="bean" cacheName="shipDetailViewBean" cacheScope="request"   version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_SHIP.*,
+					TB_HTMS_CUSTORDER.CORDERCODE,
+					TB_HTMS_CUSTORDER.CUSTOMERNAME,
+					TB_HTMS_CUSTORDER.CUSTOMERCODE,
+					TB_HTMS_SHIPDETAIL.CADDRID,
+					TB_HTMS_SHIPDETAIL.SHIPDETAILID,
+					TB_HTMS_SHIPDETAIL.codetailid,
+					cod.METERIALNO, 
+					cod.CODETAILCERTIFICATE,
+					cod.CODETAILCERTIFICATEDESC,
+					caddr.areaId,
+					caddr.caddrDetail
+					from TB_HTMS_CUSTORDER ,TB_HTMS_SHIP,TB_HTMS_SHIPDETAIL
+					left join tb_htms_custorderdetail cod on cod.codetailid= TB_HTMS_SHIPDETAIL.codetailid
+					left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_SHIPDETAIL.caddrId
+			          where TB_HTMS_SHIP.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_SHIPDETAIL.SHIPID=TB_HTMS_SHIP.SHIPID
+			          AND TB_HTMS_SHIP.SHIPID=$shipId
+			          AND TB_HTMS_SHIPDETAIL.SHIPDETAILID=$shipDetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/ship/manage/view.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+</root>

@@ -1,0 +1,10 @@
+.floatWind{	
+	right:2px;
+	top:85px;
+	width:200px;
+	height:50px;
+	background:red;
+	z-index:100;
+	position:absolute;
+	visibility: visible;
+}

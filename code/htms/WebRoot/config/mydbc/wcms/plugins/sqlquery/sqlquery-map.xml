@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean">
+		<map property="queryId" javaType="java.lang.String" column="QUERYID" colType=""/>
+		<map property="dbsId" javaType="java.lang.String" column="DBSID" colType=""/>
+		<map property="queryName" javaType="java.lang.String" column="QUERYNAME" colType=""/>
+		<!-- map property="querySQL" javaType="java.lang.String" column="QUERYSQL" colType=""/> -->
+		<map property="showStyle" javaType="java.lang.String" column="SHOWSTYLE" colType=""/>
+		<map property="showNum" javaType="int" column="SHOWNUM" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="isShowTitle" javaType="int" column="ISSHOWTITLE" colType=""/>
+		<map property="showLength" javaType="int" column="SHOWLENGTH" colType=""/>
+		<map property="replaceString" javaType="java.lang.String" column="REPLACESTRING" colType=""/>
+		<map property="titleRowNum" javaType="int" column="TITLEROWNUM" colType=""/>
+		<map property="titleColNum" javaType="int" column="TITLECOLNUM" colType=""/>
+		<map property="queryDesc" javaType="java.lang.String" column="QUERYDESC" colType=""/>
+		<map property="queryDetailPage" javaType="java.lang.String" column="QUERYDETAILPAGE" colType=""/>
+		<map property="indexSQL" javaType="java.lang.String" column="INDEXSQL" colType=""/>
+		<map property="listSQL" javaType="java.lang.String" column="LISTSQL" colType=""/>
+		<map property="viewSQL" javaType="java.lang.String" column="VIEWSQL" colType=""/>
+	</bean>
+
+</root>

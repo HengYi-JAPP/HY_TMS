@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="viewCustOrder" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="bean" cacheName="custOrderViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDER.corderId ,TB_HTMS_CUSTORDER.customerId 
+				        ,TB_HTMS_CUSTORDER.corderName ,TB_HTMS_CUSTORDER.corderCode 
+				        ,TB_HTMS_CUSTORDER.customerCode ,TB_HTMS_CUSTORDER.saleNum 
+				        ,TB_HTMS_CUSTORDER.saleChannel ,TB_HTMS_CUSTORDER.productGroup 
+				        ,TB_HTMS_CUSTORDER.saleGroup ,TB_HTMS_CUSTORDER.saleDepartment 
+				        ,TB_HTMS_CUSTORDER.saleType ,TB_HTMS_CUSTORDER.exchangeTitle 
+				        ,TB_HTMS_CUSTORDER.fetchFactory 
+				        ,TB_HTMS_CUSTORDER.deliveryStatus ,TB_HTMS_CUSTORDER.createDate 
+				        ,TB_HTMS_CUSTORDER.createTime ,TB_HTMS_CUSTORDER.creator 
+				        ,TB_HTMS_CUSTORDER.inputTime ,TB_HTMS_CUSTORDER.isValidate 
+				         ,TB_HTMS_CUSTORDER.CUSTOMERNAME
+				         ,TB_HTMS_CUSTORDERDETAIL.ORDERAMOUNT,			         
+			        TB_HTMS_CUSTORDERDETAIL.METERIALNO,
+			        TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATE,
+			        TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC,
+					TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+					
+					TB_HTMS_CUSTORDERDETAIL.projectVolume,
+					TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+					TB_HTMS_CUSTORDERDETAIL.FREIGHT,
+					TB_HTMS_CUSTORDERDETAIL.UNITPRICE  
+				    FROM TB_HTMS_CUSTORDER ,TB_HTMS_CUSTORDERDETAIL
+				    WHERE TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID and
+				    TB_HTMS_CUSTORDER.corderId = $corderId  AND TB_HTMS_CUSTORDERDETAIL.codetailId=$codetailId
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.customerId ,TB_HTMS_CUSTOMER.customerCode 
+				        ,TB_HTMS_CUSTOMER.customerName ,TB_HTMS_CUSTOMER.customerNotice 
+				        ,TB_HTMS_CUSTOMER.customerAmount ,TB_HTMS_CUSTOMER.creator 
+				        ,TB_HTMS_CUSTOMER.createTime ,TB_HTMS_CUSTOMER.isValidate 
+				    FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.customerId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="bean" cacheName="customerViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.customerId ,TB_HTMS_CUSTOMER.customerCode 
+				        ,TB_HTMS_CUSTOMER.customerName ,TB_HTMS_CUSTOMER.customerNotice 
+				        ,TB_HTMS_CUSTOMER.customerAmount ,TB_HTMS_CUSTOMER.creator 
+				        ,TB_HTMS_CUSTOMER.createTime ,TB_HTMS_CUSTOMER.isValidate 
+				    FROM TB_HTMS_CUSTOMER , TB_HTMS_CUSTORDER 
+				    WHERE TB_HTMS_CUSTOMER.customerId =TB_HTMS_CUSTORDER.customerId AND 
+				        TB_HTMS_CUSTORDER.corderId = $corderId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/sales/custorder/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/sales/custorder/modify.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="toAddNewAddress" businessClass="com.zzy.htms.sales.customeraddr.CustomerAddrBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customeraddr.CustomerAddrBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CUSTOMERID" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="bean" cacheName="customerBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.CUSTOMERID，TB_HTMS_CUSTOMER.CUSTOMERName
+             				FROM TB_HTMS_CUSTOMER WHERE TB_HTMS_CUSTOMER.CUSTOMERCODE=$customerCode
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/custorder/newaddress.jsp]]></address>
+		</forward>
+	</operation>
+	
+</root>

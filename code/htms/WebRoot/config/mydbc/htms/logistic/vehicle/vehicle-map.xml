@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.vehicle.VehicleBean">
+		<map property="vehicleId" javaType="int" column="vehicleId"  colType=""/>
+		<map property="carrierId" javaType="int" column="carrierId"  colType=""/>
+		<map property="vehicleCode" javaType="String" column="vehicleCode"  colType=""/>
+		<map property="vehicleNo" javaType="String" column="vehicleNo"  colType=""/>
+		<map property="vehicleMaxTon" javaType="String" column="vehicleMaxTon"  colType=""/>
+		<map property="vehicleLength" javaType="String" column="vehicleLength"  colType=""/>
+		<map property="vehicleWidth" javaType="String" column="vehicleWidth"  colType=""/>
+		<map property="vehicleHeight" javaType="String" column="vehicleHeight"  colType=""/>
+		<map property="vehiclePersonNum" javaType="int" column="vehiclePersonNum"  colType=""/>
+		<map property="vehicleDesc" javaType="String" column="vehicleDesc"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+</root>

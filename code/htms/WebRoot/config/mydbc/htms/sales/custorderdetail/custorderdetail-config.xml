@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="modifyCustOrderDetail" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL 
+				    SET corderId = $corderId ,codetailCertificate = $codetailCertificate 
+				        ,meterialNo = $meterialNo ,meterialId = $meterialId 
+				        ,codetailCertificateDesc = $codetailCertificateDesc 
+				        ,orderAmount = $orderAmount ,orderUnit = $orderUnit 
+				        ,projectVolume = $projectVolume ,volumeUnit = $volumeUnit 
+				        ,conditionSutotal = $conditionSutotal ,freight = $freight 
+				        ,unitPrice = $unitPrice ,docCondCount = $docCondCount 
+				        ,alreadyGetNum = $alreadyGetNum ,creator = $creator ,createTime 
+				        = $createTime ,modifier = $modifier ,modifyTiime = $modifyTiime 
+				        ,isValidate = $isValidate 
+				    WHERE TB_HTMS_CUSTORDERDETAIL.codetailId = $codetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustOrderDetail]]></address>
+		</forward>
+	</operation>
+	<operation name="viewCustOrderDetail" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.CustOrderDetailBean" cacheType="bean" cacheName="custOrderDetailViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDERDETAIL.codetailId 
+				        ,TB_HTMS_CUSTORDERDETAIL.corderId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificate 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialNo 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderAmount 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.projectVolume 
+				        ,TB_HTMS_CUSTORDERDETAIL.volumeUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.conditionSutotal 
+				        ,TB_HTMS_CUSTORDERDETAIL.freight 
+				        ,TB_HTMS_CUSTORDERDETAIL.unitPrice 
+				        ,TB_HTMS_CUSTORDERDETAIL.docCondCount 
+				        ,TB_HTMS_CUSTORDERDETAIL.alreadyGetNum 
+				        ,TB_HTMS_CUSTORDERDETAIL.creator 
+				        ,TB_HTMS_CUSTORDERDETAIL.createTime 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifier 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifyTiime 
+				        ,TB_HTMS_CUSTORDERDETAIL.isValidate 
+				    FROM TB_HTMS_CUSTORDERDETAIL 
+				    WHERE TB_HTMS_CUSTORDERDETAIL.codetailId = $codetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTORDER" beanClass="com.zzy.htms.sales.CustOrderBean" cacheType="list" cacheName="custOrderList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDER.corderId ,TB_HTMS_CUSTORDER.customerId 
+				        ,TB_HTMS_CUSTORDER.corderName ,TB_HTMS_CUSTORDER.corderCode 
+				        ,TB_HTMS_CUSTORDER.customerCode ,TB_HTMS_CUSTORDER.saleNum 
+				        ,TB_HTMS_CUSTORDER.saleChannel ,TB_HTMS_CUSTORDER.productGroup 
+				        ,TB_HTMS_CUSTORDER.saleGroup ,TB_HTMS_CUSTORDER.saleDepartment 
+				        ,TB_HTMS_CUSTORDER.saleType ,TB_HTMS_CUSTORDER.exchangeTitle 
+				        ,TB_HTMS_CUSTORDER.fetchFactory 
+				        ,TB_HTMS_CUSTORDER.deliveryStatus ,TB_HTMS_CUSTORDER.createDate 
+				        ,TB_HTMS_CUSTORDER.crecateTime ,TB_HTMS_CUSTORDER.creator 
+				        ,TB_HTMS_CUSTORDER.inputTime ,TB_HTMS_CUSTORDER.isValidate 
+				    FROM TB_HTMS_CUSTORDER ORDER BY TB_HTMS_CUSTORDER.corderId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_CUSTORDER" beanClass="com.zzy.htms.sales.CustOrderBean" cacheType="bean" cacheName="custOrderViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDER.corderId ,TB_HTMS_CUSTORDER.customerId 
+				        ,TB_HTMS_CUSTORDER.corderName ,TB_HTMS_CUSTORDER.corderCode 
+				        ,TB_HTMS_CUSTORDER.customerCode ,TB_HTMS_CUSTORDER.saleNum 
+				        ,TB_HTMS_CUSTORDER.saleChannel ,TB_HTMS_CUSTORDER.productGroup 
+				        ,TB_HTMS_CUSTORDER.saleGroup ,TB_HTMS_CUSTORDER.saleDepartment 
+				        ,TB_HTMS_CUSTORDER.saleType ,TB_HTMS_CUSTORDER.exchangeTitle 
+				        ,TB_HTMS_CUSTORDER.fetchFactory 
+				        ,TB_HTMS_CUSTORDER.deliveryStatus ,TB_HTMS_CUSTORDER.createDate 
+				        ,TB_HTMS_CUSTORDER.crecateTime ,TB_HTMS_CUSTORDER.creator 
+				        ,TB_HTMS_CUSTORDER.inputTime ,TB_HTMS_CUSTORDER.isValidate 
+				    FROM TB_HTMS_CUSTORDER , TB_HTMS_CUSTORDERDETAIL 
+				    WHERE TB_HTMS_CUSTORDER.corderId =TB_HTMS_CUSTORDERDETAIL.corderId AND 
+				        TB_HTMS_CUSTORDERDETAIL.codetailId = $codetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/sales/custorderdetail/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/sales/custorderdetail/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteCustOrderDetail" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_CUSTORDERDETAIL 
+				    WHERE TB_HTMS_CUSTORDERDETAIL.codetailId = $codetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustOrderDetail]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddCustOrderDetail" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CUSTORDER" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="list" cacheName="custOrderList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDER.corderId ,TB_HTMS_CUSTORDER.customerId 
+				        ,TB_HTMS_CUSTORDER.corderName ,TB_HTMS_CUSTORDER.corderCode 
+				        ,TB_HTMS_CUSTORDER.customerCode ,TB_HTMS_CUSTORDER.saleNum 
+				        ,TB_HTMS_CUSTORDER.saleChannel ,TB_HTMS_CUSTORDER.productGroup 
+				        ,TB_HTMS_CUSTORDER.saleGroup ,TB_HTMS_CUSTORDER.saleDepartment 
+				        ,TB_HTMS_CUSTORDER.saleType ,TB_HTMS_CUSTORDER.exchangeTitle 
+				        ,TB_HTMS_CUSTORDER.fetchFactory 
+				        ,TB_HTMS_CUSTORDER.deliveryStatus 
+				    FROM TB_HTMS_CUSTORDER ORDER BY TB_HTMS_CUSTORDER.corderId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/custorderdetail/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addCustOrderDetail" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTORDERDETAIL" caiidKey="codetailId" caiidName="codetailId" caiidVar="codetailId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTORDERDETAIL ( codetailId, corderId, 
+				        codetailCertificate, meterialNo, meterialId, 
+				        codetailCertificateDesc, orderAmount, orderUnit, projectVolume, 
+				        volumeUnit, conditionSutotal, freight, unitPrice, docCondCount, 
+				        alreadyGetNum, creator, createTime, modifier, modifyTiime, 
+				        isValidate) 
+				        VALUES($codetailId,$corderId,$codetailCertificate,$meterialNo,$meterialId,$codetailCertificateDesc,$orderAmount,$orderUnit,$projectVolume,$volumeUnit,$conditionSutotal,$freight,$unitPrice,$docCondCount,$alreadyGetNum,$creator,$createTime,$modifier,$modifyTiime,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustOrderDetail]]></address>
+		</forward>
+	</operation>
+	<operation name="listCustOrderDetail" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_CUSTORDERDETAIL 
+				    WHERE TB_HTMS_CUSTORDERDETAIL.meterialNo LIKE'%$meterialNoSH%' 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.CustOrderDetailBean" cacheType="list" cacheName="custOrderDetailList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDERDETAIL.codetailId 
+				        ,TB_HTMS_CUSTORDERDETAIL.corderId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificate 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialNo 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderAmount 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.projectVolume 
+				        ,TB_HTMS_CUSTORDERDETAIL.volumeUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.conditionSutotal 
+				        ,TB_HTMS_CUSTORDERDETAIL.freight 
+				        ,TB_HTMS_CUSTORDERDETAIL.unitPrice 
+				        ,TB_HTMS_CUSTORDERDETAIL.docCondCount 
+				        ,TB_HTMS_CUSTORDERDETAIL.alreadyGetNum 
+				        ,TB_HTMS_CUSTORDERDETAIL.creator 
+				        ,TB_HTMS_CUSTORDERDETAIL.createTime 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifier 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifyTiime 
+				        ,TB_HTMS_CUSTORDERDETAIL.isValidate 
+				    FROM TB_HTMS_CUSTORDERDETAIL 
+				    WHERE TB_HTMS_CUSTORDERDETAIL.meterialNo LIKE'%$meterialNoSH%' 
+				    ORDER BY TB_HTMS_CUSTORDERDETAIL.codetailId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/custorderdetail/list.jsp]]></address>
+		</forward>
+	</operation>
+</root>

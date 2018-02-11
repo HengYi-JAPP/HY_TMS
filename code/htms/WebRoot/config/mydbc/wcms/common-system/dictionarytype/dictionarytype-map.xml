@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.common.dictionarytype.DictionaryTypeBean">
+		<map property="typeId" javaType="java.lang.String" column="TYPEID" colType=""/>
+		<map property="typeName" javaType="java.lang.String" column="TYPENAME" colType=""/>
+		<map property="typeDesc" javaType="java.lang.String" column="TYPEDESC" colType=""/>
+		<map property="typeCode" javaType="java.lang.String" column="TYPECODE" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

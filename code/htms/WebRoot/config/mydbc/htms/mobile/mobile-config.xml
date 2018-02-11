@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="listMobile" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	
+	<operation name="listMineAddr" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		<sql name="count" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[
+					SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_CUSTOMERADDR 
+				    WHERE 
+				     TB_HTMS_CUSTOMERADDR.customerId IN (
+	                	SELECT TB_HTMS_CUSTOMER.customerId FROM TB_HTMS_CUSTOMER,TB_HTMS_CUSTORDER WHERE 
+	                	TB_HTMS_CUSTOMER.customerCode=TB_HTMS_CUSTORDER.customerCode
+	                	AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                )
+				    AND ISVALIDATE=1
+					]]></content>
+			</sql>
+			<sql name="CUSTOMERADDR" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="list" cacheName="customerAddrList" cacheScope="request" isPage="true" isEscapeQuotation="true"  isEscape="false" version="2.0">
+					<content><![CDATA[
+			SELECT TB_HTMS_CUSTOMERADDR.*,TB_HTMS_CUSTOMER.CUSTOMERNAME,TB_HTMS_CUSTOMER.CUSTOMERCODE
+						FROM TB_HTMS_CUSTOMERADDR,TB_HTMS_CUSTOMER
+						WHERE 
+	                  TB_HTMS_CUSTOMERADDR.CUSTOMERID= TB_HTMS_CUSTOMER.CUSTOMERID 
+	                  AND  TB_HTMS_CUSTOMERADDR.customerId IN (
+	                	SELECT TB_HTMS_CUSTOMER.customerId FROM TB_HTMS_CUSTOMER,TB_HTMS_CUSTORDER WHERE 
+	                	TB_HTMS_CUSTOMER.customerCode=TB_HTMS_CUSTORDER.customerCode
+	                	AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                ) 
+					   AND TB_HTMS_CUSTOMERADDR.ISVALIDATE=1 ORDER BY CADDRID DESC
+                    		]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/customeraddress/receivingaddress.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="listCustomerAddrChild" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="listChild" exeOrder="" version="2.0">
+			<sql name="CUSTOMERADDRCHILD" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="list" cacheName="customerAddrChildList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+			
+                    		]]></content>
+			</sql>
+		</method>
+	</operation>
+	<operation name="addAddress" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/customeraddress/createaddress.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="modifyAddress" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="修改地址" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			
+		</method>
+		<forward name="modifyAddress" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/customeraddress/editaddress.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="modifyAddrSave" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  >
+		<method name="修改地址保存" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+					UPDATE TB_HTMS_CUSTOMERADDR 
+						SET ISVALIDATE=0
+				    		WHERE TB_HTMS_CUSTOMERADDR.caddrId = $caddrId
+					]]></content>
+			</sql>
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTOMERADDR" caiidKey="caddrId" caiidName="caddrId" caiidVar="caddrId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTOMERADDR (caddrId, areaCode, areaId, customerId, caddrDetail, 
+				         createTime, caddrContactor,caddrTelephone,creator) 
+				        VALUES($caddrId,$areaCode,$areaId,$customerId,$caddrDetail,$createTime,$caddrContactor,$caddrTelephone,$userId) 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	<operation name="addAddrSave" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="新增地址保存" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTOMERADDR" caiidKey="caddrId" caiidName="caddrId" caiidVar="caddrId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTOMERADDR (caddrId, areaCode, areaId, customerId, caddrDetail, 
+				         createTime, caddrContactor,caddrTelephone,creator) 
+				        VALUES($caddrId,$areaCode,$areaId,$customerId,$caddrDetail,$createTime,$caddrContactor,$caddrTelephone,$userId) 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	<operation name="deleteMineAddr" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+					UPDATE TB_HTMS_CUSTOMERADDR 
+						SET ISVALIDATE=0
+				    		WHERE TB_HTMS_CUSTOMERADDR.caddrId = $addrId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listMineAddr&userId=$[userId]]]></address>
+		</forward>
+	</operation>
+
+	<operation name="applySearch" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="客户订单列表搜索" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="listApply" exeOrder="" version="2.0">
+			<sql name="count" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[
+				SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_CUSTORDER ,TB_HTMS_CUSTORDERDETAIL
+				   WHERE TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID
+			           			AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	            or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+			           			AND TB_HTMS_CUSTORDER.CUSTOMERID=$customerId
+			           			AND TB_HTMS_CUSTORDER.ISVALIDATE=1
+			           			AND TB_HTMS_CUSTORDER.DELIVERYSTATUS!='C'
+			           			AND (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				   				AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+			           			AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+					]]></content>
+			</sql>
+			<sql name="APPLYLIST" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="list" cacheName="custOrderList" cacheScope="request"  isEscapeQuotation="true" isEscape="false" isPage="true" version="2.0">
+					<content><![CDATA[
+					SELECT TB_HTMS_CUSTORDER.*,
+			          TB_HTMS_CUSTORDERDETAIL.ORDERAMOUNT,
+			          TB_HTMS_CUSTORDERDETAIL.METERIALNO,
+			          TB_HTMS_CUSTORDERDETAIL.codetailId,
+			          TB_HTMS_CUSTORDERDETAIL.APPLIABLEAMOUNT,
+			          TB_HTMS_CUSTORDERDETAIL.APPLIEDAMOUNT,
+			          TB_HTMS_CUSTORDERDETAIL.Unitprice,
+			          TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATE,
+			          TB_HTMS_CUSTORDERDETAIL.CODETAILCERTIFICATEDESC,
+			          factory.factoryName,product.productname
+			          	FROM TB_HTMS_CUSTORDER,TB_HTMS_CUSTORDERDETAIL 
+			          	left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.Factoryid
+                  		left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productid
+			          		WHERE TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID
+			           			AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                               	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+			           			AND TB_HTMS_CUSTORDER.CUSTOMERID=$customerId
+			           			AND TB_HTMS_CUSTORDER.ISVALIDATE=1
+			           			AND TB_HTMS_CUSTORDER.DELIVERYSTATUS!='C'
+			           			AND (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				   				AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+			           			AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+                      	ORDER BY TB_HTMS_CUSTORDER.CREATETIME,Tb_Htms_Custorder.corderid  DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/awaitorder/applysearch.jsp]]></address>
+		</forward>
+	</operation>
+
+	<operation name="mobileSyncSalesOrder" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="orderSync" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_ORDERSYN" caiidKey="synId" caiidName="synId" caiidVar="synId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_ORDERSYN ( synId, startTime, endTime,useTime,STARTDATE, ENDDATE, creator,createTime,modifier,modifyTime) 
+				        VALUES($synId,$startTime,$endTime,$useTime,$startDate,$endDate,$userId,$endTime,$userId,$endTime) 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+
+<operation name="searCustList" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="客户列表搜索" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="count" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[
+				SELECT COUNT(*) as totalCount FROM TB_HTMS_CUSTOMER WHERE TB_HTMS_CUSTOMER.CUSTOMERCODE IN (
+ 						SELECT TB_HTMS_CUSTOMER.CUSTOMERCODE FROM TB_HTMS_CUSTOMER,TB_HTMS_CUSTORDER,TB_HTMS_CUSTORDERDETAIL
+       
+       					WHERE TB_HTMS_CUSTOMER.CUSTOMERCODE=TB_HTMS_CUSTORDER.CUSTOMERCODE
+                		AND TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID
+       					AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+       					AND TB_HTMS_CUSTORDER.ISVALIDATE=1
+			          	AND TB_HTMS_CUSTORDER.DELIVERYSTATUS!='C'
+               			AND (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				   		AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+       					GROUP BY TB_HTMS_CUSTOMER.CUSTOMERCODE
+       				)
+               	AND  TB_HTMS_CUSTOMER.customerName LIKE '%$customerNameSH%' 
+            	ORDER BY TB_HTMS_CUSTOMER.customerName DESC 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request" isPage="true"  version="2.0"  isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+				    SELECT * FROM TB_HTMS_CUSTOMER WHERE TB_HTMS_CUSTOMER.CUSTOMERCODE IN (
+ 						SELECT TB_HTMS_CUSTOMER.CUSTOMERCODE FROM TB_HTMS_CUSTOMER,TB_HTMS_CUSTORDER,TB_HTMS_CUSTORDERDETAIL
+       
+       					WHERE TB_HTMS_CUSTOMER.CUSTOMERCODE=TB_HTMS_CUSTORDER.CUSTOMERCODE
+                		AND TB_HTMS_CUSTORDERDETAIL.CORDERID=TB_HTMS_CUSTORDER.CORDERID
+       					AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+       					AND TB_HTMS_CUSTORDER.ISVALIDATE=1
+			          	AND TB_HTMS_CUSTORDER.DELIVERYSTATUS!='C'
+               			AND (TB_HTMS_CUSTORDERDETAIL.deliveryStatus IS NULL OR TB_HTMS_CUSTORDERDETAIL.deliveryStatus <> 'C')
+   				   		AND (TB_HTMS_CUSTORDERDETAIL.partialDelivery IS NULL OR TB_HTMS_CUSTORDERDETAIL.partialDelivery<>'B')
+       					GROUP BY TB_HTMS_CUSTOMER.CUSTOMERCODE
+       				)
+       				AND  TB_HTMS_CUSTOMER.customerName LIKE '%$customerNameSH%' 
+				    ORDER BY TB_HTMS_CUSTOMER.customerName,TB_HTMS_CUSTOMER.customerId  DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/awaitorder/searcustlist.jsp]]></address>
+		</forward>
+	</operation>
+
+<operation name="searMineAddr" businessClass="com.zzy.htms.mobile.MobileBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.mobile.MobileBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		<sql name="count" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0" isEscapeQuotation="true" isEscape="false">
+					<content><![CDATA[
+				SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_CUSTOMERADDR 
+				    WHERE 
+				     TB_HTMS_CUSTOMERADDR.customerId IN (
+	                	SELECT TB_HTMS_CUSTOMER.customerId FROM TB_HTMS_CUSTOMER,TB_HTMS_CUSTORDER WHERE 
+	                	TB_HTMS_CUSTOMER.customerCode=TB_HTMS_CUSTORDER.customerCode
+	                	AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                	AND TB_HTMS_CUSTOMER.CUSTOMERNAME LIKE '%$customerNameSH%'
+	                )
+				    AND ISVALIDATE=1 
+					]]></content>
+			</sql>
+			<sql name="CUSTOMERADDR" beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" cacheType="list" cacheName="customerAddrList" cacheScope="request" isPage="true" isEscapeQuotation="true"  isEscape="false"  version="2.0">
+					<content><![CDATA[
+			 SELECT TB_HTMS_CUSTOMERADDR.*,TB_HTMS_CUSTOMER.CUSTOMERNAME,TB_HTMS_CUSTOMER.CUSTOMERCODE
+						FROM TB_HTMS_CUSTOMERADDR,TB_HTMS_CUSTOMER
+						WHERE 
+	                  TB_HTMS_CUSTOMERADDR.CUSTOMERID= TB_HTMS_CUSTOMER.CUSTOMERID 
+	                  AND  TB_HTMS_CUSTOMERADDR.customerId IN (
+	                	SELECT TB_HTMS_CUSTOMER.customerId FROM TB_HTMS_CUSTOMER,TB_HTMS_CUSTORDER WHERE 
+	                	TB_HTMS_CUSTOMER.customerCode=TB_HTMS_CUSTORDER.customerCode
+	                	AND (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                ) 
+	                 AND  TB_HTMS_CUSTOMER.CUSTOMERNAME LIKE '%$customerNameSH%' AND TB_HTMS_CUSTOMERADDR.ISVALIDATE=1 ORDER BY CADDRID DESC
+                    		]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/customeraddress/searaddress.jsp]]></address>
+		</forward>
+	</operation>
+
+</root>

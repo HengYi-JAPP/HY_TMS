@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+
+	<operation name="addLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_LAYOUT" caiidKey="LAYOUTID" caiidName="TB_WSM_LAYOUT" caiidVar="newLayoutId">
+		INSERT INTO TB_WSM_LAYOUT (LAYOUTID,CHANNELID,LAYOUTNAME,LAYOUTTEMPL,LAYOUTLOGO,LAYOUTSELECTEDLOGO,LAYOUTDESC,ISVALIDATE,DEFAULTORDER,DEFAULTSELECT,DEFAULTSHOW)
+		VALUES($newLayoutId,$checkChannelId,$layoutName,$layoutTempl,$layoutLogo,$layoutSelectedLogo,$layoutDesc,$isValidate,$defaultOrder,$defaultSelect,$defaultShow)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listLayout</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="list" forward="" cacheParams="layoutNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_LAYOUT WHERE    CHANNELID=$checkChannelId AND LAYOUTNAME LIKE '%$layoutNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.portal.layout.LayoutBean"
+			cacheName="layoutList" cacheScope="request" isPage="true" pageField="ROLEID"><![CDATA[
+			    SELECT * FROM TB_WSM_LAYOUT WHERE   CHANNELID=$checkChannelId AND  LAYOUTNAME LIKE '%$layoutNameSH%' ORDER BY DEFAULTORDER
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/layout/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteUnitColumn"  isBatch="true">
+			 DELETE FROM TB_WSM_UNIT_COLUMN WHERE UNITID IN(SELECT UNITID FROM TB_WSM_UNIT WHERE LAYOUTID=$checkLayoutId)
+		</sql>
+		<sql name="deleteUnit"  isBatch="true">
+			 DELETE FROM TB_WSM_UNIT WHERE LAYOUTID=$checkLayoutId
+		</sql>	
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LAYOUT WHERE LAYOUTID=$checkLayoutId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listLayout</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.layout.LayoutBean"
+			cacheName="layoutViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_LAYOUT WHERE LAYOUTID=$layoutId
+		</sql>		
+		<forward name="modifyPage">jsp/portal/console/layout/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/layout/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_LAYOUT SET 
+			CHANNELID=$checkChannelId,
+			LAYOUTNAME=$layoutName,
+			LAYOUTTEMPL=$layoutTempl,
+			LAYOUTLOGO=$layoutLogo,
+			LAYOUTSELECTEDLOGO=$layoutSelectedLogo,
+			LAYOUTDESC=$layoutDesc,
+			ISVALIDATE=$isValidate,
+			DEFAULTORDER=$defaultOrder,
+			DEFAULTSELECT=$defaultSelect,
+			DEFAULTSHOW=$defaultShow
+		 WHERE  LAYOUTID=$layoutId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listLayout</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="loadLayoutUnitColumn" businessClass="com.mobilecn.portal.layout.LayoutBusiness" 
+		invokeMethod="view" forward="" cacheParams="layoutNameSH,curpage" cacheScopes="page,session">
+		<sql name="sysCode"  cacheType="single" cacheName="sysCode" cacheScope="session">
+			 SELECT SYSCODE AS sysCode FROM TB_SYSTEM WHERE SYSID = (SELECT SYSID FROM TB_WSM_CHANNEL WHERE CHANNELID=$checkChannelId)
+		</sql>	
+		<sql name="currentSysCode"  cacheType="single" cacheName="currentSysCode" cacheScope="request">
+			 SELECT SYSCODE AS currentSysCode FROM TB_SYSTEM WHERE SYSID = (SELECT SYSID FROM TB_WSM_CHANNEL WHERE CHANNELID=$checkChannelId)
+		</sql>
+		<forward name="viewPage"><![CDATA[contoller.do?operation=continueLoadLayoutUnitColumn&checkChannelId=$[checkChannelId]&checkLayoutId=$[checkLayoutId]]]></forward>
+	</operation>
+	
+	<operation name="continueLoadLayoutUnitColumn" businessClass="com.mobilecn.portal.layout.LayoutBusiness" 
+		invokeMethod="view" forward="" cacheParams="layoutNameSH,curpage" cacheScopes="page,session">
+		<!--<sql name="sysCode"  cacheType="single" cacheName="sysCode" cacheScope="session">
+			 SELECT SYSCODE AS sysCode FROM TB_SYSTEM WHERE SYSID = (SELECT SYSID FROM TB_WSM_CHANNEL WHERE CHANNELID=$checkChannelId)
+		</sql>	
+		<sql name="currentSysCode"  cacheType="single" cacheName="currentSysCode" >
+			 SELECT SYSCODE AS currentSysCode FROM TB_SYSTEM WHERE SYSID = (SELECT SYSID FROM TB_WSM_CHANNEL WHERE CHANNELID=$checkChannelId)
+		</sql>
+		-->
+		<sql name="layoutId" refNames="checkLayoutId" refCols="LAYOUTID" test="$[checkLayoutId]==''"><![CDATA[
+			   SELECT LAYOUTID  FROM TB_WSM_LAYOUT WHERE  CHANNELID=$checkChannelId ORDER BY defaultOrder DESC,LAYOUTID DESC
+		]]></sql>
+		<sql name="view" beanClass="com.mobilecn.portal.layout.LayoutBean"
+			cacheName="layoutViewBean" cacheScope="request" ><![CDATA[
+			   SELECT *   FROM TB_WSM_LAYOUT WHERE LAYOUTID=$checkLayoutId 
+		]]></sql>	
+		
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="layoutColumn" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_COLUMN.*,TB_WSM_UNIT_COLUMN.UNITID,TB_WSM_UNIT_COLUMN.DEFAULTORDER,TB_WSM_UNIT_COLUMN.DEFAULTSHOW,TB_WSM_UNIT_COLUMN.DEFAULTOPEN,TB_WSM_UNIT_COLUMN.DEFAULTMOVE FROM TB_WSM_UNIT,TB_WSM_UNIT_COLUMN,TB_WSM_COLUMN WHERE TB_WSM_UNIT.LAYOUTID=$checkLayoutId AND TB_WSM_UNIT.UNITID=TB_WSM_UNIT_COLUMN.UNITID AND TB_WSM_UNIT_COLUMN.COLUMNID=TB_WSM_COLUMN.COLUMNID AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		<sql name="systemColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="systemColumn" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_LAYOUT,TB_WSM_CHANNEL WHERE TB_WSM_CHANNEL.SYSID=TB_WSM_COLUMN.SYSID AND TB_WSM_CHANNEL.CHANNELID=TB_WSM_LAYOUT.CHANNELID AND TB_WSM_LAYOUT.LAYOUTID=$checkLayoutId AND TB_WSM_COLUMN.COLUMNID NOT IN(SELECT TB_WSM_UNIT_COLUMN.COLUMNID FROM TB_WSM_UNIT,TB_WSM_UNIT_COLUMN WHERE TB_WSM_UNIT.LAYOUTID=$checkLayoutId AND TB_WSM_UNIT.UNITID=TB_WSM_UNIT_COLUMN.UNITID) AND  TB_WSM_COLUMN.ISVALIDATE=1   
+		]]></sql>
+		<forward name="viewPage"><![CDATA[jsp/wsites/$[currentSysCode]/layout/system-layout-designer.jsp?checkLayoutId=$[checkLayoutId]&checkChannelId=$[checkChannelId]&currentSysCode=$[currentSysCode]]]></forward>
+	</operation>
+	
+	<operation name="saveLayoutUnitColumn" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="modify" forward="" beforeInvoke="saveTemplate">		
+		<sql name="updateLayout" ><![CDATA[
+			   UPDATE TB_WSM_LAYOUT SET 
+				LAYOUTTEMPL=$layoutTempl
+			 WHERE  LAYOUTID=$checkLayoutId
+		]]></sql>
+		<sql name="deleteUnitColumn"  isBatch="true">
+			 DELETE FROM TB_WSM_UNIT_COLUMN WHERE UNITID IN(SELECT UNITID FROM TB_WSM_UNIT WHERE LAYOUTID=$checkLayoutId)
+		</sql>
+		<sql name="deleteUnit"  isBatch="true">
+			 DELETE FROM TB_WSM_UNIT WHERE LAYOUTID=$checkLayoutId
+		</sql>	
+		<sql name="insertUnit" isBatch="true"><![CDATA[
+			   INSERT INTO TB_WSM_UNIT (LAYOUTID,UNITID)
+			   VALUES($checkLayoutId,$unitId)  
+		]]></sql>
+		<sql name="insertUnitColumn" isBatch="true"><![CDATA[
+			   INSERT INTO TB_WSM_UNIT_COLUMN (UNITID,COLUMNID,DEFAULTORDER,DEFAULTSHOW,DEFAULTOPEN,DEFAULTMOVE)
+			   VALUES($columnUnitId,$columnId,$showOrder,$isShow,$isOpen,$isMove)  
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=loadLayoutUnitColumn&checkChannelId=$[checkChannelId]&currentSysCode=$[currentSysCode]]]></forward>
+	</operation>
+	
+	<operation name="publishLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="modify" forward="" beforeInvoke="publishTemplate">		
+	
+		<forward name="listAction">contoller.do?operation=loadLayoutUnitColumn</forward>
+	</operation>
+	<!-- 查询需要分配权限的角色，并进入分配权限角色，此处分配权限是指为角色指定可以访问的权限模块。注意：下面是从系统管理员的视角来分配的；如果以各个应用系统的管理员来说，应该与具体的应用系统做关联，该视角后期权限验证时或子系统验证时再实现 -->	
+	<!--<operation name="toAssignPrivilegeForLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.layout.LayoutBean"
+			cacheName="layoutViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_LAYOUT WHERE LAYOUTID=$checkLayoutId
+		</sql>
+		<sql name="privilegeCheckedList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeCheckedList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_PRIVILEGE.* FROM TB_WSM_PRIVILEGE,TB_WSM_LAYOUT_PRIVILEGE WHERE TB_WSM_PRIVILEGE.PRIVID=TB_WSM_LAYOUT_PRIVILEGE.PRIVID AND TB_WSM_LAYOUT_PRIVILEGE.LAYOUTID=$checkLayoutId
+		]]></sql>
+		<sql name="privilegeList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_PRIVILEGE 
+		]]></sql>
+		<forward name="viewPage">jsp/portal/console/layout/assignPrivilege.jsp</forward>
+	</operation>
+	
+	<operation name="assignPrivilegeForLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="delete" >
+			 DELETE   FROM TB_WSM_LAYOUT WHERE LAYOUTID=$layoutId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=executeAssignPrivilegeForLayout</forward>
+	</operation>
+	<operation name="executeAssignPrivilegeForLayout" businessClass="com.mobilecn.portal.layout.LayoutBusiness"
+		invokeMethod="add" forward="" >		
+		<sql name="insert" isBatch="true">
+		INSERT INTO TB_WSM_LAYOUT (LAYOUTID,PRIVID)VALUES($layoutId,$privId)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listLayout</forward>
+	</operation>
+	
+	--><!-- 用户end -->
+</root>

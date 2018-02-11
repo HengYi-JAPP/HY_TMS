@@ -1,0 +1,19 @@
+.treeDiv{}
+.treeDiv img{border:0; text-align:left;float:left;}
+.treeDiv a{padding-right:25px;text-decoration: none;color:#4E6EC9;}
+
+/* 列表样式 */
+.dgbackground{ border:1px solid #CCCCCC; font-size:12px; padding-left:2px;table-layout:fixed;}/* 整个table 样式 */
+/* 整个table 样式 */
+.dgHeaderStyle { background-color:#DFEBF9;background:url(../images/img/table_border_ex_bg.gif) }/* 列表标题行tr 样式 */
+/* th 样式 */
+.dgHeaderStyle td{ height:25px; font-size:12px; text-align:center; color:#000000; font-weight:bold; border:1px solid #CCCCCC;}/* td样式 */
+/* th 样式 */
+.dgAlternatingItemStyle{ background:#FFFFFF}
+/* td 样式（奇数行） */
+.dgAlternatingItemStyle td{ background:#FFFFFF; height:25px; font-size:12px;  border:1px solid #CCCCCC;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}/* td 样式（奇数行）  */
+/* td 样式（奇数行）  */
+.dgItemStyle { background:#F2F5F9;}
+/* 样式（偶数行样式） */
+.dgItemStyle td{ background:#F2F5F9; height:25px; font-size:12px;  border:1px solid #CCCCCC;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}/* 样式（偶数行样式） */
+	

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	
+	<operation name="addSubSystemPicLinkType" businessClass="com.mobilecn.plugins.piclink.PicLinkTypeBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_LINK_TYPE" caiidKey="LINKTYPEID"  caiidName="TB_WSM_LINK_TYPE" caiidVar="picLinkTypeId">
+		INSERT INTO TB_WSM_LINK_TYPE (LINKTYPEID,SYSID,LINKTYPENAME,LINKTYPEDESC,ISVALIDATE)
+		VALUES($picLinkTypeId,$sysId,$linkTypeName,$linkTypeDesc,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLinkType</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemPicLinkType" businessClass="com.mobilecn.plugins.piclink.PicLinkTypeBusiness"
+		invokeMethod="list" forward="" cacheParams="linkTypeNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_LINK_TYPE WHERE SYSID=$sysId  AND LINKTYPENAME LIKE '%$linkTypeNameSH%'    
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			SELECT * FROM TB_WSM_LINK_TYPE WHERE  SYSID=$sysId  AND LINKTYPENAME LIKE '%$linkTypeNameSH%' 
+		]]></sql>
+		<forward name="listPage">/jsp/portal/console/plugins/piclink/subsystem/type/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemPicLinkType" businessClass="com.mobilecn.plugins.piclink.PicLinkTypeBusiness"
+		invokeMethod="delete" forward="">
+		<!-- 删除所有相关的信息 -->
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LINK WHERE LINKGROUPID in(SELECT LINKGROUPID FROM  TB_WSM_LINK_GROUP WHERE LINKTYPEID =$checkLinkTypeId)
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LINK_GROUP WHERE  LINKTYPEID =$checkLinkTypeId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LINK_TYPE WHERE  LINKTYPEID =$checkLinkTypeId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLinkType</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSubSystemPicLinkType" businessClass="com.mobilecn.plugins.piclink.PicLinkTypeBusiness"
+		invokeMethod="view" forward="">
+		
+		<sql name="view" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_LINK_TYPE WHERE LINKTYPEID=$linkTypeId
+		</sql>
+		
+		<forward name="modifyPage">/jsp/portal/console/plugins/piclink/subsystem/type/modify.jsp</forward>
+		<forward name="viewPage">/jsp/portal/console/plugins/piclink/subsystem/type/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemPicLinkType" businessClass="com.mobilecn.plugins.piclink.PicLinkTypeBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_LINK_TYPE SET 	
+		 	SYSID=$sysId,	
+			LINKTYPENAME=$linkTypeName,
+			LINKTYPEDESC=$linkTypeDesc,
+			ISVALIDATE=$isValidate		
+		 WHERE LINKTYPEID=$linkTypeId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLinkType</forward>
+	</operation>
+	<!-- 用户end -->
+	
+	<!-- 为类型指定可访问的角色  end -->
+</root>

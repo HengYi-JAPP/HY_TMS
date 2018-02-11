@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.owncar.OwnCarBean">
+		<map property="feeId" javaType="java.lang.String" column="FEEID" colType=""/>
+		<map property="managementFee" javaType="java.lang.String" column="MANAGEMENTFEE" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.transfer.TransferBean">
+		<map property="transId" javaType="int" column="transId"  colType=""/>
+		<map property="shipId" javaType="int" column="shipId"  colType=""/>
+		<map property="logisticsId" javaType="int" column="logisticsId"  colType=""/>
+		<map property="corderId" javaType="int" column="corderId"  colType=""/>
+		<map property="customerId" javaType="int" column="customerId"  colType=""/>
+		<map property="transferCode" javaType="String" column="transferCode"  colType=""/>
+		<map property="applyTonNum" javaType="String" column="applyTonNum"  colType=""/>
+		<map property="applyPackNum" javaType="String" column="applyPackNum"  colType=""/>
+		<map property="actualTonNum" javaType="String" column="actualTonNum"  colType=""/>
+		<map property="actualPackNum" javaType="String" column="actualPackNum"  colType=""/>
+		<map property="planFreight" javaType="String" column="planFreight"  colType=""/>
+		<map property="actualFreight" javaType="String" column="actualFreight"  colType=""/>
+		<map property="freightUnit" javaType="String" column="freightUnit"  colType=""/>
+		<map property="shipNotice" javaType="String" column="shipNotice"  colType=""/>
+		<map property="transStatus" javaType="int" column="transStatus"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifier" javaType="String" column="modifier"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		<map property="corderCode" javaType="String" column="corderCode"  colType=""/>
+		<map property="mapId" javaType="String" column="mapId"  colType=""/>
+		<map property="mapCodeId" javaType="String" column="mapId"  colType=""/>
+		<map property="isDefault" javaType="String" column="isDefault"  colType=""/>
+		<map property="carrierId" javaType="String" column="carrierId"  colType=""/>
+		<map property="caddrId" javaType="int" column="caddrId"  colType=""/>
+		<map property="transDetailId" javaType="int" column="transDetailId"  colType=""/>
+		
+		<map property="meterialNo" javaType="String" column="meterialNo"  colType=""/>
+		<map property="meterialFactory" javaType="String" column="meterialFactory"  colType=""/>
+		<map property="codetailCertificate" javaType="String" column="codetailCertificate"  colType=""/>
+		<map property="codetailCertificateDesc" javaType="String" column="codetailCertificateDesc"  colType=""/>
+		<map property="areaId" javaType="String" column="areaId"  colType=""/>
+		<map property="shipDetailStatus" javaType="String" column="shipDetailStatus"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+		<map property="caddrDetail" javaType="String" column="caddrDetail"  colType=""/>
+		<map property="customerCode" javaType="String" column="customerCode"  colType=""/>		
+		<map property="shipCode" javaType="String" column="shipCode"  colType=""/>	
+		<map property="codetailId" javaType="String" column="codetailId"  colType=""/>
+		
+		<map property="selfFetch" javaType="String" column="selfFetch"  colType=""/>		
+		<map property="fetchDriver" javaType="String" column="fetchDriver"  colType=""/>		
+		<map property="fetchMobile" javaType="String" column="fetchMobile"  colType=""/>		
+		<map property="fetchCar" javaType="String" column="fetchCar"  colType=""/>		
+		<map property="isUrgent" javaType="String" column="isUrgent"  colType=""/>
+		
+		<map property="caddrContactor" javaType="int" column="caddrContactor"  colType=""/>
+		<map property="caddrTelephone" javaType="String" column="caddrTelephone"  colType=""/>
+		<map property="sapTransCode" javaType="String" column="SAPTRANSCODE"  colType=""/>
+		<map property="saleOrg" javaType="String" column="saleOrg"  colType=""/>
+		<map property="shipApplyTime" javaType="String" column="shipApplyTime"  colType=""/>
+		<map property="saleMan" javaType="String" column="saleMan"  colType=""/>
+		<map property="custOrderCreateTime" javaType="java.lang.String" column="custOrderCreateTime" colType=""/>
+		
+		<map property="freight" javaType="java.lang.String" column="freight" colType=""/>
+		<map property="unitPrice" javaType="java.lang.String" column="unitPrice" colType=""/>
+		<map property="transportTotalPrice" javaType="java.lang.String" column="transportTotalPrice" colType=""/>
+		<map property="detailApplyTonNum" javaType="java.lang.String" column="detailApplyTonNum" colType=""/>
+		<map property="detailApplyPackNum" javaType="java.lang.String" column="detailApplyPackNum" colType=""/>
+		
+		<map property="factoryId" javaType="java.lang.String" column="factoryId" colType=""/>
+		<map property="productId" javaType="java.lang.String" column="productId" colType=""/>
+		
+		<map property="factoryName" javaType="java.lang.String" column="factoryName" colType=""/>
+		<map property="productName" javaType="java.lang.String" column="productName" colType=""/>
+		
+		<map   property="shipPointDesc" javaType="java.lang.String" column="shipPointDesc" colType=""/>
+		
+		<map   property="shipPriceMark" javaType="int" column="shipPriceMark" colType=""/>	
+		
+		<map   property="approveAgreeTime" javaType="int" column="approveAgreeTime" colType=""/>	
+		
+		<map   property="isMerger" javaType="String" column="isMerger" colType=""/>
+		<map   property="mergerGroup" javaType="String" column="mergerGroup" colType=""/>
+		
+		<map   property="assignTime" javaType="int" column="assignTime" colType=""/>
+		<map   property="sendStatus" javaType="int" column="sendStatus" colType=""/>
+		<map   property="province" javaType="int" column="province" colType=""/>
+		<map   property="city" javaType="int" column="city" colType=""/>
+		<map   property="district" javaType="int" column="district" colType=""/>
+		<map   property="transportStatus" javaType="int" column="transportStatus" colType=""/>
+		
+		<map   property="transportCreateTime" javaType="java.lang.String" column="transportCreateTime" colType=""/>
+		<map   property="sendCreateTime" javaType="java.lang.String" column="sendCreateTime" colType=""/>
+		<map   property="sendTime" javaType="java.lang.String" column="sendTime" colType=""/>
+		<map   property="carrierName" javaType="java.lang.String" column="carrierName" colType=""/>
+		<map   property="carrierCheck" javaType="java.lang.String" column="carrierCheck" colType=""/>
+		
+	</bean>
+</root>

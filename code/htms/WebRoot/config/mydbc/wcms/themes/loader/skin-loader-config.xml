@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemSkin" businessClass="com.mobilecn.themes.loader.SkinLoader" invokeMethod="list" forward="" >
+	<!--<sql name="loadAllSystemSkin" beanClass="com.mobilecn.themes.skin.SkinBean"><![CDATA[
+		    SELECT TB_WSM_SKIN.*,TB_WSM_THEMES_SKIN.THEMESID  
+		    FROM TB_WSM_SKIN,TB_WSM_THEMES_SKIN,TB_WSM_SYS_THEMES  
+		    WHERE  TB_WSM_SKIN.ISVALIDATE=1 AND  
+		    TB_WSM_THEMES_SKIN.THEMESID=TB_WSM_SYS_THEMES.THEMESID AND 
+		    TB_WSM_THEMES_SKIN.SKINID=TB_WSM_SKIN.SKINID
+		    ORDER BY TB_WSM_THEMES_SKIN.THEMESID, TB_WSM_SKIN.SKINID DESC				
+	]]></sql>
+	--><sql name="loadAllSystemSkin" beanClass="com.mobilecn.themes.skin.SkinBean"><![CDATA[
+		  SELECT TB_WSM_SKIN.*,TB_WSM_THEMES.THEMESID  
+        FROM TB_WSM_SKIN,TB_WSM_THEMES,TB_WSM_SYS_THEMES  
+        WHERE  TB_WSM_SKIN.ISVALIDATE=1 AND  
+        TB_WSM_THEMES.THEMESID=TB_WSM_SYS_THEMES.THEMESID AND
+         TB_WSM_THEMES.THEMESID=TB_WSM_SKIN.THEMESID
+        ORDER BY TB_WSM_THEMES.THEMESID, TB_WSM_SKIN.SKINID DESC 				
+	]]></sql>
+	
+	 
+</operation>
+</root>

@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+	<!-- 保存发货申请 -->
+	<operation name="testCreateShipApply" businessClass="com.zzy.htms.autotest.AutoTestBussiness"	 forward="">
+			<sql name="INSERT" caiidTable="TB_HTMS_SHIP" caiidKey="shipId"
+				caiidName="shipId" caiidVar="shipId" >
+				<![CDATA[
+				INSERT INTO TB_HTMS_SHIP ( shipId, corderId,caddrId,orderCode,shipCode,applyTonNum, applyPackNum, shipNotice,applyStatus,
+				selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent,creator,createTime ) 
+		        VALUES($shipId,$corderId,$caddrId,$orderCode,$shipCode,$applyTonNum,$applyPackNum,$ordreNotice,0,
+		        $selfFetch,$fetchDriver,$fetchMobile,$fetchCar,$isUrgent,$userId,to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')) 
+				]]>
+			</sql>
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_SHIPDETAIL"	caiidKey="shipDetailId" caiidName="shipDetailId" caiidVar="shipDetailId"
+				 test="'$[applyTonNum]'!=''&amp;&amp;$[applyTonNum]!=0">
+				<![CDATA[
+				INSERT INTO TB_HTMS_SHIPDETAIL(shipDetailId,shipId,caddrId,codetailId,productId,factoryId,itemCode,applyTonNum,applyPackNum,shipDetailNotice,shipDetailStatus,creator,createTime) 
+		        VALUES($shipDetailId,$shipId,$caddrId,$codetailId,$productId,$factoryId,$itemCode,$applyTonNum,$applyPackNum,$shipNotice,0,$userId,$createTime)
+				]]>
+			</sql>
+			<sql name="updateAmount" isBatch="true" >
+				<![CDATA[
+				UPDATE TB_HTMS_CUSTORDERDETAIL SET
+				     appliableAmount =to_number(appliableAmount)- to_number($applyTonNum), 
+				     appliedAmount = to_number(appliedAmount)+ to_number($applyTonNum) 
+		    	WHERE codetailId = $codetailId 
+				]]>
+			</sql>
+			<sql name="updateTon" >
+				<![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyTonNum= (SELECT SUM(to_number(applyTonNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE shipId = $shipId 
+				]]>
+			</sql>
+			<sql name="updatePack" >
+				<![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyPackNum= (SELECT SUM(to_number(applyPackNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE TB_HTMS_SHIP.shipId = $shipId 
+				]]>
+			</sql>
+	</operation>
+	
+	
+	
+	<!-- 保存发货申请 -->
+	<operation name="testCreateShipApplyUseSequenceId" businessClass="com.zzy.htms.autotest.AutoTestBussiness"	 forward="">
+			<sql name="getSequenceId" refCols="seqshipid" refNames="shipId" >
+				<![CDATA[
+				Select seq_t_htms_ship.nextval  as seqshipid  From dual
+				]]>
+			</sql>
+			<sql name="INSERT"  >
+				<![CDATA[
+				INSERT INTO TB_HTMS_SHIP ( shipId, corderId,caddrId,orderCode,shipCode,applyTonNum, applyPackNum, shipNotice,applyStatus,
+				selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent,creator,createTime ) 
+		        VALUES($shipId,$corderId,$caddrId,$orderCode,$shipCode,$applyTonNum,$applyPackNum,$ordreNotice,0,
+		        $selfFetch,$fetchDriver,$fetchMobile,$fetchCar,$isUrgent,$userId,to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')) 
+				]]>
+			</sql>
+			<sql name="getDetailSequenceId" refCols="seqshipdetailid" refNames="shipDetailId" >
+				<![CDATA[
+				Select seq_t_htms_shipdetail.nextval  as seqshipdetailid  From dual
+				]]>
+			</sql>
+			<sql name="INSERT" isBatch="true"   test="'$[applyTonNum]'!=''&amp;&amp;$[applyTonNum]!=0">
+				<![CDATA[
+				<if test="$[applyTonNum]!='0'">
+				INSERT INTO TB_HTMS_SHIPDETAIL(shipDetailId,shipId,caddrId,codetailId,productId,factoryId,itemCode,applyTonNum,applyPackNum,shipDetailNotice,shipDetailStatus,creator,createTime) 
+		        VALUES($shipDetailId,$shipId,$caddrId,$codetailId,$productId,$factoryId,$itemCode,$applyTonNum,$applyPackNum,$shipNotice,0,$userId,$createTime)
+		        </if> 
+				]]>
+			</sql>
+			<sql name="updateAmount" isBatch="true" >
+				<![CDATA[
+				UPDATE TB_HTMS_CUSTORDERDETAIL SET
+				     appliableAmount =to_number(appliableAmount)- to_number($applyTonNum), 
+				     appliedAmount = to_number(appliedAmount)+ to_number($applyTonNum) 
+		    	WHERE codetailId = $codetailId 
+				]]>
+			</sql>
+			<sql name="updateTon" >
+				<![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyTonNum= (SELECT SUM(to_number(applyTonNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE shipId = $shipId 
+				]]>
+			</sql>
+			<sql name="updatePack" >
+				<![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyPackNum= (SELECT SUM(to_number(applyPackNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE TB_HTMS_SHIP.shipId = $shipId 
+				]]>
+			</sql>
+	</operation>
+	
+	
+	<operation name="testCancelShipApply" businessClass="com.zzy.htms.autotest.AutoTestBussiness"   forward="" >
+			<sql name="UPDATEDETAIL"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+						SHIPDETAILSTATUS=902,
+						modifier=$userId,
+						modifyTime=$modifyTime
+						where SHIPID=$shipId
+					]]>
+			</sql>
+			<sql name="UPDATESHIP"   >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+						APPLYSTATUS=902,						
+						modifier=$userId,
+						modifyTime=$modifyTime 
+						where SHIPID=$shipId
+					]]>
+			</sql>
+			<!--查出申请明细，进行订单行项目数据修改 -->
+			<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  >
+					<![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.*
+						  FROM TB_HTMS_SHIPDETAIL
+						 WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId
+					]]>
+			</sql>
+	
+			<!-- 更新订单明细，把申请数量算回去 -->
+			<sql name="UPDATECODETAIL"  isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($applyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($applyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]>
+			</sql>
+	</operation>
+	
+	
+	<!-- 审批 -->
+	<operation name="testCreateTransfer" businessClass="com.zzy.htms.autotest.AutoTestBussiness"   forward="" >
+			<!-- 插入初始、默认的虚拟调拨单 -->
+			<sql name="INSERTTRANSFER"  caiidTable="TB_HTMS_TRANSFER" caiidKey="transId" caiidName="transId" caiidVar="transId"  >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSFER (transId, shipId,shipCode, logisticsId, corderId, caddrId,
+				        customerId, transferCode, applyTonNum, applyPackNum, actualTonNum, 
+				        actualPackNum, planFreight, actualFreight, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, transStatus, creator, createTime,isValidate,isDefault) 
+				        SELECT 
+				        $transId, shipId,shipCode, $logisticsId, corderId, caddrId,
+				        customerId, $transferCode, applyTonNum, applyPackNum, 0, 
+				        0, 0, 0, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, 0, $userId, $createTime,1,1
+				        FROM TB_HTMS_SHIP WHERE TB_HTMS_SHIP.shipId=$shipId
+					]]>
+			</sql>
+			<!-- 插入调拨单明细，可能批量 -->
+			<sql name="INSERTRANSFERDETAIL" isBatch="true" caiidTable="TB_HTMS_TRANSFERDETAIL" caiidKey="transDetailId" caiidName="transDetailId" caiidVar="transDetailId"  >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSFERDETAIL (transDetailId, shipDetailId, itemCode,
+				        transId, shipId,codetailId, caddrId, productId,factoryId, applyTonNum, applyPackNum, 
+				        fetchTonNum, fetchPackNum, planFreight, actulFreight, 
+				        freightUnit, transDetailNotice, transDetailStatus, creator, 
+				        createTime, isValidate) 
+				        SELECT 
+				        $transDetailId, shipDetailId, itemCode,
+				        $transId, shipId,codetailId, caddrId, productId,factoryId, applyTonNum, applyPackNum, 
+				        0, 0, 0, 0, 
+				        freightUnit, shipDetailNotice, 0, $userId, 
+				        $createTime, 1
+				        FROM TB_HTMS_SHIPDETAIL
+				        WHERE TB_HTMS_SHIPDETAIL.shipDetailId=$shipDetailId
+					]]>
+			</sql>
+			<!-- 更新申请明细状态，为审批通过 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							TB_HTMS_SHIPDETAIL.shipDetailId = $shipDetailId 
+					]]>
+			</sql>
+			<!-- 更新申请状态，为审批通过，及审批意见 -->
+			<sql name="UPDATESHIP"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = $approveNotice,
+							modifier=$userId,
+							modifyTime=$modifyTime,
+							shortStock=$shortStock,
+							shortNotice=$shortNotice,
+							shortTime=$modifyTime
+				     WHERE TB_HTMS_SHIP.shipId = $shipId 
+					]]>
+			</sql>
+			<sql name="countTransferById"  refCols="shipIdCountNum" refNames="refShipIdCountNum" >
+					<![CDATA[
+						select shipid,count(shipid) as shipIdCountNum from  tb_htms_transfer 
+						where shipid = $shipId  and  isdefault=1  Group By shipid
+					]]>
+			</sql>
+			<sql name="deleteTransferDetailById"  >
+					<![CDATA[
+					    <if test="$[refShipIdCountNum]!='1'">
+						    delete from TB_HTMS_TRANSFERDETAIL where transid = $transId
+						</if>
+					]]>
+			</sql>
+			<sql name="deleteTransferById"  >
+					<![CDATA[
+					    <if test="$[refShipIdCountNum]!='1'">
+						    delete from TB_HTMS_TRANSFER where transid =  $transId
+						</if>
+					]]>
+			</sql>
+	</operation>
+	
+	<operation name="testCancelTransfer" businessClass="com.zzy.htms.autotest.AutoTestBussiness"   forward="" >
+			<!-- 删除调拨单明细 -->
+			<sql name="DELETERANSFERDETAIL"  >
+					<![CDATA[
+						DELETE FROM  TB_HTMS_TRANSFERDETAIL where shipId=$shipId
+					]]>
+			</sql>
+			<!--  删除调拨单 -->
+			<sql name="DELETETRANSFER"  >
+					<![CDATA[
+						DELETE FROM TB_HTMS_TRANSFER where shipId=$shipId
+					]]>
+			</sql>
+			
+			<!-- 更新申请明细状态，为撤消审批,恢复到审批中状态 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =0,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							shipId=$shipId
+					]]>
+			</sql>
+			<!-- 更新申请状态，为撤消审批,恢复到审批中状态 -->
+			<sql name="UPDATESHIP"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=0,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = '撤消',
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE TB_HTMS_SHIP.shipId = $shipId 
+					]]>
+			</sql>
+		
+	</operation>
+	
+	
+	<operation name="testCreateTransport" businessClass="com.zzy.htms.autotest.AutoTestBussiness" invokeMethod="list" afterInvoke="checkAssign"  loadCacheForm="splitForm"   forward="" >
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						transStatus=1,
+						modifier=$userId,
+					    modifyTime=$modifyTime
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<!-- 更新调拨单明细状态 -->
+			<sql name="UPDATE_DETAIL" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<!-- 更新调拨单对应的申请明细状态，为2分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =2,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							shipId = $currentShipId 
+					]]>
+			</sql>
+			<!-- 更新调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=2,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				    	WHERE 
+				    		shipId = $currentShipId 
+					]]>
+			</sql>
+			
+			<!-- 插入新分拆调拨单的运单 -->
+			<sql name="INSERT_SPLIT_TRANSPORT"  caiidTable="TB_HTMS_TRANSPORT" caiidKey="transportId" caiidName="transportId" caiidVar="assignTransportId" >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSPORT ( transportId, carrierId, transId,corderId, caddrId,
+				        transportCode, applyTonNum, applyPackNum, 
+				        actaulTonNum, actaulPackNum, planFreight, actaulFreight, 
+				        freightUnit, transportStatus, creator, createTime, isValidate,transportNotice,isMerger,mergerGroup) 
+				        
+				        SELECT $assignTransportId,$currentCarrierId,transId,corderId,caddrId,
+				        $transportCode,applyTonNum,applyPackNum,
+				        0,0,0,0,
+				        freightUnit,0,$userId,$createTime,1,$transportNotice,isMerger,mergerGroup
+				        FROM TB_HTMS_TRANSFER
+				        WHERE TB_HTMS_TRANSFER.transId=$transId
+					]]>
+			</sql>
+			<!-- 插入新分拆调拨单的运单明细 -->
+			<sql name="INSERT_SPLIT_TRANSPORTDIATLE" isBatch="true" caiidTable="TB_HTMS_TRANSPORTDETAIL" caiidKey="sportDetailId" caiidName="sportDetailId" caiidVar="sportDetailId"  >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSPORTDETAIL (sportDetailId, transDetailId, 
+				        transportId, transferId, shipDetailId, codetailId, shipId, 
+				        caddrId, productId,factoryId,itemCode, applyTonNum, applyPackNum, fetchTonNum, 
+				        fetchPackNum, planFreight, actulFreight, freightUnit, 
+				        transDetailNotice, transDetailStatus, creator, createTime,isValidate) 
+				        
+				        SELECT $sportDetailId,transDetailId,
+				        $assignTransportId,transId,shipDetailId,codetailId, shipId,
+				        caddrId,productId,factoryId,itemCode,applyTonNum,applyPackNum,0,
+				        0,0,0,freightUnit,
+				        $transDetailNotice,0,$userId,$createTime,1
+				        FROM TB_HTMS_TRANSFERDETAIL
+				        WHERE TB_HTMS_TRANSFERDETAIL.transDetailId=$currentTransDetailId
+					]]>
+			</sql>
+			<sql name="countTransportById"  refCols="transIdCountNum" refNames="refTransIdCountNum" >
+					<![CDATA[
+						select transId,count(transId) as transIdCountNum from  TB_HTMS_TRANSPORT 
+						where transId = $transId  Group By transId
+					]]>
+			</sql>
+			<!-- 如果分配有重复的记录，做特殊处理，让此处报错，否则可能生成两个调拨单数据，利用事物做回滚，回滚后进入到此afterInvoke方法删除之前创建的调拨单 -->
+			<sql name="deleteTransferDetailById" >
+					<![CDATA[
+					    <if test="$[refTransIdCountNum]!='1'">
+						    delete  from TB_HTMS_TRANSPORTDETAIL where transportId =  $assignTransportId
+						</if>
+					]]>
+			</sql>
+			<sql name="deleteTransferById"  >
+					<![CDATA[
+					    <if test="$[refTransIdCountNum]!='1'">
+						    delete from TB_HTMS_TRANSPORT where transportId =  $assignTransportId
+						</if>
+					]]>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSERCODE" test="$[sapTransferCode]!=''">
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+	   </operation>
+	
+	
+	
+	<!-- 调拨单承取消运单分配 -->
+	<operation name="testCancelTransport" businessClass="com.zzy.htms.autotest.AutoTestBussiness"   forward="" >
+			<!-- 取消调拨单对应的运单明细 -->
+			<sql name="INSERT_SPLIT_TRANSPORTDIATLE" ><![CDATA[
+						DELETE FROM TB_HTMS_TRANSPORTDETAIL 
+						WHERE transportId=(
+							SELECT transportId FROM TB_HTMS_TRANSPORT WHERE transId=$transId
+						)
+						AND transDetailStatus=0
+						
+					]]>
+			</sql>
+			<!-- 取消调拨单对应的运单 -->
+			<sql name="INSERT_SPLIT_TRANSPORT">
+					<![CDATA[
+						DELETE FROM  TB_HTMS_TRANSPORT
+						WHERE transId =$transId 
+						AND transportStatus = 0
+					]]>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET
+					 transStatus=0,
+					 modifier=$userId,
+					 modifyTime=$modifyTime
+				    WHERE transId =$transId
+					]]>
+			</sql>
+			<!-- 更新调拨单明细状态-->
+			<sql name="UPDATE_DETAIL" >
+					<![CDATA[
+						UPDATE TB_HTMS_TRANSFERDETAIL SET
+							transDetailStatus=0,
+				    		modifier=$userId,
+				    		modifyTime=$modifyTime
+				    	WHERE transId =$transId 
+					]]>
+			</sql>
+			<sql name="UPDATE_TRANSER_PRICE" >
+					<![CDATA[
+					delete from  TB_HTMS_TRANSFER_PRICE  WHERE transId =$transId
+					]]>
+			</sql>
+			
+			<!-- 当前申请单对应的调拨单只有一个，而且是未分配时，则可以更新申请单状态为审批完成状态，允许撤消 -->
+			<!-- 通过计算同一申请号原始状态的调拨单数目，来决定后面是否更改申请单的状态 -->
+			<sql name="defaultTransferNum" refCols="defaultTransferNum" refNames="defaultTransferNum">
+					<![CDATA[
+					SELECT COUNT(*) AS defaultTransferNum FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId AND  transStatus=0
+					]]>
+			</sql>
+			<sql name="transferCount" refCols="transferCount" refNames="transferCount">
+					<![CDATA[
+					SELECT COUNT(*) AS transferCount FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId 
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请明细状态，为1分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE shipId = $transShipId and '1'=$defaultTransferNum AND '1'=$transferCount
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $transShipId  and '1'=$defaultTransferNum AND '1'=$transferCount
+					]]>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSERCODE" test="$[sapTransferCode]==''">
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+	</operation>
+	
+	
+	<operation name="testCreateSend" businessClass="com.zzy.htms.autotest.AutoTestBussiness"   forward="" >
+		    <sql name="INSERT" caiidTable="TB_HTMS_SEND" caiidKey="sendId" caiidName="sendId" caiidVar="sendId"  >
+				<![CDATA[
+					INSERT INTO TB_HTMS_SEND ( sendId, vehicleId, driverId, 
+			        carrierId,  planTime,detailTime,applyTonNum,applyPackNum,sendCode,sendNotice,sendStatus,creator,createTime,sendTime) 
+			        VALUES($sendId,$sendVehicleId,$sendDriverId,
+			        $login_user_carrier_id,$planTime,$detailTime,$sendTonNum,$sendPackNum,$sendCode,$sendNotice,0,$userId,$createTime,$createTime) 
+				]]>
+			</sql>
+			<!-- 插入运单-派车单对应关系； -->
+			<sql name="INSERTRelative" isBatch="true">
+				<![CDATA[
+					INSERT INTO TB_HTMS_TRANSPORTSEND (sendId,transportId)VALUES( $sendId, $transportId) 
+				]]>
+			</sql>
+			<!-- 更新[调拨单]状态:已经分配派车 -->
+			<sql name="UPDATE_TRANSER" isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+					transStatus=2
+				    ,modifier=$userId,modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSFER.transId = $transferId
+					]]>
+			</sql>
+			<!-- 更新[调拨单明细]状态 ：已经分配派车-->
+			<sql name="UPDATE_DETAIL"  isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL  SET 
+						transDetailStatus=2,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSFERDETAIL.transId=$transferId
+					]]>
+			</sql>
+			
+			<!-- 更新[运单]状态:已经分配派车  transportStatus=0未分配车，transportStatus=1已经分配车，但未派车，transportStatus=2已经分配车且派车了-->
+			<sql name="UPDATE_TRANSPORT" isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORT  SET 
+					transportStatus=1
+				    ,modifier=$userId,modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORT.TRANSPORTID = $transportId
+					]]>
+			</sql>
+			<!-- 更新[运单明细]状态 ：已经分配派车-->
+			<sql name="UPDATE_TRANSPORTDETAIL"  isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORTDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE transportId=$transportId
+					]]>
+			</sql>
+			
+			<!-- 更新申请明细状态，为已经派车 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =3,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							TB_HTMS_SHIPDETAIL.shipId IN(
+								SELECT TB_HTMS_TRANSFER.SHIPID 
+								FROM TB_HTMS_TRANSPORT,TB_HTMS_TRANSFER 
+								WHERE  
+								TB_HTMS_TRANSPORT.TRANSPORTID=$transportId
+								AND TB_HTMS_TRANSPORT.TRANSID=TB_HTMS_TRANSFER.TRANSID
+							)
+					]]>
+			</sql>
+			<!-- 更新申请状态，为已经派车 -->
+			<sql name="UPDATESHIP"  isBatch="true"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=3,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				            WHERE TB_HTMS_SHIP.shipId IN (
+								SELECT TB_HTMS_TRANSFER.SHIPID 
+								FROM TB_HTMS_TRANSPORT,TB_HTMS_TRANSFER 
+								WHERE  
+								TB_HTMS_TRANSPORT.TRANSPORTID=$transportId
+								AND TB_HTMS_TRANSPORT.TRANSID=TB_HTMS_TRANSFER.TRANSID
+							) 
+					]]>
+			</sql>
+	</operation>
+	
+	
+	<operation name="testCancelSend" businessClass="com.zzy.htms.autotest.AutoTestBussiness"   forward="" >
+			<!-- 更新[运单明细]状态 ：已经分配派车-->
+			<sql name="UPDATE_TRANSPORTDETAIL" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORTDETAIL  SET 
+						transDetailStatus=0,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORTDETAIL.transportId=$transportId
+					]]>
+			</sql>
+			<!-- 更新[运单]状态:已经分配车，但未派车 -->
+			<sql name="UPDATE_TRANSPORT" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORT  SET 
+					transportStatus=0
+				    ,modifier=$userId,modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORT.TRANSPORTID =$transportId
+						]]>
+			</sql>
+			
+			<!-- 更新[调拨单明细]状态 ：-->
+			<sql name="UPDATE_DETAIL"  >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSFERDETAIL.transId IN (
+				    	SELECT TRANSID FROM  TB_HTMS_TRANSPORT
+						WHERE 
+						TB_HTMS_TRANSPORT.TRANSPORTID=$transportId
+				    )
+					]]>
+			</sql>
+			
+			<!-- 更新[调拨单]状态:已经分配派车 -->
+			<sql name="UPDATE_TRANSER"  >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						transStatus=1,
+						modifier=$userId,
+						modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSFER.transId IN (
+				    	SELECT TRANSID FROM  TB_HTMS_TRANSPORT
+						WHERE 
+						TB_HTMS_TRANSPORT.TRANSPORTID=$transportId
+				    )
+					]]>
+			</sql>
+			<!-- 更新申请明细状态，为已经派车 -->
+			<sql name="UPDATESHIPDETAIL"   >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =2,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							TB_HTMS_SHIPDETAIL.shipId IN(
+								SELECT TB_HTMS_TRANSFER.SHIPID 
+								FROM TB_HTMS_TRANSPORT,TB_HTMS_TRANSFER 
+								WHERE  
+								TB_HTMS_TRANSPORT.TRANSPORTID=$transportId
+								AND TB_HTMS_TRANSPORT.TRANSID=TB_HTMS_TRANSFER.TRANSID
+							)
+					]]>
+			</sql>
+			<!-- 更新申请状态，为已经派车 -->
+			<sql name="UPDATESHIP"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=2,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE TB_HTMS_SHIP.shipId IN(
+								SELECT TB_HTMS_TRANSFER.SHIPID 
+								FROM TB_HTMS_TRANSPORT,TB_HTMS_TRANSFER 
+								WHERE  
+								TB_HTMS_TRANSPORT.TRANSPORTID= $transportId
+								AND TB_HTMS_TRANSPORT.TRANSID=TB_HTMS_TRANSFER.TRANSID
+							) 
+					]]>
+			</sql>
+			<!-- 注意：下面三条SQL需要按顺序执行，不能调换顺序 -->	
+			<!-- 插入运单-派车单对应关系； -->
+			<sql name="INSERTRelative" isBatch="true">
+				<![CDATA[
+					DELETE FROM TB_HTMS_TRANSPORTSEND WHERE  TRANSPORTID=$transportId
+				]]>
+			</sql>
+			
+			<!-- 没有关联时，删除派车单-->
+			<sql name="DELETESEND" >
+				<![CDATA[
+					DELETE FROM TB_HTMS_SEND WHERE  SENDID NOT IN(SELECT SENDID FROM TB_HTMS_TRANSPORTSEND GROUP BY SENDID)
+				]]>
+			</sql>
+	</operation>
+	
+	
+	<operation name="testDoSendCar" businessClass="com.zzy.htms.autotest.AutoTestBussiness"    forward="">
+			<!-- 插入派车单 -->
+			<!-- 派车单列表sendStatus=0,在派车中，sendStatus=1已经派车，在提货中，sendStatus=2，已经提货，在送货中，sendStatus=5货已经到，并签收 -->
+			<sql name="UPDATESEND"  isBatch="true">
+				<![CDATA[
+					UPDATE TB_HTMS_SEND SET 
+						sendStatus=1,
+						modifier=$userId,
+						modifyTime=$modifyTime,
+						sendTime=$modifyTime
+				    WHERE SENDID=$checkSendId 
+				]]>
+			</sql>
+			
+			
+			<!-- 更新[运单]状态:已经派车  transportStatus=0未排车，transportStatus=1已排车，但未派车，transportStatus=2已排车且派车了-->
+			<sql name="UPDATE_TRANSPORT" isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORT  SET 
+					transportStatus=2
+				    ,modifier=$userId,modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORT.TRANSPORTID IN(
+				    	SELECT transportId FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$checkSendId  
+				    )
+					]]>
+			</sql>
+			<!-- 更新[运单明细]状态 ：已排车且派车-->
+			<sql name="UPDATE_TRANSPORTDETAIL"  isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORTDETAIL  SET 
+						transDetailStatus=2,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORTDETAIL.TRANSPORTID IN(
+				    	SELECT TRANSPORTID FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$checkSendId  
+				    )
+					]]>
+			</sql>
+			
+	</operation>
+
+      <operation name="testCancelSendCar" businessClass="com.zzy.htms.autotest.AutoTestBussiness"    forward="">
+			<!-- 插入派车单 -->
+			<!-- 派车单列表sendStatus=0,在派车中，sendStatus=1已经派车，在提货中，sendStatus=2，已经提货，在送货中，sendStatus=5货已经到，并签收 -->
+			<sql name="UPDATESEND" >
+				<![CDATA[
+					UPDATE TB_HTMS_SEND SET 
+						sendStatus=0,
+						modifier=$userId,
+						modifyTime=$modifyTime,
+				    	sendTime=''
+				    WHERE SENDID=$sendId 
+				]]>
+			</sql>
+			
+			
+			<!-- 更新[运单]状态:已经派车  transportStatus=0未排车，transportStatus=1已排车，但未派车，transportStatus=2已排车且派车了-->
+			<sql name="UPDATE_TRANSPORT" isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORT  SET 
+					transportStatus=1,
+					modifier=$userId,
+					modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORT.TRANSPORTID IN(
+				    	SELECT transportId FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$sendId  
+				    )
+					]]>
+			</sql>
+			<!-- 更新[运单明细]状态 ：已排车且派车-->
+			<sql name="UPDATE_TRANSPORTDETAIL"  isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSPORTDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE TB_HTMS_TRANSPORTDETAIL.TRANSPORTID IN(
+				    	SELECT TRANSPORTID FROM TB_HTMS_TRANSPORTSEND WHERE  SENDID=$sendId  
+				    )
+					]]>
+			</sql>
+	</operation>
+
+</root>

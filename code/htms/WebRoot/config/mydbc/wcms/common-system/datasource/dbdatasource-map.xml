@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.mydbc.dbpool.DatasourceBean">
+		<map property="dbsId" javaType="java.lang.String" column="DBSID" colType=""/>
+		<map property="dbsName" javaType="java.lang.String" column="DBSNAME" colType=""/>
+		<map property="dbType" javaType="java.lang.String" column="DBTYPE" colType=""/>
+		<map property="dbDriver" javaType="java.lang.String" column="DBDRIVER" colType=""/>
+		<map property="dbName" javaType="java.lang.String" column="DBNAME" colType=""/>
+		<map property="hostIp" javaType="java.lang.String" column="HOSTIP" colType=""/>
+		<map property="hostPort" javaType="java.lang.String" column="HOSTPORT" colType=""/>
+		<map property="dbAccount" javaType="java.lang.String" column="DBACCOUNT" colType=""/>
+		<map property="dbPwd" javaType="java.lang.String" column="DBPWD" colType=""/>
+		<map property="maxConn" javaType="java.lang.String" column="MAXCONN" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

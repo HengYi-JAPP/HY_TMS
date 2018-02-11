@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 加载当前频道的布局列表 -->
+	<operation name="loadColumn_of_commonSystem" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="list"  forward="" >
+		<sql name="unitList"  beanClass="com.mobilecn.portal.unit.UnitBean" cacheName="__UNITS_LIST___" cacheScope="session" >
+			SELECT TB_WSM_UNIT.* FROM TB_WSM_UNIT WHERE TB_WSM_UNIT.LAYOUTID=$__layoutId 	 
+		</sql>	
+		
+		<!-- 当前布局中用户有权限访问的栏目栏目列表 -->
+		<!-- __COLUMN_LIST___  修改之后要修改mydbc-xml-conf.properties文件中的__COLUMN_LIST变量值 -->
+		<sql name="columnList"  beanClass="com.mobilecn.portal.column.ColumnBean" cacheName="__COLUMN_LIST___" cacheScope="session" >
+			SELECT TB_WSM_COLUMN.*,TB_WSM_UNIT_COLUMN.UNITID,TB_WSM_UNIT_COLUMN.DEFAULTORDER,TB_WSM_UNIT_COLUMN.DEFAULTSHOW,TB_WSM_UNIT_COLUMN.DEFAULTOPEN,TB_WSM_UNIT_COLUMN.DEFAULTMOVE
+			FROM TB_WSM_COLUMN,TB_WSM_UNIT_COLUMN,TB_WSM_UNIT
+			WHERE 
+			TB_WSM_UNIT.LAYOUTID=$__layoutId AND 
+			TB_WSM_UNIT.UNITID = TB_WSM_UNIT_COLUMN.UNITID AND 
+			TB_WSM_UNIT_COLUMN.COLUMNID = TB_WSM_COLUMN.COLUMNID AND (
+					(TB_WSM_COLUMN.COLUMNID IN(
+						SELECT TB_WSM_ROLE_COLUMN.COLUMNID FROM TB_WSM_ROLE_COLUMN,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+						WHERE 
+						TB_WSM_USER_GROUP.USERID=$userId AND 
+						TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+						TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_COLUMN.ROLEID
+					)
+					)OR(
+						TB_WSM_COLUMN.USERDEFINE=1 AND
+						TB_WSM_COLUMN.USERID=$userId
+					)
+			)AND 
+			TB_WSM_COLUMN.ISVALIDATE = 1 
+			ORDER BY TB_WSM_UNIT_COLUMN.DEFAULTORDER
+		</sql>	
+		<sql name="selfDefineColumnList"  beanClass="com.mobilecn.portal.column.ColumnBean" cacheName="__SELF_COLUMN_LIST___" cacheScope="session" >
+			 SELECT TB_WSM_USER_COLUMN.* FROM TB_WSM_USER_COLUMN 
+			 WHERE 
+			 TB_WSM_USER_COLUMN.LAYOUTID=$__layoutId AND 
+			 TB_WSM_USER_COLUMN.USERID=$userId 
+			 ORDER BY TB_WSM_USER_COLUMN.UNITID,TB_WSM_USER_COLUMN.SHOWORDER
+		</sql>	
+		<forward name="listPage">jsp/index.jsp</forward>
+	</operation>
+	
+	<!-- 用户end -->
+</root>

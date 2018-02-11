@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddSubSystemPicLink" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="list" forward="" >	
+		<sql name="listType" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_TYPE WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<sql name="listGroup" beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean"
+			cacheName="picLinkGroupList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_GROUP WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<forward name="listPage">/jsp/portal/console/plugins/piclink/subsystem/piclink/add.jsp</forward>
+	</operation>
+	<operation name="addSubSystemPicLink" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidName="TB_WSM_INFO_COLUMN" caiidVar="picLinkId">
+		INSERT INTO TB_WSM_LINK (LINKID,LINKTYPEID,LINKGROUPID,LINKNAME,LINKTITLE,LINKADDR,LINKDESC,LINKICONPATH,LINKICONWIDTH,LINKICONHEIGHT,LINKICONADDR,SHOWCONTENTS,CONTENTS,PUBLISHER,PUBLISHDATETIME,DRAFTER,DRAFDATETIME,SHOWLINKICON,SHOWORDER,ISSEE,ISCLICK,ISVALIDATE)
+		VALUES($picLinkId,$linkTypeId,$linkGroupId,$linkName,$linkTitle,$linkAddr,$linkDesc,$linkIconPath,$linkIconWidth,$linkIconHeight,$linkIconAddr,$showContents,$contents,$publisher,$publishDatetime,$drafter,$drafDatetime,$showLinkIcon,$showOrder,$isSee,$isClick,$isValidate)
+		</sql>
+		<sql name="insertColumnMap">
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($picLinkId,$columnId,0,0,0,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLink</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemPicLink" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="list" forward="" cacheParams="linkNameSH,curpage" cacheScopes="page,session">
+		<sql name="listType" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_TYPE WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<sql name="listGroup" beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean"
+			cacheName="picLinkGroupList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_GROUP WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_LINK,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_LINK.LINKID AND TB_WSM_INFO_COLUMN.ISVALIDATE=1 AND LINKNAME LIKE '%$linkNameSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.piclink.PicLinkBean"
+			cacheName="picLinkList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			 SELECT TB_WSM_LINK.* FROM TB_WSM_LINK,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_LINK.LINKID AND TB_WSM_INFO_COLUMN.ISVALIDATE=1 AND LINKNAME LIKE '%$linkNameSH%' ORDER BY LINKTYPEID,LINKGROUPID,SHOWORDER 
+		]]></sql>
+		<forward name="listPage">/jsp/portal/console/plugins/piclink/subsystem/piclink/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemPicLink" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="delete" forward="">
+		<!-- 删除所有相关的信息 -->		
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LINK WHERE  LINKID =$checkLinkId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLink</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSubSystemPicLink" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="view" forward="">
+		<sql name="listType" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_TYPE WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<sql name="listGroup" beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean"
+			cacheName="picLinkGroupList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_GROUP WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<sql name="view" beanClass="com.mobilecn.plugins.piclink.PicLinkBean"
+			cacheName="picLinkViewBean" cacheScope="request"><![CDATA[
+			 SELECT * FROM TB_WSM_LINK WHERE LINKID=$linkId
+		]]></sql>
+		
+		<forward name="modifyPage">/jsp/portal/console/plugins/piclink/subsystem/piclink/modify.jsp</forward>
+		<forward name="viewPage">/jsp/portal/console/plugins/piclink/subsystem/piclink/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemPicLink" businessClass="com.mobilecn.plugins.piclink.PicLinkBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_LINK SET 	
+			LINKTYPEID=$linkTypeId,	 	
+			LINKGROUPID=$linkGroupId,
+			LINKNAME=$linkName,
+			LINKTITLE=$linkTitle,
+			LINKADDR=$linkAddr,
+			LINKDESC=$linkDesc,
+			LINKICONPATH=$linkIconPath,
+			LINKICONWIDTH=$linkIconWidth,
+			LINKICONHEIGHT=$linkIconHeight,
+			LINKICONADDR=$linkIconAddr,
+			SHOWCONTENTS=$showContents,
+			CONTENTS=$contents,
+			PUBLISHER=$publisher,
+			PUBLISHDATETIME=$publishDatetime,
+			DRAFTER=$drafter,
+			DRAFDATETIME=$drafDatetime,
+			SHOWLINKICON=$showLinkIcon,
+			SHOWORDER=$showOrder,
+			ISSEE=$isSee,
+			ISCLICK=$isClick,
+			ISVALIDATE=$isValidate	
+		 WHERE LINKID=$linkId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLink</forward>
+	</operation>
+	
+</root>

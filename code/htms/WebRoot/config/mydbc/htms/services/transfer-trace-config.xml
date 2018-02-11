@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>	
+	<operation name="loadTransferTraceTransfer" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		<!-- 获得引用ID -->
+		<sql name="orderBean"  beanClass="com.zzy.htms.sales.custorder.CustOrderBean"  refCols="corderId" refNames="refCorderId" >
+			SELECT TB_HTMS_CUSTORDER.*
+			FROM TB_HTMS_CUSTORDER
+			WHERE corderCode=$orderCode
+		</sql>
+		<sql name="transferBean"  beanClass="com.zzy.htms.logistic.transfer.TransferBean"  isEscapeQuotation="true"  isEscape="false" >
+			SELECT TB_HTMS_TRANSFER.*,
+			       TB_HTMS_CUSTOMERADDR.AREAID
+			FROM TB_HTMS_TRANSFER,TB_HTMS_CUSTOMERADDR 
+			WHERE 
+			  TB_HTMS_TRANSFER.CADDRID=TB_HTMS_CUSTOMERADDR.CADDRID
+			  AND TB_HTMS_TRANSFER.corderId='$refCorderId'
+			  and tb_htms_transfer.saptranscode like '%$sapTransferCode%'  
+			  and  TB_HTMS_TRANSFER.transstatus in (1,2,3)
+		</sql>
+	</operation>
+	
+	
+	<operation name="loadTransferTraceInfo" businessClass="com.zzy.htms.services.business.HtmsFreightBusiness" invokeMethod="add"  >
+		<sql name="customerBean"  beanClass="com.zzy.htms.sales.customer.CustomerBean"   isEscapeQuotation="true"  isEscape="false"  >
+			SELECT  TB_HTMS_customer.*
+			FROM    TB_HTMS_customer 
+			WHERE   TB_HTMS_customer.customerId = $refCustomerId
+		</sql>
+		<sql name="transportBean"  refCols="transportId" refNames="refTransportId" beanClass="com.zzy.htms.logistic.transport.TransportBean"   isEscapeQuotation="true"  isEscape="false"  >
+			SELECT  TB_HTMS_TRANSPORT.*
+			FROM    TB_HTMS_TRANSPORT 
+			WHERE   TB_HTMS_TRANSPORT.TRANSID in ($refTransId)
+		</sql>
+		<sql name="shipBean"  beanClass="com.zzy.htms.sales.ship.ShipBean" isEscapeQuotation="true"  isEscape="false"  >
+			SELECT TB_HTMS_SHIP.* FROM TB_HTMS_SHIP 
+			WHERE TB_HTMS_SHIP.SHIPID in ($refShipId)
+		</sql>
+		<sql name="sendBean"  beanClass="com.zzy.htms.logistic.send.SendBean" isEscapeQuotation="true"  isEscape="false"  >
+		     Select Tb_Htms_Send.*,tb_htms_vehicle.vehicleNo
+                From Tb_Htms_Send  Left Join tb_htms_vehicle  On Tb_Htms_Send.vehicleid = tb_htms_vehicle.vehicleid
+                Where Tb_Htms_Send.Sendid In 
+                   (Select Sendid From tb_htms_transportsend Where tb_htms_transportsend.Transportid in 
+                      (select transportid from tb_htms_transport where transid in ($refTransId)) 
+                   )
+		</sql>
+		<sql name="sendLocationBean"  beanClass="com.zzy.htms.location.SendLocation" isEscapeQuotation="true"  isEscape="false"  >
+			SELECT  TB_HTMS_SENDLOCATION.* 
+			FROM    TB_HTMS_SENDLOCATION 
+			WHERE   TB_HTMS_SENDLOCATION.transid in ($refTransId)
+		</sql>
+		<sql name="parkLogisticsBean"  beanClass="com.zzy.htms.parklogistics.ParkLogisticsBean" isEscapeQuotation="true"  isEscape="false"  >
+			SELECT  tb_htms_parklogistics.* 
+			FROM    tb_htms_parklogistics 
+			WHERE   tb_htms_parklogistics.sapcode in ($sapTransferCodes)
+		</sql>
+		<sql name="transDetailList"  beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" isEscapeQuotation="true"  isEscape="false"  >
+			SELECT TB_HTMS_TRANSFERDETAIL.* FROM TB_HTMS_TRANSFERDETAIL  
+			WHERE  TB_HTMS_TRANSFERDETAIL.transId in ($refTransId)
+		</sql> 
+		<sql name="customerAddrList"  beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean" isEscapeQuotation="true"  isEscape="false"  >
+				<![CDATA[
+					select * from tb_htms_customeraddr where cAddrId in  (SELECT TB_HTMS_SHIP.cAddrId FROM TB_HTMS_SHIP 
+			        WHERE TB_HTMS_SHIP.SHIPID in ($refShipId))
+				]]>
+			</sql>
+	</operation>
+	
+</root>

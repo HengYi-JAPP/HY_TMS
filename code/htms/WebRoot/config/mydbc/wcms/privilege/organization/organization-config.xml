@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 用户组start -->
+	
+	<!-- 添加 -->
+	<operation name="toAddOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="list" forward="">		
+		<sql name="list" beanClass="com.mobilecn.privilege.organization.OrganizationBean"
+			cacheName="organizationList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_ORGANIZATION.*  FROM  TB_WSM_ORGANIZATION  ORDER BY ORGPARENTID,SHOWORDER ASC
+		]]></sql>
+		<forward name="listPage">jsp/privilege/organization/add.jsp</forward>
+	</operation>
+	
+	<operation name="addOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="add" forward="">
+		<sql name="insert"  caiidTable="TB_WSM_ORGANIZATION" caiidKey="ORGID"  caiidName="TB_WSM_ORGANIZATION" caiidVar="orgId">
+		  INSERT INTO TB_WSM_ORGANIZATION(ORGID,ORGCODE,ORGNAME,ORGDESC,ORGSIMPLENAME,ORGALIAS,ORGENGNAME,ORGPARENTID,ISVALIDATE,SHOWORDER)
+          VALUES($orgId,$orgCode,$orgName,$orgDesc,$orgSimpleName,$orgAlias,$orgEngName,$orgParentId,$isValidate,$showOrder)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listOrganization</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="list" forward="" cacheParams="orgNameSH,curpage" cacheScopes="session,session">
+		<sql name="count">
+			  select count(*) as total from TB_WSM_ORGANIZATION where orgName like '%$orgNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.privilege.organization.OrganizationBean"
+			cacheName="organizationList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_ORGANIZATION.*  FROM  TB_WSM_ORGANIZATION WHERE ORGNAME LIKE '%$orgNameSH%' AND ORGCODE LIKE '%$orgCodeSH%' AND  ORGDESC LIKE '%$orgDescSH%' ORDER BY ORGPARENTID,SHOWORDER ASC
+		]]></sql>
+		<forward name="listPage">jsp/privilege/organization/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="delete"  forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_ORGANIZATION WHERE ORGID = $checkOrgId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listOrganization</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.organization.OrganizationBean"
+			cacheName="organizationViewBean" cacheScope="request">
+		 select ORGID,
+         		ORGCODE,
+         		ORGNAME,
+         		ORGDESC,
+        		ORGSIMPLENAME,
+         		ORGALIAS,
+         		ORGENGNAME,
+         		ORGPARENTID,
+         		ISVALIDATE,
+         		SHOWORDER
+           from TB_WSM_ORGANIZATION 
+   		  WHERE ORGID = $orgId
+		</sql>
+		<forward name="modifyPage">jsp/privilege/organization/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/organization/view.jsp</forward>
+	</operation>
+	<operation name="listCheckedOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="list" forward="" >		
+		<sql name="list" beanClass="com.mobilecn.privilege.organization.OrganizationBean"
+			cacheName="organizationList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_ORGANIZATION.*  FROM  TB_WSM_ORGANIZATION  ORDER BY ORGPARENTID,SHOWORDER ASC
+		]]></sql>
+		
+		<sql name="listChecked" beanClass="com.mobilecn.privilege.organization.OrganizationBean"
+			cacheName="organizationCheckedList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_ORGANIZATION.*  FROM  TB_WSM_ORGANIZATION WHERE TB_WSM_ORGANIZATION.ORGID = (SELECT TB_WSM_ORGANIZATION.ORGPARENTID  FROM  TB_WSM_ORGANIZATION  WHERE ORGID = $orgId) 
+		]]></sql>
+		<forward name="listPage">contoller.do?operation=viewOrganization</forward>
+	</operation>
+	<!-- 修改记录 -->
+	<operation name="modifyOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify" beanClass="com.mobilecn.privilege.organization.OrganizationBean">
+			update TB_WSM_ORGANIZATION 
+      		   set ORGCODE       = $orgCode,
+          		   ORGNAME       = $orgName,
+          		   ORGDESC       = $orgDesc,
+          		   ORGSIMPLENAME = $orgSimpleName,
+          		   ORGALIAS      = $orgAlias,
+          		   ORGENGNAME    = $orgEngName,
+          		   ORGPARENTID   = $orgParentId,
+          		   SHOWORDER		= $showOrder
+    	     WHERE ORGID = $orgId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listOrganization</forward>
+	</operation>
+	
+	<operation name="loadAllOrganization" businessClass="com.mobilecn.privilege.organization.OrganizationBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadAllOrganization" beanClass="com.mobilecn.privilege.organization.OrganizationBean"><![CDATA[
+			   SELECT TB_WSM_ORGANIZATION.*  FROM  TB_WSM_ORGANIZATION WHERE ISVALIDATE=1
+		]]></sql>
+		
+	</operation>
+	<!-- 用户组end -->
+</root>

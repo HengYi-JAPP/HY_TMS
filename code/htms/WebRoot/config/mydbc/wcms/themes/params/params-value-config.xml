@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 增加 -->
+	<operation name="toAddThemesParamsValueByParamsId" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="list" afterInvoke="beforeDefineParamsValue"  forward="" >
+		<sql name="defineTypeList"  beanClass="com.mobilecn.themes.definetype.DefineTypeBean"
+			cacheName="defineTypeList" cacheScope="request">
+		<!-- 查出所有定制类型，结合已经有的值 -->
+		SELECT TB_WSM_THEMES_DEFINE_TYPE.*  
+		FROM TB_WSM_THEMES_DEFINE_TYPE   
+		WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId AND  
+		TB_WSM_THEMES_DEFINE_TYPE.ISVALIDATE=1 
+		ORDER BY TB_WSM_THEMES_DEFINE_TYPE.TDTID DESC
+		</sql>
+		<sql name="paramsValueList"   beanClass="com.mobilecn.themes.params.ParamsValueBean"
+			cacheName="paramsValueList" cacheScope="request">
+		<!-- 查出所有定制类型，结合已经有的值 -->
+		SELECT TB_WSM_THEMES_SELECTABLE_VALUE.*  
+		FROM TB_WSM_THEMES_SELECTABLE_VALUE   
+		WHERE TB_WSM_THEMES_SELECTABLE_VALUE.PARAMSID=$paramsId AND 
+		TB_WSM_THEMES_SELECTABLE_VALUE.ISVALIDATE=1 AND 
+		TB_WSM_THEMES_SELECTABLE_VALUE.TDTID IN(
+			SELECT TB_WSM_THEMES_DEFINE_TYPE.TDTID  
+			FROM TB_WSM_THEMES_DEFINE_TYPE   
+			WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId AND  
+			TB_WSM_THEMES_DEFINE_TYPE.ISVALIDATE=1 
+		)
+		ORDER BY TB_WSM_THEMES_SELECTABLE_VALUE.TDTID DESC
+		</sql>
+		
+		<forward name="listPage">jsp/portal/themes/params/defineParamsValues.jsp</forward>
+	</operation>
+	<operation name="addThemesParamsValueByParamsId" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" isBatch="true">
+		DELETE FROM TB_WSM_THEMES_SELECTABLE_VALUE WHERE PARAMSID=$paramsId
+		</sql>
+		<forward name="listAction">contoller.do?operation=doAddThemesParamsValue</forward>
+	</operation>
+	<operation name="doAddThemesParamsValue" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_THEMES_SELECTABLE_VALUE" caiidKey="VALUEID"  caiidName="THEMES_SELECT_VALUE" caiidVar="themesSelectValueId" isBatch="true">
+		INSERT INTO TB_WSM_THEMES_SELECTABLE_VALUE (VALUEID,PARAMSID,TDTID,VALUECONTENT,VALUEDESC,ISVALIDATE)
+		VALUES($themesSelectValueId,$paramsId,$tdtId,$valueContent,$valueDesc,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=toAddThemesParamsValueByParamsId</forward>
+	</operation>
+	
+	
+	<operation name="toAddThemesParamsValueByTypeId" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="list" afterInvoke="beforeDefineTypeParamsValue"  forward="" >
+		<sql name="defineParamsList"  beanClass="com.mobilecn.themes.params.ParamsBean"
+			cacheName="defineParamsList" cacheScope="request">
+		<!-- 查出所有定制类型，结合已经有的值 -->
+		SELECT TB_WSM_THEMES_PARAMS.*  
+		FROM TB_WSM_THEMES_PARAMS   
+		WHERE TB_WSM_THEMES_PARAMS.THEMESID=$themesId AND  
+		TB_WSM_THEMES_PARAMS.ISVALIDATE=1 
+		ORDER BY TB_WSM_THEMES_PARAMS.PARAMSID DESC
+		</sql>
+		<sql name="paramsValueList"   beanClass="com.mobilecn.themes.params.ParamsValueBean"
+			cacheName="paramsValueList" cacheScope="request">
+		<!-- 查出所有定制类型，结合已经有的值 -->
+		SELECT TB_WSM_THEMES_SELECTABLE_VALUE.*  
+		FROM TB_WSM_THEMES_SELECTABLE_VALUE   
+		WHERE TB_WSM_THEMES_SELECTABLE_VALUE.TDTID=$tdtId AND 
+		TB_WSM_THEMES_SELECTABLE_VALUE.ISVALIDATE=1 AND 
+		TB_WSM_THEMES_SELECTABLE_VALUE.PARAMSID IN(
+			SELECT TB_WSM_THEMES_PARAMS.PARAMSID  
+			FROM TB_WSM_THEMES_PARAMS   
+			WHERE TB_WSM_THEMES_PARAMS.THEMESID=$themesId AND  
+			TB_WSM_THEMES_PARAMS.ISVALIDATE=1 
+		)
+		ORDER BY TB_WSM_THEMES_SELECTABLE_VALUE.PARAMSID DESC
+		</sql>
+		
+		<forward name="listPage">jsp/portal/themes/definetype/defineParamsValues.jsp</forward>
+	</operation>
+	<operation name="addThemesParamsValueByTypeId" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" isBatch="true">
+		DELETE FROM TB_WSM_THEMES_SELECTABLE_VALUE WHERE TDTID=$tdtId
+		</sql>
+		<forward name="listAction">contoller.do?operation=doAddThemesParamsValueByType</forward>
+	</operation>
+	<operation name="doAddThemesParamsValueByType" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  isBatch="true">
+		INSERT INTO TB_WSM_THEMES_SELECTABLE_VALUE (VALUEID,PARAMSID,TDTID,VALUECONTENT,VALUEDESC,ISVALIDATE)
+		VALUES($valueId,$paramsId,$tdtId,$valueContent,$valueDesc,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=toAddThemesParamsValueByTypeId</forward>
+	</operation>
+</root>

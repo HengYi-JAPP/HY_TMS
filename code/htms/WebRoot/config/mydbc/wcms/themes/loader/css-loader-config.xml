@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemCss" businessClass="com.mobilecn.themes.loader.CssLoader" invokeMethod="list" forward="" >
+	<!--<sql name="loadAllSystemCss" beanClass="com.mobilecn.themes.css.CssBean"><![CDATA[
+		SELECT * FROM TB_WSM_CSS
+		WHERE TB_WSM_CSS.ISVALIDATE=1 AND (
+			TB_WSM_CSS.OWNERID IN(
+			    SELECT TB_WSM_THEMES_SKIN.SKINID  
+			    FROM TB_WSM_THEMES_SKIN,TB_WSM_SYS_THEMES  
+			    WHERE TB_WSM_THEMES_SKIN.THEMESID=TB_WSM_SYS_THEMES.THEMESID
+			    GROUP BY SKINID 
+			  ) 
+			  OR 
+			  TB_WSM_CSS.OWNERID IN
+			  (
+			  	SELECT  TB_WSM_SYS_THEMES.THEMESID  
+			    FROM TB_WSM_SYS_THEMES  
+			    GROUP BY THEMESID  
+			  )
+		    )
+	]]></sql>
+
+-->
+
+	<sql name="loadAllSystemCss" beanClass="com.mobilecn.themes.css.CssBean"><![CDATA[
+				SELECT *
+				  FROM TB_WSM_CSS
+				 WHERE TB_WSM_CSS.ISVALIDATE = 1
+				   AND (TB_WSM_CSS.OWNERID IN
+				       (SELECT TB_WSM_SKIN.SKINID
+				           FROM TB_WSM_SKIN, TB_WSM_THEMES, TB_WSM_SYS_THEMES
+				          WHERE TB_WSM_SKIN.ISVALIDATE = 1
+				            AND TB_WSM_THEMES.THEMESID = TB_WSM_SYS_THEMES.THEMESID
+				            AND TB_WSM_THEMES.THEMESID = TB_WSM_SKIN.THEMESID
+				          GROUP BY SKINID) OR
+				       TB_WSM_CSS.OWNERID IN (SELECT TB_WSM_SYS_THEMES.THEMESID
+				                                 FROM TB_WSM_SYS_THEMES
+				                                GROUP BY THEMESID))
+		]]></sql>
+</operation>
+</root>

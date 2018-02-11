@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 加载用户当前系统的频道列表 -->
+	<operation name="loadChannel_of_commonSystem" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="list"  forward="" >
+		<!-- 用户有权限访问的频道-->
+		<sql name="systemChannelList"  beanClass="com.mobilecn.portal.channel.ChannelBean" cacheName="systemChannelList"  cacheScope="session" test="$[currentSysCode]==''">
+			SELECT TB_WSM_CHANNEL.* FROM TB_WSM_CHANNEL WHERE 
+			TB_WSM_CHANNEL.SYSID=$__systemId AND			
+			TB_WSM_CHANNEL.ISVALIDATE = 1 AND 
+			TB_WSM_CHANNEL.DEFAULTSHOW = 1 AND (
+				TB_WSM_CHANNEL.CHANNELID IN(
+					SELECT TB_WSM_ROLE_CHANNEL.CHANNELID FROM TB_WSM_ROLE_CHANNEL,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+					WHERE 
+					TB_WSM_USER_GROUP.USERID=$userId AND 
+					TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+					TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_CHANNEL.ROLEID
+				)OR(
+					TB_WSM_CHANNEL.USERDEFINE=1 AND
+					TB_WSM_CHANNEL.USERID=$userId
+				)
+			)
+			ORDER BY TB_WSM_CHANNEL.DEFAULTORDER			
+		</sql>	
+		<!-- 用户有权限访问的组合频道 -->
+		<sql name="systemCompositeList" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="systemCompositeList" cacheScope="session" test="$[currentSysCode]==''"><![CDATA[
+			  SELECT * FROM TB_WSM_CHANNEL_COLUMN WHERE 
+			  SYSID=$__systemId AND
+			  COLUMNID IN(
+			  	SELECT TB_WSM_ROLE_COLUMN.COLUMNID FROM TB_WSM_ROLE_COLUMN,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+				WHERE 
+				TB_WSM_USER_GROUP.USERID=$userId AND 
+				TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+				TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_COLUMN.ROLEID
+			  ) 
+			  ORDER BY CCID
+		]]></sql>
+		<!-- 用户自定义的频道 -->
+		<sql name="selfDefineChannelList" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="selfDefineChannelList" cacheScope="session" test="$[currentSysCode]==''"><![CDATA[
+			  SELECT * FROM TB_WSM_USER_CHANNEL WHERE USERID=$userId AND SYSID=$__systemId  ORDER BY CHANNELORDER
+		]]></sql>
+		
+		
+		<sql name="systemChannelList"  beanClass="com.mobilecn.portal.channel.ChannelBean" cacheName="systemChannelList"  cacheScope="session" test="$[currentSysCode]!=''">
+			SELECT TB_WSM_CHANNEL.* FROM TB_WSM_CHANNEL WHERE 
+			TB_WSM_CHANNEL.SYSID=(SELECT SYSID FROM TB_SYSTEM WHERE SYSCODE=$currentSysCode) AND			
+			TB_WSM_CHANNEL.ISVALIDATE = 1 AND 
+			TB_WSM_CHANNEL.DEFAULTSHOW = 1 AND (
+				TB_WSM_CHANNEL.CHANNELID IN(
+					SELECT TB_WSM_ROLE_CHANNEL.CHANNELID FROM TB_WSM_ROLE_CHANNEL,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+					WHERE 
+					TB_WSM_USER_GROUP.USERID=$userId AND 
+					TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+					TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_CHANNEL.ROLEID
+				)OR(
+					TB_WSM_CHANNEL.USERDEFINE=1 AND
+					TB_WSM_CHANNEL.USERID=$userId
+				)
+			)
+			ORDER BY TB_WSM_CHANNEL.DEFAULTORDER			
+		</sql>	
+		<!-- 用户有权限访问的组合频道 -->
+		<sql name="systemCompositeList" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="systemCompositeList" cacheScope="session" test="$[currentSysCode]!=''"><![CDATA[
+			  SELECT * FROM TB_WSM_CHANNEL_COLUMN WHERE 
+			  SYSID=(SELECT SYSID FROM TB_SYSTEM WHERE SYSCODE=$currentSysCode) AND
+			  COLUMNID IN(
+			  	SELECT TB_WSM_ROLE_COLUMN.COLUMNID FROM TB_WSM_ROLE_COLUMN,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+				WHERE 
+				TB_WSM_USER_GROUP.USERID=$userId AND 
+				TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+				TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_COLUMN.ROLEID
+			  ) 
+			  ORDER BY CCID
+		]]></sql>
+		<!-- 用户自定义的频道 -->
+		<sql name="selfDefineChannelList" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="selfDefineChannelList" cacheScope="session" test="$[currentSysCode]!=''"><![CDATA[
+			  SELECT * FROM TB_WSM_USER_CHANNEL WHERE USERID=$userId AND SYSID=(SELECT SYSID FROM TB_SYSTEM WHERE SYSCODE=$currentSysCode)  ORDER BY CHANNELORDER
+		]]></sql>
+		<forward name="listPage">jsp/index.jsp</forward>
+	</operation>
+	
+	<!-- 用户选择下拉菜单后，进入页面加载频道下的子菜单 -->
+	<operation name="loadChannelSubMenu_of_commonSystem" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="list"  forward="" >
+		<!-- 当前访问的频道 -->
+		<sql name="systemChannelList"  beanClass="com.mobilecn.portal.channel.ChannelBean" cacheName="systemChannelList"  cacheScope="session" >
+			SELECT * FROM TB_WSM_CHANNEL WHERE CHANNELID =(SELECT CHANNELID FROM TB_WSM_CHANNEL_COLUMN WHERE CCID=$ccId)			
+		</sql>	
+		<!-- 当前频道中用户有权限访问的的所有组合频道 -->
+		<sql name="systemCompositeList" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="systemCompositeList" cacheScope="session"><![CDATA[
+			  SELECT * FROM TB_WSM_CHANNEL_COLUMN 
+			  WHERE 
+			  CHANNELID IN(SELECT CHANNELID FROM TB_WSM_CHANNEL_COLUMN WHERE CCID=$ccId) AND
+			  COLUMNID IN(
+			  	SELECT TB_WSM_ROLE_COLUMN.COLUMNID FROM TB_WSM_ROLE_COLUMN,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+				WHERE 
+				TB_WSM_USER_GROUP.USERID=$userId AND 
+				TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP_ROLE.GROUPID AND
+				TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE_COLUMN.ROLEID
+			  ) 
+			  ORDER BY CCID
+		]]></sql>
+		<!-- 此处从性能角度没有进行权限过滤，因为 columnList是被动引用的，即systemCompositeList为主，根据ID引用匹配的column-->
+		<sql name="columnList" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="session"><![CDATA[
+			  SELECT * FROM TB_WSM_COLUMN WHERE COLUMNID IN(SELECT COLUMNID FROM TB_WSM_CHANNEL_COLUMN WHERE CHANNELID=(SELECT CHANNELID FROM TB_WSM_CHANNEL_COLUMN WHERE CCID=$ccId)) ORDER BY COLUMNID
+		]]></sql>
+		<forward name="listPage">jsp/index.jsp</forward>
+	</operation>
+	<!-- 用户end -->
+</root>

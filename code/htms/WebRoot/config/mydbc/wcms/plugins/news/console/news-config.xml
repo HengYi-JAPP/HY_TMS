@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="addNews" businessClass="com.mobilecn.plugins.news.NewsBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"  caiidName="TB_WSM_INFO_COLUMN" caiidVar="newsInfoId" lobKeyName="INFOID" lobKeyVar="newsInfoId">
+		INSERT INTO TB_WSM_INFO_NEWS (INFOID,TITLE,SUBTILE,INTRODUCTION,KEYWORD,CONTENTS,DRAFTOR,INDEXPIC,CREATETIME,ISVALIDATE)
+		VALUES($newsInfoId,$title,$subTile,$introduction,$keyword,$contents,$userId,$indexPic,$createTime,$isValidate)
+		</sql>
+		<sql name="insert">
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($newsInfoId,$columnId,0,0,0,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listNews</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listNews" businessClass="com.mobilecn.plugins.news.NewsBusiness"
+		invokeMethod="list" forward="" cacheParams="titleSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(TB_WSM_INFO_NEWS.INFOID) AS total FROM TB_WSM_INFO_NEWS,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_NEWS.INFOID=TB_WSM_INFO_COLUMN.INFOID AND TITLE LIKE '%$titleSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.news.NewsBean"
+			cacheName="newsList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_NEWS.*,TB_WSM_INFO_COLUMN.APPROVESTATUS FROM TB_WSM_INFO_NEWS,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_NEWS.INFOID=TB_WSM_INFO_COLUMN.INFOID AND TITLE LIKE '%$titleSH%'
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/news/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteNews" businessClass="com.mobilecn.plugins.news.NewsBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_INFO_NEWS WHERE  INFOID =$checkInfoId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listNews</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewNews" businessClass="com.mobilecn.plugins.news.NewsBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.news.NewsBean"
+			cacheName="newsViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_INFO_NEWS WHERE INFOID=$infoId
+		</sql>
+		
+		<forward name="modifyPage">jsp/portal/console/plugins/news/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/news/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyNews" businessClass="com.mobilecn.plugins.news.NewsBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_INFO_NEWS SET 
+			TITLE=$title,
+			SUBTILE=$subTile,
+			INTRODUCTION=$introduction,
+			KEYWORD=$keyword,
+			CONTENTS=$contents,
+			CREATETIME=$createTime,
+			INDEXPIC=$indexPic,
+			MODIFIER=$userId,
+			MODIFYTIME=$modifyTime			
+		 WHERE  INFOID=$infoId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listNews</forward>
+	</operation>
+	<!-- 用户end -->
+</root>

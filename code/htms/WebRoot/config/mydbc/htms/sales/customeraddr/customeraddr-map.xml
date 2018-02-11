@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean">
+		<map property="caddrId" javaType="int" column="caddrId"  colType=""/>
+		<map property="customerId" javaType="int" column="customerId"  colType=""/>
+		<map property="areaId" javaType="int" column="areaId"  colType=""/>
+		<map property="caddrDetail" javaType="String" column="caddrDetail"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="caddrContactor" javaType="int" column="caddrContactor"  colType=""/>
+		<map property="caddrTelephone" javaType="String" column="caddrTelephone"  colType=""/>
+		<map property="isDefault" javaType="String" column="isDefault"  colType=""/>
+		<map property="carNo" javaType="String" column="carNo"  colType=""/>
+		<map property="caddrNotice" javaType="int" column="caddrNotice"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+		<map property="mapId" javaType="String" column="mapId"  colType=""/>
+		<map property="targetCustomerId" javaType="String" column="targetCustomerId"  colType=""/>
+		<map property="areaCode" javaType="String" column="areaCode"  colType=""/>
+	</bean>
+</root>

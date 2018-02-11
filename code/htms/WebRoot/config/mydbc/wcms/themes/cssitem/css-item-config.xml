@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 增加 -->
+	<operation name="toListBatchCssItem" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="list" beanClass="com.mobilecn.themes.cssitem.CssItemBean"
+			cacheName="__cssItemList" cacheScope="request"><![CDATA[
+			SELECT TB_WSM_CSS_ITEM.*  FROM TB_WSM_CSS_ITEM  WHERE  TB_WSM_CSS_ITEM.CSSID=$cssId  AND 	TB_WSM_CSS_ITEM.ISVALIDATE=1			
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/cssitem/addItems.jsp</forward>
+	</operation>
+	<operation name="addBatchCssItems" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" >
+		DELETE FROM TB_WSM_CSS_ITEM WHERE TB_WSM_CSS_ITEM.CSSID=$cssId
+		</sql>
+		<forward name="listAction">contoller.do?operation=doAddBatchCssItems</forward>
+	</operation>
+	<operation name="doAddBatchCssItems" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="add" beforeInvoke="filtItems" forward="" >
+		<sql name="insert" caiidTable="TB_WSM_CSS_ITEM" caiidKey="ITEMID" caiidName="TB_WSM_CSS_ITEM" caiidVar="newBatchItemId"  isBatch="true">
+		INSERT INTO TB_WSM_CSS_ITEM (ITEMID,CSSID,ITEMCODE,ITEMVALUE,ITEMVAR,ISVALIDATE)
+		VALUES($newBatchItemId,$cssId,$batchItemCode,$batchItemValue,$batchItemVar,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=toListBatchCssItem</forward>
+	</operation>
+	
+	<operation name="addCssItem" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_CSS_ITEM" caiidKey="ITEMID"  caiidName="TB_WSM_CSS_ITEM" caiidVar="newItemId"  isBatch="true">
+		INSERT INTO TB_WSM_CSS_ITEM (ITEMID,CSSID,ITEMCODE,ITEMVALUE,ISVALIDATE)
+		VALUES($newItemId,$cssId,$itemCode,$itemValue,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listCssItem</forward>
+	</operation>
+
+	<!-- 查询 -->
+	<operation name="listCssItem" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="list" forward="" cacheParams="itemCodeSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			SELECT COUNT(*) AS total  FROM TB_WSM_CSS_ITEM WHERE  TB_WSM_CSS_ITEM.CSSID=$cssId  AND  TB_WSM_CSS_ITEM.ITEMCODE LIKE '%$itemCodeSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.themes.cssitem.CssItemBean"
+			cacheName="itemList" cacheScope="request" isPage="true" pageField="ITEMID"><![CDATA[
+			SELECT TB_WSM_CSS_ITEM.*  FROM TB_WSM_CSS_ITEM  WHERE  TB_WSM_CSS_ITEM.CSSID=$cssId AND TB_WSM_CSS_ITEM.ITEMCODE LIKE '%$itemCodeSH%'   ORDER BY TB_WSM_CSS_ITEM.ITEMID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/cssitem/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteCssItem" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_CSS_ITEM WHERE ITEMID=$checkItemId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listCssItem</forward>
+	</operation>
+	
+	<!-- 查看 -->
+	<operation name="viewCssItem" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.cssitem.CssItemBean"
+			cacheName="itemViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_CSS_ITEM WHERE ITEMID    =$itemId
+		</sql>	
+		
+		<forward name="modifyPage">jsp/portal/themes/cssitem/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/cssitem/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改 -->
+	<operation name="modifyCssItem" businessClass="com.mobilecn.themes.cssitem.CssItemBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_CSS_ITEM SET 
+			 ITEMCODE =$itemCode,
+			 ITEMDESC =$itemValue,
+			 ISVALIDATE =$isValidate
+		 WHERE ITEMID    =$itemId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listCssItem]]></forward>
+	</operation>
+	
+</root>

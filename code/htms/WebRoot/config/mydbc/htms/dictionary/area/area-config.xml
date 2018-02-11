@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>toLoadArea
+	<operation name="toLoadArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="toLoadArea" exeOrder="" version="2.0">
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listArea]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/area/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="listArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="SELECT" beanClass="com.zzy.htms.dictionary.area.AreaBean" cacheType="list" cacheName="areaList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_AREA.areaId ,TB_HTMS_AREA.parentAreaId 
+				        ,TB_HTMS_AREA.areaCode ,TB_HTMS_AREA.areaName 
+				        ,TB_HTMS_AREA.areaLevel ,TB_HTMS_AREA.areaRoute 
+				        ,TB_HTMS_AREA.isValidate ,TB_HTMS_AREA.areaLongTitue
+				        ,TB_HTMS_AREA.areaLaTitue,TB_HTMS_AREA.areaParentCode,TB_HTMS_AREA.isLeaf
+				    FROM TB_HTMS_AREA 
+				    WHERE PARENTAREAID='0' AND AREALEVEL='1' AND ISVALIDATE='1'
+				 ORDER BY AREAID
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/area/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="listCurrentNodeChildArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" invokeMethod="list"  forward="" >
+		<sql name="areaList" beanClass="com.zzy.htms.dictionary.AreaBean" cacheType="list" cacheName="areaList" cacheScope="request"  >
+			<![CDATA[
+						SELECT TB_HTMS_AREA.areaId ,TB_HTMS_AREA.parentAreaId 
+				        ,TB_HTMS_AREA.areaCode ,TB_HTMS_AREA.areaName 
+				        ,TB_HTMS_AREA.areaLevel ,TB_HTMS_AREA.areaRoute 
+				        ,TB_HTMS_AREA.isValidate,TB_HTMS_AREA.areaLongTitue
+				        ,TB_HTMS_AREA.areaLaTitue,TB_HTMS_AREA.areaParentCode,TB_HTMS_AREA.isLeaf 
+				    FROM TB_HTMS_AREA 
+				    WHERE PARENTAREAID=$parentNodeId AND isValidate='1'
+				 ORDER BY AREAID
+					]]>
+			</sql>
+		<forward name="listPage" forwardStyle="1"><![CDATA[jsp/htms/dictionary/area/list.jsp]]></forward>
+	</operation>
+	
+	<operation name="modifyArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="beforeModify" exeOrder="" version="2.0">
+		</method>
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_AREA 
+				    SET parentAreaId = $parentAreaId ,areaCode = $areaCode ,areaName = 
+				        $areaName ,areaLevel = $areaLevel ,areaRoute = $areaRoute 
+				        ,isValidate = $isValidate,areaLongTitue=$areaLongTitue
+				        ,areaLaTitue=$areaLaTitue,areaParentCode=$areaParentCode,isLeaf=$isLeaf
+				    WHERE TB_HTMS_AREA.areaId = $areaId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listArea]]></address>
+		</forward>
+	</operation>
+	<operation name="viewArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.dictionary.AreaBean" cacheType="bean" cacheName="areaViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_AREA.areaId ,TB_HTMS_AREA.parentAreaId 
+				        ,TB_HTMS_AREA.areaCode ,TB_HTMS_AREA.areaName 
+				        ,TB_HTMS_AREA.areaLevel ,TB_HTMS_AREA.areaRoute 
+				        ,TB_HTMS_AREA.isValidate,TB_HTMS_AREA.areaLongTitue
+				        ,TB_HTMS_AREA.areaLaTitue,TB_HTMS_AREA.areaParentCode,TB_HTMS_AREA.isLeaf 
+				    FROM TB_HTMS_AREA 
+				    WHERE TB_HTMS_AREA.areaId = $areaId 
+					]]></content>
+			</sql>
+		</method>
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="areaList" beanClass="com.zzy.htms.dictionary.AreaBean" cacheType="list" cacheName="areaList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_AREA.areaId ,TB_HTMS_AREA.parentAreaId 
+				        ,TB_HTMS_AREA.areaCode ,TB_HTMS_AREA.areaName 
+				        ,TB_HTMS_AREA.areaLevel ,TB_HTMS_AREA.areaRoute 
+				        ,TB_HTMS_AREA.isValidate ,TB_HTMS_AREA.areaLongTitue
+				        ,TB_HTMS_AREA.areaLaTitue,TB_HTMS_AREA.areaParentCode,TB_HTMS_AREA.isLeaf
+				    FROM TB_HTMS_AREA 
+				    WHERE PARENTAREAID='0' AND AREALEVEL='1'
+				 ORDER BY AREAID
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/area/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/area/modify.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="deleteArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<!--<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_AREA 
+				    WHERE TB_HTMS_AREA.areaId = $checkAreaId 
+					]]></content>
+			</sql>
+			-->
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_AREA 
+				    SET isValidate = '0'
+				    WHERE TB_HTMS_AREA.areaId = $checkAreaId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listArea]]></address>
+		</forward>
+	</operation>
+	<operation name="addArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="beforeAdd" exeOrder="" version="2.0">
+		</method>
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_AREA" caiidKey="areaId" caiidName="areaId" caiidVar="areaId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_AREA ( areaId, parentAreaId, areaCode, areaName, 
+				        areaLevel, areaRoute, isValidate,areaLongTitue
+				        ,areaLaTitue,areaParentCode,isLeaf) 
+				        VALUES($areaId,$parentAreaId,$areaCode,$areaName,$areaLevel,$areaRoute,$isValidate,
+				        $areaLongTitue,$areaLaTitue,$areaParentCode,$isLeaf) 
+					]]></content>
+			</sql>
+		</method>
+	
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listArea]]></address>
+		</forward>
+	</operation>
+	
+
+	<operation name="loadAllArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadAllArea" beanClass="com.zzy.htms.dictionary.area.AreaBean"><![CDATA[
+			   SELECT TB_HTMS_AREA.*  FROM  TB_HTMS_AREA WHERE ISVALIDATE=1 ORDER BY AREAID
+		]]></sql>
+	</operation>
+	<!-- 查询所有父节点 -->
+	<operation name="loadAllPraentArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadAllPraentArea" isBatch="true" beanClass="com.zzy.htms.dictionary.area.AreaBean"><![CDATA[
+			    SELECT TB_HTMS_AREA.AREANAME FROM TB_HTMS_AREA
+			      START WITH areaId = $areaId
+			  CONNECT BY NOCYCLE PRIOR TB_HTMS_AREA.PARENTAREAID=TB_HTMS_AREA.AREAID 
+			  ORDER BY TB_HTMS_AREA.AREALEVEL
+		]]></sql>
+	</operation>
+	
+	<operation name="loadPraentArea" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadPraentArea" beanClass="com.zzy.htms.dictionary.area.AreaBean"><![CDATA[
+			    SELECT TB_HTMS_AREA.AREANAME FROM TB_HTMS_AREA
+			      START WITH areaId = (SELECT TB_HTMS_AREA.PARENTAREAID from TB_HTMS_AREA where areaId=$areaId)
+			  CONNECT BY NOCYCLE PRIOR TB_HTMS_AREA.PARENTAREAID=TB_HTMS_AREA.AREAID 
+			  ORDER BY TB_HTMS_AREA.AREALEVEL
+		]]></sql>
+	</operation>
+	<!-- 查询地址层级 -->
+	<operation name="loadAreaLevel" businessClass="com.zzy.htms.dictionary.area.AreaBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadAreaLevel" beanClass="com.zzy.htms.dictionary.area.AreaBean"><![CDATA[
+			   SELECT areaLevel,areaCode FROM TB_HTMS_AREA where areaId=$areaId
+		]]></sql>
+	</operation>
+</root>

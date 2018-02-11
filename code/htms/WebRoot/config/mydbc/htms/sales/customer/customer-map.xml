@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.sales.customer.CustomerBean">
+		<map property="customerId" javaType="int" column="customerId"  colType=""/>
+		<map property="customerCode" javaType="String" column="customerCode"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		<map property="customerNotice" javaType="String" column="customerNotice"  colType=""/>
+		<map property="customerAmount" javaType="String" column="customerAmount"  colType=""/>
+		<map property="customerType" javaType="String" column="customerType"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="feeId" javaType="String" column="feeId"  colType=""/>
+		<map property="managementFee" javaType="String" column="managementFee"  colType=""/>
+		<map property="isFee" javaType="String" column="isFee"  colType=""/>
+	</bean>
+</root>

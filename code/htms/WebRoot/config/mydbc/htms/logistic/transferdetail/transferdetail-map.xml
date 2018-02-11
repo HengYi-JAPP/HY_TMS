@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean">
+		<map property="transDetailId" javaType="int" column="transDetailId"  colType=""/>
+		<map property="shipDetailId" javaType="int" column="shipDetailId"  colType=""/>
+		<map property="transId" javaType="int" column="transId"  colType=""/>
+		<map property="shipId" javaType="int" column="shipId"  colType=""/>
+		<map property="caddrId" javaType="int" column="caddrId"  colType=""/>
+		<map property="productId" javaType="int" column="productId"  colType=""/>
+		<map property="applyTonNum" javaType="String" column="applyTonNum"  colType=""/>
+		<map property="applyPackNum" javaType="String" column="applyPackNum"  colType=""/>
+		<map property="fetchTonNum" javaType="String" column="fetchTonNum"  colType=""/>
+		<map property="fetchPackNum" javaType="String" column="fetchPackNum"  colType=""/>
+		<map property="planFreight" javaType="String" column="planFreight"  colType=""/>
+		<map property="actulFreight" javaType="String" column="actulFreight"  colType=""/>
+		<map property="freightUnit" javaType="String" column="freightUnit"  colType=""/>
+		<map property="transDetailNotice" javaType="String" column="transDetailNotice"  colType=""/>
+		<map property="transDetailStatus" javaType="int" column="transDetailStatus"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifier" javaType="String" column="modifier"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		<map property="corderCode" javaType="String" column="corderCode"  colType=""/>
+		<map property="mapId" javaType="String" column="mapId"  colType=""/>
+		<map property="carrierId" javaType="String" column="carrierId"  colType=""/>
+		
+		
+		
+		<map property="itemCode" javaType="String" column="itemCode"  colType=""/>
+		
+		<map property="meterialNo" javaType="String" column="meterialNo"  colType=""/>
+		<map property="meterialFactory" javaType="String" column="meterialFactory"  colType=""/>
+		<map property="codetailCertificate" javaType="String" column="codetailCertificate"  colType=""/>
+		<map property="codetailCertificateDesc" javaType="String" column="codetailCertificateDesc"  colType=""/>
+		<map property="meterialGroup" javaType="java.lang.String" column="METERIALGROUP" colType=""/>
+		<map property="appliableAmount" javaType="java.lang.String" column="APPLIABLEAMOUNT" colType=""/>
+		<map property="appliedAmount" javaType="java.lang.String" column="APPLIEDAMOUNT" colType=""/>
+		
+		<map property="factoryId" javaType="java.lang.String" column="factoryId" colType=""/>
+		<map property="productName" javaType="java.lang.String" column="productName" colType=""/>
+		<map property="factoryName" javaType="java.lang.String" column="factoryName" colType=""/>
+		
+		<map property="freight" javaType="java.lang.String" column="freight" colType=""/>
+		<map property="unitPrice" javaType="java.lang.String" column="unitPrice" colType=""/>
+		
+		<map property="codetailId" javaType="java.lang.String" column="codetailId" colType=""/>
+		
+		<map property="transportTotalPrice" javaType="java.lang.String" column="transportTotalPrice" colType=""/>
+		
+		<map   property="shipPointDesc" javaType="java.lang.String" column="shipPointDesc" colType=""/>
+	</bean>
+</root>

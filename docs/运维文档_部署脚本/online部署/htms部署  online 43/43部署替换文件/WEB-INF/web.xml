@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<!--<listener>
+	  <listener-class>init.SystemInitListener</listener-class>
+	</listener>
+	<listener>
+	  <listener-class>com.zzy.htms.schedule.ScheduleListener</listener-class>
+	</listener>
+	
+	<servlet>
+    	<servlet-name>excelExportServlet</servlet-name>
+    	<servlet-class>com.zzy.taglib.export.business.DownloadServlet</servlet-class>
+  	</servlet>
+
+  	<servlet-mapping>
+   	 	<servlet-name>excelExportServlet</servlet-name>
+    	<url-pattern>/excelExportServlet</url-pattern>
+  	</servlet-mapping>
+	-->
+	  	<servlet>
+    	<servlet-name>WeChatIndexServlet</servlet-name>
+    	<servlet-class>com.zzy.htms.location.WXIndexServlet</servlet-class>
+  	</servlet>
+  	<servlet-mapping>
+   	 	<servlet-name>WeChatIndexServlet</servlet-name>
+    	<url-pattern>/WeChatIndexServlet</url-pattern>
+  	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>tagCommonServlet</servlet-name>
+		<servlet-class>
+			com.mobilecn.taglibs.common.servlet.TagCommonServlet
+		</servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>tagCommonServlet</servlet-name>
+		<url-pattern>/tagCommonServlet</url-pattern>
+	</servlet-mapping>
+  <servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>
+			com.mobilecn.actions.Controller
+		</servlet-class>		
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	 <servlet>
+		<servlet-name>AjaxServlet</servlet-name>
+		<servlet-class>
+			com.mobilecn.taglibs.webcomps.ajax.AjaxServlet
+		</servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AjaxServlet</servlet-name>
+		<url-pattern>/ajax/*</url-pattern>
+	</servlet-mapping>
+	<!--<servlet>
+		<servlet-name>themesServlet</servlet-name>
+		<servlet-class>
+			com.mobilecn.themes.servlet.ThemesServlet
+		</servlet-class>
+		<load-on-startup>80</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>themesServlet</servlet-name>
+		<url-pattern>/css/getcss</url-pattern>
+	</servlet-mapping>
+	-->
+	<servlet>
+		<servlet-name>uploader</servlet-name>
+		<servlet-class>
+			com.mobilecn.taglibs.webcomps.upload.UploadServlet
+		</servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>uploader</servlet-name>
+		<url-pattern>/uploader/*</url-pattern>
+	</servlet-mapping>
+	
+<!--
+	<servlet>
+		<servlet-name>vcode</servlet-name>
+		<servlet-class>
+			com.mobilecn.taglibs.webcomps.vcode.VCodeServlet
+		</servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>vcode</servlet-name>
+		<url-pattern>/vcode</url-pattern>
+	</servlet-mapping>
+
+	
+	
+	<servlet>
+		<servlet-name>syncupdater</servlet-name>
+		<servlet-class>
+			com.mobilecn.lwedu.sync.SyncUpdator
+		</servlet-class>		
+		<load-on-startup>4</load-on-startup>
+	</servlet>
+  <servlet>   
+    <servlet-name>JQueryTreeServlet</servlet-name>
+    <servlet-class>com.mobilecn.services.upriv.client.JQueryTreeServlet</servlet-class>
+  </servlet>
+	
+	<servlet-mapping>
+		<servlet-name>syncupdater</servlet-name>
+		<url-pattern>/syncupdater</url-pattern>
+	</servlet-mapping>
+	--><filter>
+		<filter-name>SetCharacterEncodingFilter</filter-name>
+		<filter-class>
+			com.mobilecn.filter.SetCharacterEncodingFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SetCharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>ThemesFilter</filter-name>
+		<filter-class>
+			com.mobilecn.filter.ThemesFilter
+		</filter-class>
+	</filter>
+	 <filter-mapping>
+		<filter-name>ThemesFilter</filter-name>
+		<url-pattern>*.css</url-pattern>
+	</filter-mapping>
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.sync</url-pattern>
+	</servlet-mapping>
+	
+	<!-- ckfinder servlet start -->
+	<servlet>
+		<servlet-name>ConnectorServlet</servlet-name>
+		<servlet-class>ckfinder.com.ckfinder.connector.ConnectorServlet</servlet-class>
+		<init-param>
+			<param-name>XMLConfig</param-name>
+			<param-value>/WEB-INF/ckfinder-config.xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConnectorServlet</servlet-name>
+		<url-pattern>
+			/ckfinder/core/connector/java/*
+		</url-pattern>
+	</servlet-mapping>
+	<filter>
+		<filter-name>FileUploadFilter</filter-name>
+		<filter-class>ckfinder.com.ckfinder.connector.FileUploadFilter</filter-class>
+                <init-param>
+                    <param-name>sessionCookieName</param-name>
+                    <param-value>JSESSIONID</param-value>
+                </init-param>
+                <init-param>
+                    <param-name>sessionParameterName</param-name>
+                    <param-value>jsessionid</param-value>
+                </init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>FileUploadFilter</filter-name>
+		<url-pattern>
+			/ckfinder/core/connector/java/*
+     	 </url-pattern>
+	</filter-mapping>
+	<!-- ckfinder servlet end -->
+	
+	
+	 <servlet>
+		<servlet-name>publisher</servlet-name>
+		<servlet-class>
+			com.myabc.connector.server.http.HttpServer
+		</servlet-class>		
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>publisher</servlet-name>
+		<url-pattern>/publisher</url-pattern>
+	</servlet-mapping>
+	
+	<!-- for axis web services start -->
+	<display-name>Apache-Axis</display-name>
+	<listener>
+		<listener-class>
+			org.apache.axis.transport.http.AxisHTTPSessionListener
+		</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>AxisServlet</servlet-name>
+		<servlet-class>
+			org.apache.axis.transport.http.AxisServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>AdminServlet</servlet-name>
+		<servlet-class>
+			org.apache.axis.transport.http.AdminServlet
+		</servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+	<mime-mapping>
+		<extension>wsdl</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>xsd</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+	<!-- for axis web services end -->
+	
+  <!--<servlet-mapping>
+    <servlet-name>JQueryTreeServlet</servlet-name>
+    <url-pattern>/servlet/JQueryTreeServlet</url-pattern>
+  </servlet-mapping>
+  	<listener>
+		<listener-class>
+			com.mobilecn.lwedu.sync.SyncListener
+		</listener-class>
+	</listener>-->
+	<!-- for axis web services start -->
+	
+	<!-- for axis web services end -->
+
+
+
+
+  <!--  CAS configure Begin -->
+     <!--
+	<filter>
+		<filter-name>CasSingleSignOutFilter</filter-name>
+		<filter-class>
+			org.jasig.cas.client.session.SingleSignOutFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CasSingleSignOutFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<listener>
+		<listener-class>
+			org.jasig.cas.client.session.SingleSignOutHttpSessionListener
+		</listener-class>
+	</listener>
+	<filter>
+		<filter-name>CasAuthenticationFilter</filter-name>
+		<filter-class>
+			org.jasig.cas.client.authentication.AuthenticationFilter
+		</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>http://cas.hengyi.com:8080</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+
+		        <param-value>http://htms.hengyi.com</param-value>
+		</init-param>
+		<init-param>
+			<param-name>renew</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</filter>
+	
+	
+	<filter-mapping>
+		<filter-name>CasAuthenticationFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CasAuthenticationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>CasValidationFilter</filter-name>
+		<filter-class>
+			org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter
+		</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>http://cas.hengyi.com:8080</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+		<param-value>http://htms.hengyi.com</param-value>
+		</init-param>
+		<init-param>
+			<param-name>redirectAfterValidation</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>CasValidationFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>CasHttpServletRequestWrapperFilter</filter-name>
+		<filter-class>
+			org.jasig.cas.client.util.HttpServletRequestWrapperFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CasHttpServletRequestWrapperFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	    <filter>
+        <filter-name>CasAssertionThreadLocalFilter</filter-name>
+        <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CasAssertionThreadLocalFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+     -->
+
+      <!-- CAS configure End -->
+
+
+	<!--<filter>
+		<filter-name>AuthorizationFilter</filter-name>
+		<filter-class>
+			com.mobilecn.filter.AuthorizationFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthorizationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>AuthorizationFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping> 
+	--><session-config>
+	      <session-timeout>600</session-timeout>
+	</session-config>
+	
+	<jsp-config>
+	    <taglib>
+	      <taglib-uri>/config/taglibs/tld/form-elements.tld</taglib-uri>
+	      <taglib-location>/config/taglibs/tld/form-elements.tld</taglib-location>
+	    </taglib>
+	    <taglib>
+	      <taglib-uri>/config/taglibs/tld/comp-elements.tld</taglib-uri>
+	      <taglib-location>/config/taglibs/tld/comp-elements.tld</taglib-location>
+	    </taglib>   
+ 	</jsp-config>
+  <welcome-file-list>
+    <welcome-file>jsp/ssologin.jsp</welcome-file>
+  </welcome-file-list>
+  <distributable/>
+</web-app>

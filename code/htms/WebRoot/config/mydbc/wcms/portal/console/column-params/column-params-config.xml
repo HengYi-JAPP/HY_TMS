@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddColumnParams" businessClass="com.mobilecn.portal.column.params.ColumnParamsBusiness"
+		invokeMethod="delete" forward="" >
+		<sql name="delete" isBatch="true">
+		DELETE FROM TB_WSM_COLUMN_PARAMS WHERE  PARAMSID =$paramsId
+		</sql>
+		<forward name="listAction">contoller.do?operation=addColumnParams</forward>
+	</operation>
+	<operation name="addColumnParams" businessClass="com.mobilecn.portal.column.params.ColumnParamsBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidTable="TB_WSM_COLUMN_PARAMS" caiidKey="PARAMSID"  caiidName="COLUMN_PARAMS" caiidVar="newParamsId" isBatch="true">
+		INSERT INTO TB_WSM_COLUMN_PARAMS (PARAMSID,COLUMNID,PARAMSVAR,PARAMSNAME,PARAMSVALUE,PARAMSDEFVALUE,PARAMSDESC,ISVALIDATE)
+		VALUES($newParamsId,$columnId,$paramsVar,$paramsName,$paramsValue,$paramsDefValue,$paramsDesc,'1')
+		</sql>
+		<forward name="listAction">contoller.do?operation=listColumn</forward>
+	</operation>
+
+	<!-- 列表展示 -->
+	<operation name="listColumnParams" businessClass="com.mobilecn.portal.column.params.ColumnParamsBusiness"
+		invokeMethod="view" afterInvoke="filtColumnParams" forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean" >
+			 SELECT *   FROM TB_WSM_COLUMN WHERE COLUMNID=$checkColumnId
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.portal.column.params.ColumnParamsBean"  ><![CDATA[
+			    SELECT * FROM TB_WSM_COLUMN_PARAMS WHERE COLUMNID=$checkColumnId
+		]]></sql>		
+		<forward name="viewPage">jsp/portal/console/column/params/config.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteColumnParams" businessClass="com.mobilecn.portal.column.params.ColumnParamsBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_COLUMN_PARAMS WHERE  PARAMSID =$checkParamsId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listColumnParams</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewColumnParams" businessClass="com.mobilecn.portal.column.params.ColumnParamsBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.column.params.ColumnParamsBean"
+			cacheName="columnParamsViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_COLUMN_PARAMS WHERE PARAMSID=$paramsId
+		</sql>
+		
+		<forward name="modifyPage">jsp/portal/console/column/params/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/column/params/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyColumnParams" businessClass="com.mobilecn.portal.column.params.ColumnParamsBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_COLUMN_PARAMS SET 
+			PARAMSVAR=$paramsVar,
+			PARAMSNAME=$paramsName,
+			PARAMSVALUE=$paramsValue,
+			PARAMSDEFVALUE=$paramsDefValue,
+			PARAMSDESC=$paramsDesc	
+		 WHERE PARAMSID=$paramsId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listColumnParams</forward>
+	</operation>
+	
+	
+	<!-- 用户end -->
+</root>

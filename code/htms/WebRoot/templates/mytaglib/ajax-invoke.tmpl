@@ -1,0 +1,29 @@
+<SCRIPT type=text/javascript>
+	var {$AJAX_ID}_ajax_instance = document.getElementById('{$TARGET_ID}');
+	var {$AJAX_ID}_ajax=function() { 
+		
+		if(!{$AJAX_ID}_ajax_instance){
+			return;
+		}
+		var ajax = new Ajax(); 
+		if(!ajax){
+			return;
+		}
+		
+		var params = "{$AJAX_PARAMS}";
+		if(params&&{$AJAX_ID}_ajax_instance.name&&{$AJAX_ID}_ajax_instance.value){
+			params=params+"&"+{$AJAX_ID}_ajax_instance.name+"="+{$AJAX_ID}_ajax_instance.value;
+		}
+		 ajax.setUrl("{$AJAX_URL}"); 
+		 ajax.setMethod("{$METHOD}");
+	 	 ajax.setCallBackObject({$CALL_BACK});
+		
+		 ajax.setParameters(params); 
+	
+		 ajax.invokeAjax(); 
+	}; 
+	
+	if({$AJAX_ID}_ajax_instance){
+	__dynamicBindObjectEvent("{$TARGET_ID}",["{$EVENT_ID}"],{$AJAX_ID}_ajax,false);
+	} 
+</SCRIPT>

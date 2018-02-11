@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.driver.DriverBean">
+		<map property="driverId" javaType="int" column="driverId"  colType=""/>
+		<map property="carrierId" javaType="int" column="carrierId"  colType=""/>
+		<map property="driverCode" javaType="String" column="driverCode"  colType=""/>
+		<map property="driverName" javaType="String" column="driverName"  colType=""/>
+		<map property="driverSex" javaType="int" column="driverSex"  colType=""/>
+		<map property="driverYear" javaType="int" column="driverYear"  colType=""/>
+		<map property="driverIdNum" javaType="String" column="driverIdNum"  colType=""/>
+		<map property="driverAddress" javaType="String" column="driverAddress"  colType=""/>
+		<map property="driverMobile" javaType="String" column="driverMobile"  colType=""/>
+		<map property="driverWeiXin" javaType="String" column="driverWeiXin"  colType=""/>
+		<map property="driverNotice" javaType="String" column="driverNotice"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+</root>

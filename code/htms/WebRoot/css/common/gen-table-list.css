@@ -1,0 +1,34 @@
+/* 列表页面标题 */
+.tableCell{
+
+}
+.tdLabelCell{
+	border: #d1d1d1 1px solid;
+	padding: 5px;
+	height: 28px;
+	width: 100px;
+	background: #f1f1f1;
+	font-size: 12px;
+	text-align: right;
+	min-width: 100px;
+}
+.tdContentCell{
+	height: 28px;
+	border: #d1d1d1 1px solid;
+	padding: 5px;
+	font-size: 12px;
+	text-align: left;
+	min-width: 100px;
+}
+.tdOperationCell{
+	height: 28px;
+	border: #d1d1d1 1px solid;
+	padding: 5px;
+	font-size: 12px;
+	align:center;
+	valign:middle;
+	text-align: center;
+	text-valign: middle;
+	min-width: 100px;
+}
+

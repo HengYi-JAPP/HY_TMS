@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.params.ParamsValueBean">
+		<map property="tdtId" javaType="java.lang.String" column="TDTID" colType=""/>
+		<map property="tdtName" javaType="java.lang.String" column="TDTNAME" colType=""/>
+		<map property="tdtCode" javaType="java.lang.String" column="TDTCODE" colType=""/>
+		<map property="paramsId" javaType="java.lang.String" column="PARAMSID" colType=""/>
+		<map property="paramsName" javaType="java.lang.String" column="PARAMSNAME" colType=""/>
+		<map property="paramsType" javaType="java.lang.String" column="PARAMSTYPE" colType=""/>
+		<map property="paramsCode" javaType="java.lang.String" column="PARAMSCODE" colType=""/>
+		<map property="valueId" javaType="java.lang.String" column="VALUEID" colType=""/>
+		<map property="valueContent" javaType="java.lang.String" column="VALUECONTENT" colType=""/>
+		<map property="valueDesc" javaType="java.lang.String" column="VALUEDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+
+</root>

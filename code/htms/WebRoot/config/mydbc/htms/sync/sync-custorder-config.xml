@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	
+	<operation name="loadCustOrder" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" invokeMethod="list"  forward="" >
+		<sql name="loadCustOrder" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="list" cacheName="custOrderList" cacheScope="request" isEscapeQuotation="true"  isEscape="false"><![CDATA[
+			SELECT *
+		    FROM TB_HTMS_CUSTORDER 
+		    WHERE to_date(CREATETIME ,'YYYY-MM-DD') >= to_date('$G_BEGDA' ,'YYYY-MM-DD')AND 
+		        to_date(CREATETIME ,'YYYY-MM-DD')<=to_date('$G_ENDDA' ,'YYYY-MM-DD') 
+		        <if test="$[syncSalesNo]!=''">
+		        AND saleGroup IN ('$syncSalesNo') 
+		        </if>
+		]]></sql>
+		
+		<sql name="loadCustDetail" beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean" cacheType="list" cacheName="custOrderList" cacheScope="request" isEscapeQuotation="true"  isEscape="false"><![CDATA[
+			SELECT *
+		    FROM tb_htms_custorderdetail where 
+		    tb_htms_custorderdetail.corderId in ( 
+			SELECT corderId
+		    FROM TB_HTMS_CUSTORDER 
+		    WHERE to_date(CREATETIME ,'YYYY-MM-DD') >= to_date('$G_BEGDA' ,'YYYY-MM-DD')AND 
+		        to_date(CREATETIME ,'YYYY-MM-DD')<=to_date('$G_ENDDA' ,'YYYY-MM-DD') 
+ 				<if test="$[syncSalesNo]!=''">
+		        AND saleGroup IN ('$syncSalesNo') 
+		        </if>
+		   )
+		]]></sql>
+		<!-- 同步订单中已经申请未审批通过的信息以及，已经审批通过，但未在SAP成生调拨单的信息-->
+		<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request" isEscapeQuotation="true"  isEscape="false">
+				<![CDATA[
+				SELECT corder.cordercode ,TB_HTMS_SHIPDETAIL.Itemcode, sum(to_number(TB_HTMS_SHIPDETAIL.Applytonnum)) AS applyTonNum
+	             FROM TB_HTMS_SHIPDETAIL,TB_HTMS_SHIP
+	             left join tb_htms_custorder corder on corder.corderId=TB_HTMS_SHIP.corderId
+	             WHERE
+	               TB_HTMS_SHIP.corderId in ( 
+	                SELECT corderId
+	                  FROM TB_HTMS_CUSTORDER 
+	                  WHERE to_date(CREATETIME ,'YYYY-MM-DD') >= to_date('$G_BEGDA' ,'YYYY-MM-DD')AND 
+	                      to_date(CREATETIME ,'YYYY-MM-DD')<=to_date('$G_ENDDA' ,'YYYY-MM-DD') 
+						   <if test="$[syncSalesNo]!=''">
+					        AND saleGroup IN ('$syncSalesNo') 
+					        </if>
+	                 )
+	                     and  (TB_HTMS_SHIP.Applystatus=0 OR TB_HTMS_SHIP.Applystatus=1)
+	               and TB_HTMS_SHIPDETAIL.shipId = TB_HTMS_SHIP.shipId
+	                     group by cordercode,TB_HTMS_SHIPDETAIL.Itemcode
+				]]>
+		</sql>
+		<sql name="loadAllCustomer" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="custOrderList" cacheScope="request" ><![CDATA[
+			SELECT * FROM TB_HTMS_CUSTOMER 
+		]]></sql>
+	</operation>
+	
+	
+	
+	<operation name="loadCustOrderWithOrderCode" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" invokeMethod="list"  forward="" >
+		<sql name="loadCustOrderWithOrderCode" beanClass="com.zzy.htms.sales.custorder.CustOrderBean" cacheType="list" cacheName="custOrderList" cacheScope="request" isEscapeQuotation="true"  isEscape="false"><![CDATA[
+			SELECT *
+		    FROM TB_HTMS_CUSTORDER 
+		    WHERE    corderCode IN ($orderCodes) 
+		]]></sql>
+		
+		<sql name="loadCustDetail" beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean" cacheType="list" cacheName="custOrderList" cacheScope="request" isEscapeQuotation="true"  isEscape="false"><![CDATA[
+			SELECT *
+		    FROM tb_htms_custorderdetail where 
+		    tb_htms_custorderdetail.corderId in ( 
+			SELECT corderId
+		    FROM TB_HTMS_CUSTORDER 
+		    WHERE   saleNum IN ($orderCodes) 
+		   )
+		]]></sql>
+		<!-- 同步订单中已经申请未审批通过的信息以及，已经审批通过，但未在SAP成生调拨单的信息-->
+		<sql name="shipDetailList" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request" isEscapeQuotation="true"  isEscape="false">
+				<![CDATA[
+				SELECT corder.cordercode ,TB_HTMS_SHIPDETAIL.Itemcode, sum(to_number(TB_HTMS_SHIPDETAIL.Applytonnum)) AS applyTonNum
+	             FROM TB_HTMS_SHIPDETAIL,TB_HTMS_SHIP
+	             left join tb_htms_custorder corder on corder.corderId=TB_HTMS_SHIP.corderId
+	             WHERE
+	               TB_HTMS_SHIP.corderId in ( 
+	                SELECT corderId
+	                  FROM TB_HTMS_CUSTORDER 
+	                  WHERE to_date(CREATETIME ,'YYYY-MM-DD') >= to_date('$G_BEGDA' ,'YYYY-MM-DD')AND 
+	                      to_date(CREATETIME ,'YYYY-MM-DD')<=to_date('$G_ENDDA' ,'YYYY-MM-DD') 
+						   <if test="$[orderCodes]!=''">
+					          AND corderCode IN ($orderCodes) 
+					       </if>
+	                 )
+	                     and  (TB_HTMS_SHIP.Applystatus=0 OR TB_HTMS_SHIP.Applystatus=1)
+	               and TB_HTMS_SHIPDETAIL.shipId = TB_HTMS_SHIP.shipId
+	                     group by cordercode,TB_HTMS_SHIPDETAIL.Itemcode
+				]]>
+		</sql>
+		<sql name="loadAllCustomer" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="custOrderList" cacheScope="request" ><![CDATA[
+			SELECT * FROM TB_HTMS_CUSTOMER 
+		]]></sql>
+	</operation>
+	
+	
+	
+	<operation name="syncCustOrder" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" invokeMethod="list"  forward="" >
+			<sql name="DELETEDETAILINVALIDATE" isBatch="true"  test="$[delete_salesNum]!=''">
+					<![CDATA[
+					update tb_htms_custorderdetail  set isValidate=0 WHERE saleNum =$delete_salesNum 
+					]]>
+			</sql>
+			<sql name="UPDATEORDERINVALIDATE" isBatch="true"  test="$[delete_salesNum]!=''">
+					<![CDATA[
+						update TB_HTMS_CUSTORDER  set isValidate=0
+				    WHERE TB_HTMS_CUSTORDER.corderCode = $delete_salesNum 
+					]]>
+			</sql>
+		<!-- 插入订单 -->
+		<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTORDER" caiidKey="corderId" caiidName="corderId" caiidVar="insert_corderId" test="$[insert_corderCode]!=''">
+				<![CDATA[
+					INSERT INTO TB_HTMS_CUSTORDER (
+						corderId,
+						corderCode,
+						customerCode,
+						customerName,
+						saleType,
+						saleNum,
+						exchangeTitle,
+						saleOrg,
+						saleChannel,
+						productGroup,
+						saleGroup,
+						saleDepartment,
+						fetchFactory,
+						saleMan,
+						customerAmount,
+						deliveryStatus,					
+						createTime,
+						inputTime,
+						creator,
+						isValidate,
+						modifytime,
+						syncEmployNo) 
+			        VALUES(
+			        $insert_corderId,
+			        $insert_corderCode,
+					$insert_customerCode,
+					$insert_customerName,
+					$insert_saleType,
+					$insert_saleNum,
+					$insert_exchangeTitle,
+					$insert_saleOrg,
+					$insert_saleChannel,
+					$insert_productGroup,
+					$insert_saleGroup,
+					$insert_saleDepartment,
+					$insert_fetchFactory,
+					$insert_saleMan,
+					$insert_customerAmount,
+					$insert_deliveryStatus,
+					$insert_crecateTime,
+					$insert_inputTime,
+					$insert_creator,
+					1,
+					to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+					$insert_syncEmployNo) 
+				]]>
+		</sql>
+			
+		
+		<!-- 更新订单 -->
+		<sql name="UPDATE" isBatch="true"  version="2.0">
+					<![CDATA[
+					UPDATE TB_HTMS_CUSTORDER SET 
+						customerId=$update_customerId,
+						corderName=$update_corderName,
+						corderCode=$update_corderCode,
+						customerCode=$update_customerCode,
+						customerName=$update_customerName,
+						saleType=$update_saleType,
+						saleNum=$update_saleNum,
+						exchangeTitle=$update_exchangeTitle,
+						saleOrg=$update_saleOrg,
+						saleChannel=$update_saleChannel,
+						productGroup=$update_productGroup,
+						saleGroup=$update_saleGroup,
+						saleDepartment=$update_saleDepartment,
+						fetchFactory=$update_fetchFactory,
+						saleMan=$update_saleMan,
+						customerAmount=$update_customerAmount,
+						deliveryStatus=$update_deliveryStatus,
+						createTime=$update_crecateTime,
+						inputTime=$update_inputTime,
+						creator=$update_creator,
+						isValidate=1,
+						modifytime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+						syncEmployNo=$update_syncEmployNo
+				    WHERE TB_HTMS_CUSTORDER.corderId = $update_corderId 
+					]]>
+			</sql>
+			
+			
+			
+			
+			
+			<!-- 删除冗余订单及订单明细 -->
+			<!--<sql name="DELETEDETAIL" isBatch="true"  test="$[delete_salesNum]!=''">
+					<![CDATA[
+					DELETE FROM tb_htms_custorderdetail WHERE saleNum =$delete_salesNum 
+					]]>
+			</sql>
+			--><!--<sql name="DELETE" isBatch="true"  test="$[delete_salesNum]!=''">
+					<![CDATA[
+						DELETE FROM TB_HTMS_CUSTORDER 
+				    WHERE TB_HTMS_CUSTORDER.corderCode = $delete_salesNum 
+					]]>
+			</sql>
+			-->
+			<!--  -->
+			<!-- 插入订单明细 -->
+			<sql name="INSERTDETAIL" isBatch="true" caiidTable="TB_HTMS_CUSTORDERDETAIL" caiidKey="codetailId" caiidName="codetailId" caiidVar="codetailId">
+				<![CDATA[
+					INSERT INTO TB_HTMS_CUSTORDERDETAIL (
+						codetailId,
+						corderId,
+						saleNum,
+						codetailCertificate,
+						meterialFactory,
+						meterialNo,
+						meterialGroup,
+						codetailCertificateDesc,
+						orderAmount,
+						orderUnit,
+						projectVolume,
+						volumeUnit,
+						conditionSutotal,
+						freight,
+						unitPrice,
+						docCondCount,
+						notLimitStorage,
+						postedStock,
+						unpostedStock,
+						deliveryStatus,
+						partialDelivery,
+						dbPrice,						
+						productId,
+						factoryId,
+						factoryGroup,
+						appliableamount,
+						shipPoint,						
+						shipPointDesc,	
+						createTime,
+						isValidate,modifytime) 
+			        SELECT 
+				        $codetailId,
+				        corderId,
+				        $dinsert_saleNum,
+						$dinsert_codetailCertificate,
+						$dinsert_meterialFactory,
+						$dinsert_meterialNo,
+						$dinsert_meterialGroup,
+						$dinsert_codetailCertificateDesc,
+						$dinsert_orderAmount,
+						$dinsert_orderUnit,
+						$dinsert_projectVolume,
+						$dinsert_volumeUnit,
+						$dinsert_conditionSutotal,
+						$dinsert_freight,
+						$dinsert_unitPrice,
+						$dinsert_docCondCount,
+						$dinsert_notLimitStorage,
+						$dinsert_postedStock,
+						$dinsert_unpostedStock,
+						$dinsert_deliveryStatus,
+						$dinsert_partialDelivery,
+						$dinsert_dbPrice,
+						$dinsert_productId,
+						$dinsert_factoryId,
+						$dinsert_factoryGroup,
+						$dinsert_applyNum,						
+						$dinsert_shipPoint,
+						$dinsert_shipPointDesc,
+						$dinsert_createTime,
+						1,
+						to_char(sysdate,'yyyy-MM-dd HH24:mi:ss') as modifytime
+					FROM TB_HTMS_CUSTORDER
+					WHERE saleNum= $dinsert_saleNum
+				]]>
+		</sql>
+		<!-- 更新订单明细 -->
+			<sql name="UPDATEDETAIL" isBatch="true" >
+				<![CDATA[
+					UPDATE TB_HTMS_CUSTORDERDETAIL SET
+						saleNum=$dupdate_saleNum,
+						codetailCertificate=$dupdate_codetailCertificate,
+						meterialFactory=$dupdate_meterialFactory,
+						meterialNo=$dupdate_meterialNo,
+						meterialGroup=$dupdate_meterialGroup,
+						codetailCertificateDesc=$dupdate_codetailCertificateDesc,
+						orderAmount=$dupdate_orderAmount,
+						orderUnit=$dupdate_orderUnit,
+						projectVolume=$dupdate_projectVolume,
+						volumeUnit=$dupdate_volumeUnit,
+						conditionSutotal=$dupdate_conditionSutotal,
+						freight=$dupdate_freight,
+						unitPrice=$dupdate_unitPrice,
+						docCondCount=$dupdate_docCondCount,
+						notLimitStorage=$dupdate_notLimitStorage,
+						postedStock=$dupdate_postedStock,
+						unpostedStock=$dupdate_unpostedStock,
+						deliveryStatus=$dupdate_deliveryStatus,
+						partialDelivery=$dupdate_partialDelivery,
+						dbPrice=$dupdate_dbPrice,
+						productId=$dupdate_productId,
+						factoryId=$dupdate_factoryId,
+						factoryGroup=$dupdate_factoryGroup,
+						appliableamount=$dupdate_applyNum,						
+						shipPoint=$dupdate_shipPoint,						
+						shipPointDesc=$dupdate_shipPointDesc,
+						createTime=$dupate_createTime,
+						isValidate=1,
+						modifytime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+					WHERE codetailId= $dupdate_codetailId
+				]]>
+		</sql>
+		<!-- 删除冗余订单及订单明细 -->
+		<!--<sql name="DELETEDETAILS" isBatch="true"  test="$[delete_detailSalesItem]!=''&amp;&amp;$[delete_detailSalesItem]!=''">
+				<![CDATA[
+				DELETE FROM tb_htms_custorderdetail WHERE saleNum=$delete_detailSalesNum AND  codetailCertificate=$delete_detailSalesItem
+				]]>
+		</sql>
+		
+		-->
+		<sql name="INSERTCUSTOMER" isBatch="true" caiidTable="TB_HTMS_CUSTOMER" caiidKey="customerId" caiidName="customerId" caiidVar="insertCustomerId"  test="$[insertCustomerNo]!=''">
+				<![CDATA[
+					INSERT INTO TB_HTMS_CUSTOMER ( customerId, customerCode, customerName,  isValidate) 
+			        VALUES($insertCustomerId,$insertCustomerNo,$insertCustomerName,1) 
+				]]>
+		</sql>
+		<sql name="UPDATECUSTOMER" isBatch="true"  test="$[updateCustomerNo]!=''">
+				<![CDATA[
+					UPDATE TB_HTMS_CUSTOMER 
+				    SET customerName = $updateCustomerName 
+				    WHERE customerCode = $updateCustomerNo
+				]]>
+		</sql>
+		
+		<sql name="bindCustomerId" >
+				<![CDATA[
+				update tb_htms_custorder t set t.customerid=(
+					select c.customerid from tb_htms_customer c where c.customercode=t.customercode
+				) 
+				where t.customerid is null
+				]]>
+		</sql>
+
+	</operation>
+	
+	<!-- 加载所有未派车的SAP调拨单号 -->
+	<operation name="loadAllNotSendCarSapCode" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" invokeMethod="list"  forward="" >
+		<sql name="loadAllNotSendCarSapCode" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="loadAllNotSendCarSapCode" cacheScope="request" isEscapeQuotation="true"  isEscape="false"><![CDATA[
+			select trans.saptranscode
+			from tb_htms_transfer trans,tb_htms_transport sport
+			where  
+			trans.saptranscode is not null
+			and trans.transid=sport.transid 
+			and sport.transportid not in (
+			select t.transportid from tb_htms_transportsend t,tb_htms_send s 
+			       where t.sendid=s.sendid and s.sendstatus=1
+			) 
+		]]></sql>
+	</operation>
+	
+	<operation name="updateAllNotSendCarSapCode" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" invokeMethod="list"  forward="" >
+		<sql name="updateSend" isBatch="true"><![CDATA[
+			UPDATE TB_HTMS_SEND SET TB_HTMS_SEND.SENDSTATUS=1 WHERE TB_HTMS_SEND.SENDID IN(
+			SELECT TS.SENDID FROM tb_htms_transportsend TS WHERE TS.TRANSPORTID IN(
+			SELECT P.TRANSPORTID FROM tb_htms_transport P WHERE P.TRANSID IN(
+			SELECT T.TRANSID FROM tb_htms_transfer T WHERE T.SAPTRANSCODE=$updateSapCodes)))
+		]]></sql>
+		
+		<sql name="updateTransport" isBatch="true"><![CDATA[
+			UPDATE  tb_htms_transport TS  SET TS.TRANSPORTSTATUS=2   WHERE TS.TRANSPORTID IN(
+			SELECT P.TRANSPORTID FROM tb_htms_transport P WHERE P.TRANSID IN(
+			SELECT T.TRANSID FROM tb_htms_transfer T WHERE T.SAPTRANSCODE =$updateSapCodes))
+		]]></sql>		
+		
+		<sql name="updateTransfer" isBatch="true"><![CDATA[
+			UPDATE  tb_htms_transfer TS  SET TS.TRANSSTATUS=2   WHERE TS.TRANSID IN(
+			SELECT P.TRANSID FROM tb_htms_transport P WHERE P.TRANSID IN(
+			SELECT T.TRANSID FROM tb_htms_transfer T WHERE T.SAPTRANSCODE =$updateSapCodes))
+		]]></sql>
+		
+		
+		<sql name="updateShip" isBatch="true"><![CDATA[
+			update tb_htms_ship set applystatus=3  WHERE tb_htms_ship.shipid IN(
+			SELECT TS.SHIPID FROM  tb_htms_transfer TS  
+			WHERE TS.TRANSID IN(
+			SELECT P.TRANSID FROM tb_htms_transport P WHERE P.TRANSID IN(
+			SELECT T.TRANSID FROM tb_htms_transfer T WHERE T.SAPTRANSCODE=$updateSapCodes)))
+		]]></sql>
+	</operation>
+</root>

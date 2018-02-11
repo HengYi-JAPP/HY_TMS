@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.mobile.ShipDriverBean">
+		<map property="driverName" javaType="String" column="driverName"  colType=""/>
+		<map property="driverMobile" javaType="String" column="driverMobile"  colType=""/>
+		<map property="vehicleNo" javaType="String" column="vehicleNo"  colType=""/>
+
+		<map property="shipId" javaType="int" column="shipId"  colType=""/>
+		
+		<map property="transId" javaType="int" column="transId"  colType=""/>
+		
+		<map property="sendStatus" javaType="int" column="sendStatus"  colType=""/>
+		
+		<map property="applyTonNum" javaType="String" column="applyTonNum"  colType=""/>
+		<map property="applyPackNum" javaType="String" column="applyPackNum"  colType=""/>
+		
+		<map property="totalFreight" javaType="String" column="totalFreight"  colType=""/>
+		
+	</bean>
+</root>

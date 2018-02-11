@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.parklogistics.ParkLogisticsBean">
+		<map property="sapCode" javaType="String" column="sapCode"  colType=""/>
+		<map property="bindingTime" javaType="String" column="bindingTime"  colType=""/>
+		<map property="exitTime" javaType="String" column="exitTime"  colType=""/>
+		<map property="parkStatus" javaType="String" column="parkStatus"  colType=""/>
+		
+		
+	</bean>
+</root>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 查询 -->
+	<operation name="toLoadThemesParams" businessClass="com.mobilecn.themes.params.ParamsBusiness"
+		invokeMethod="list" forward="" >
+		
+		<sql name="list" beanClass="com.mobilecn.themes.params.ParamsBean"
+			cacheName="paramsList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_THEMES_PARAMS.*  FROM TB_WSM_THEMES_PARAMS  WHERE TB_WSM_THEMES_PARAMS.THEMESID=$themesId AND TB_WSM_THEMES_PARAMS.ISVALIDATE=1 ORDER BY TB_WSM_THEMES_PARAMS.PARAMSID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/cssitem/bindVars.jsp</forward>
+	</operation>
+
+</root>

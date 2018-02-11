@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.privilege.sysconfig.SysConfigBean">
+		<map property="configId" javaType="java.lang.String" column="CONFIGID" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="configType" javaType="java.lang.String" column="CONFIGTYPE" colType=""/>
+		<map property="configName" javaType="java.lang.String" column="CONFIGNAME" colType=""/>
+		<map property="configCode" javaType="java.lang.String" column="CONFIGCODE" colType=""/>
+		<map property="configDesc" javaType="java.lang.String" column="CONFIGDESC" colType=""/>
+		<map property="configContent" javaType="java.lang.String" column="CONFIGCONTENT" colType=""/>
+		<map property="versionNo" javaType="java.lang.String" column="VERSIONNO" colType=""/>
+		<map property="isRef" javaType="java.lang.String" column="ISREF" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>	
+	<!-- 更新用户的布局列表 -->
+	<operation name="updateColumn_of_commonSystem" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="modify"  forward="" >
+		<!-- 删除用户原有的布局定义信息 -->
+		<sql name="deleteUserColumn"  isBatch="true" >
+			DELETE FROM TB_WSM_USER_COLUMN WHERE USERID=$userId AND LAYOUTID=$_layoutId AND UNITID=$_unitId AND COLUMNID=$_columnId
+		</sql>	
+		<!-- 记录用户当前的布局定义信息 -->	
+		<sql name="updateUserColumn"  isBatch="true" >
+			INSERT INTO TB_WSM_USER_COLUMN (USERID,UNITID,LAYOUTID,COLUMNID,SHOWORDER,ISSHOW,ISOPEN,ISMOVE)
+			VALUES($userId,$_unitId,$_layoutId,$_columnId,$_showOrder,$_isShow,$_isOpen,$_isMove)
+		</sql>	
+		<forward name="listAction"> null</forward>
+	</operation>
+	
+	<!--<operation name="updateColumnOpenStatus" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="modify"  forward="" >
+		<sql name="update"  isBatch="true" >
+			UPDATE TB_WSM_USER_COLUMN SET ISOPEN=$_statusValue 
+			WHERE USERID=$userId AND
+			LAYOUTID=$_layoutId AND 
+			UNITID=$_currUnitId AND 
+			COLUMNID=$_columnId
+		</sql>	
+		<forward name="listAction"> null</forward>
+	</operation>
+	<operation name="updateColumnShowStatus" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="modify"  forward="" >
+		<sql name="update"  isBatch="true" >
+			UPDATE TB_WSM_USER_COLUMN SET ISSHOW=$_statusValue 
+			WHERE USERID=$userId AND
+			LAYOUTID=$__layoutId AND 
+			UNITID=$_currUnitId AND 
+			COLUMNID=$_columnId
+		</sql>	
+		<forward name="listAction"> null</forward>
+	</operation>
+	--><operation name="cleanUserLayoutColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="modify"  forward="" >
+		<sql name="delete"  isBatch="true" >
+			DELETE FROM TB_WSM_USER_COLUMN 
+			WHERE USERID=$userId AND
+			LAYOUTID=$__layoutId 
+		</sql>	
+		<forward name="listAction"> null</forward>
+	</operation>
+</root>

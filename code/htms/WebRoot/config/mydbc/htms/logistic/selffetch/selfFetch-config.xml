@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="listSelfFtech" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  loadCacheForm="selfFetchForm"  version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0"  isEscapeQuotation="true"  isEscape="false" >
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+            			FROM TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+            			left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+            			left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+            			WHERE TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+            			AND TB_HTMS_TRANSFER.SELFFETCH>'0' 
+            			AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+            			AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+            			AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'
+            			and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                        and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                        and TB_HTMS_TRANSFER.fetchCar LIKE '%$fetchCarSH%'
+                       <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+						</if>
+						<if test="$[transferCodeSH]!=''">
+							AND (TB_HTMS_TRANSFER.transferCode LIKE '%$transferCodeSH%' or TB_HTMS_TRANSFER.SapTransCode LIKE '%$transferCodeSH%')
+						</if>						
+                        <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+						</if>                        
+                         <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+						  </if>
+						   <if test="$[factoryIdSH]!=''">
+							     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+						  </if>
+						  <if test="$[orderTypeSH]!=''">
+							     and TB_HTMS_TRANSFER.SELFFETCH like '$orderTypeSH'
+						  </if>
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="selfFetchList"   isEscapeQuotation="true"  isEscape="false"  cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.*,
+						    TB_HTMS_TRANSFERDETAIL.applyTonNum as  detailApplyTonNum,
+						    TB_HTMS_TRANSFERDETAIL.applyPackNum as  detailApplyPackNum,
+						    TB_HTMS_TRANSFERDETAIL.codetailid,
+						    TB_HTMS_CUSTORDER.createTime as custOrderCreateTime,
+							TB_HTMS_CUSTORDER.CORDERCODE,
+							TB_HTMS_CUSTORDER.CUSTOMERCODE,
+		                    TB_HTMS_CUSTORDER.CUSTOMERNAME,    
+		                    TB_HTMS_CUSTORDER.saleMan,
+				            caddr.areaId,
+				            caddr.caddrDetail,
+				            TB_HTMS_TRANSFER.createTime as approveAgreeTime,			           
+				            TB_HTMS_SHIP.createTime as shipApplyTime 
+                      FROM 
+                         TB_HTMS_CUSTORDER , TB_HTMS_TRANSFER 
+	                      left join TB_HTMS_TRANSFERDETAIL on TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSFERDETAIL.TRANSID
+	                      left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+	                      left join TB_HTMS_SHIP on TB_HTMS_TRANSFER.shipid=TB_HTMS_SHIP.shipid
+                      WHERE 
+                      TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID 
+                      AND TB_HTMS_TRANSFER.SELFFETCH > '0' 
+                      AND TB_HTMS_CUSTORDER.CORDERCODE LIKE '%$corderCodeSH%'
+                      AND TB_HTMS_TRANSFER.ISURGENT like  '%$isUrgentSH%'
+            		  AND TB_HTMS_TRANSFER.transStatus like  '%$transStatusSH%'                  
+                      and TB_HTMS_CUSTORDER.CUSTOMERNAME LIKE '%$customerNameSH%'
+                      and TB_HTMS_TRANSFER.fetchCar LIKE '%$fetchCarSH%'
+                      and TB_HTMS_CUSTORDER.saleMan LIKE '%$saleManSH%'
+                      <if test="$[areaCodeSH]!=''">
+							AND caddr.AREACODE LIKE '$areaCodeSH%'
+					  </if>
+					  <if test="$[transferCodeSH]!=''">
+							AND (TB_HTMS_TRANSFER.transferCode LIKE '%$transferCodeSH%' or TB_HTMS_TRANSFER.SapTransCode LIKE '%$transferCodeSH%')
+					  </if>
+                      <if test="$[createOrderTimeSH]!=''">
+						    and TB_HTMS_CUSTORDER.createTime = '$createOrderTimeSH'
+					  </if>
+					  <if test="$[productIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.productid in ($productIdSH)
+					  </if>
+					   <if test="$[factoryIdSH]!=''">
+						     and TB_HTMS_TRANSFERDETAIL.factoryid in ($factoryIdSH)
+					  </if>
+                      <if test="$[orderTypeSH]!=''">
+							  and TB_HTMS_TRANSFER.SELFFETCH like '$orderTypeSH'
+					  </if>
+                      ORDER BY  TB_HTMS_TRANSFER.transStatus asc  , TB_HTMS_TRANSFER.ISURGENT  desc,TB_HTMS_TRANSFER. createTime  desc
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/selffetch/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="viewSelfFetch" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId ,TB_HTMS_CARRIER.carrierName 
+				    FROM TB_HTMS_CARRIER WHERE TB_HTMS_CARRIER.isValidate='1'
+				     ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+			
+			<sql name="TransferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="bean" cacheName="tranferViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE,
+					  TB_HTMS_CUSTORDER.CUSTOMERNAME,
+					  TB_HTMS_CUSTORDER.CUSTOMERCODE,
+			          caddr.areaId,
+			          caddr.caddrDetail
+			          from TB_HTMS_SHIP,TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			                where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			                AND TB_HTMS_SHIP.shipId=TB_HTMS_TRANSFER.Shipid
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+			<sql name="TRANSFERDETAIL" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="detailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*,
+						       TB_HTMS_CUSTORDERDETAIL.meterialFactory,
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc,
+						       TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       factory.factoryName,
+						       product.productname
+						       
+						  FROM TB_HTMS_TRANSFERDETAIL, TB_HTMS_CUSTORDERDETAIL 						  						  					  
+		                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.Factoryid
+		                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productid 
+						 WHERE TRANSID=$transId
+						 and TB_HTMS_CUSTORDERDETAIL.codetailId = TB_HTMS_TRANSFERDETAIL.codetailId
+						 order by transDetailId
+
+					]]></content>
+			</sql>
+			<!-- 已经分配的承运商 -->
+			<sql name="SELECTED_CARRIER" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="bean" cacheName="transportBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId,TB_HTMS_CARRIER.carrierName,TB_HTMS_TRANSPORT.*,TB_HTMS_TRANSPORTDETAIL.transDetailNotice  
+				    FROM TB_HTMS_CARRIER,TB_HTMS_TRANSPORT,TB_HTMS_TRANSPORTDETAIL
+				    WHERE 
+				    TB_HTMS_CARRIER.carrierId=TB_HTMS_TRANSPORT.carrierId
+				    AND TB_HTMS_TRANSPORT.transportId=TB_HTMS_TRANSPORTDETAIL.transportId
+				    AND TB_HTMS_TRANSPORT.transId=$transId
+				    AND TB_HTMS_CARRIER.isValidate='1'
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/selffetch/view.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="getSelfFetchById"  businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  >
+		<sql name="getSelfFetchById"  beanClass="com.zzy.htms.logistic.transfer.TransferBean"   >
+		    <![CDATA[
+			     select *  from TB_HTMS_TRANSFER where SELFFETCH > '0'  and transId=$transId
+		     ]]>
+		</sql>
+	</operation>
+	
+	<operation name="getTranferAndDetailById"  businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  >
+		<!-- 获得引用ID -->
+		<sql name="transRefId"  refCols="freightTransId,freightShipId" refNames="freightTransId,freightShipId">
+			SELECT 
+			TB_HTMS_TRANSFER.TRANSID AS freightTransId,
+			TB_HTMS_TRANSFER.CORDERID as freightCorderId,
+			TB_HTMS_TRANSFER.SHIPID AS freightShipId
+			 FROM TB_HTMS_TRANSFER WHERE TB_HTMS_TRANSFER.transId=$transId 
+		</sql>
+		<sql name="transferBean"  beanClass="com.zzy.htms.logistic.transfer.TransferBean">
+			SELECT TB_HTMS_TRANSFER.*,
+			       TB_HTMS_CUSTOMERADDR.AREAID
+			FROM TB_HTMS_TRANSFER,TB_HTMS_CUSTOMERADDR 
+			WHERE 
+			  TB_HTMS_TRANSFER.CADDRID=TB_HTMS_CUSTOMERADDR.CADDRID
+			  AND TB_HTMS_TRANSFER.TRANSID=$transId
+		</sql>
+		<sql name="transDetailList"  beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean">
+			SELECT TB_HTMS_TRANSFERDETAIL.* FROM TB_HTMS_TRANSFERDETAIL
+			where TB_HTMS_TRANSFERDETAIL.TRANSID=$freightTransId
+		</sql>
+		<sql name="shipBean"  beanClass="com.zzy.htms.sales.ship.ShipBean">
+			SELECT TB_HTMS_SHIP.* FROM TB_HTMS_SHIP 
+			WHERE TB_HTMS_SHIP.SHIPID=$freightShipId 
+		</sql>	
+	</operation>
+	
+    <operation name="doSelfFetch" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness" version="2.0"   forward="">
+		<method name="checkSelfFetchAgreeStatus" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  invokeMethod="checkSelfFetchAgreeStatus" exeOrder="1" version="2.0">
+		</method>
+        <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performSelfFetch]]></address>
+		</forward>
+	</operation>
+
+	<operation name="performSelfFetch" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness" version="2.0"   forward="">
+		<method name="createSapTransfer" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  invokeMethod="createSapTransfer" exeOrder="1" version="2.0">
+			<!-- 查出调拨单及订单信息，创建SAP上的调拨单 -->
+			<sql name="transferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean"    version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE,
+					  TB_HTMS_CUSTORDER.customercode,
+			          caddr.areaId,
+			          caddr.caddrDetail,
+			          caddr.caddrContactor,
+			          caddr.caddrTelephone
+			         from TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			         where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+			<sql name="detailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*
+						  FROM TB_HTMS_TRANSFERDETAIL
+						 WHERE TRANSID=$transId
+						 order by transDetailId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[sapTransferCode]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[sapTransferCode]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=updateSelfFetchStatus&transId=$[transId]&sapTransferCode=$[sapTransferCode]]]></address>
+		</forward>
+	</operation>
+	<operation name="updateSelfFetchStatus" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  invokeMethod="modify" exeOrder="2" version="2.0">
+			<sql name="UPDATE_SELFFETCH"  version="2.0">
+				<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET 
+						SELFFETCH='9',
+						modifier=$userId,
+						modifyTime=$modifyTime
+				    WHERE TRANSID=$transId and SELFFETCH='1'
+				]]></content>
+			</sql>
+			<sql name="UPDATE_SELFFETCH2"  version="2.0">
+				<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET 
+						SELFFETCH='10',
+						modifier=$userId,
+						modifyTime=$modifyTime
+				    WHERE TRANSID=$transId  and SELFFETCH='2'
+				]]></content>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER"  version="2.0">
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						transStatus=1,
+						modifier=$userId,
+					    modifyTime=$modifyTime
+				    WHERE 
+				    	transId = $transId
+					]]></content>
+			</sql>
+			<!-- 更新调拨单明细状态 -->
+			<sql name="UPDATE_DETAIL"  version="2.0">
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE 
+				    	transId = $transId
+					]]></content>
+			</sql>
+			
+			
+			<!-- 更新调拨单对应的申请明细状态，为2分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =2,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							shipId = $currentShipId 
+					]]></content>
+			</sql>
+			<!-- 更新调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=2,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				    	WHERE 
+				    		shipId = $currentShipId 
+					]]></content>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSERCODE" test="$[sapTransferCode]!=''">
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]></content>
+			</sql>
+			</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+	</operation>
+	
+	
+	 <operation name="rejectSelfFetch" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness" version="2.0"   forward="">
+		<method name="checkSelfFetchRejectStatus" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  invokeMethod="checkSelfFetchRejectStatus" exeOrder="1" version="2.0">
+		</method>
+        <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performRejectSelfFetch]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="performRejectSelfFetch" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  invokeMethod="rejectSelfFetch" exeOrder="2" version="2.0">
+			<!-- 删除调拨单明细-->
+			<sql name="DELETE_DETAIL" >
+					<content><![CDATA[
+						DELETE FROM  TB_HTMS_TRANSFERDETAIL 
+				    	WHERE transId = $transId
+					]]></content>
+			</sql>
+			<!-- 删除调拨单-->
+			<sql name="DELETE_TRANSER" >
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_TRANSFER 
+					    WHERE transId =$transId
+					]]></content>
+			</sql>
+			
+			<!-- 更新更新原始调拨单对应的申请明细状态 ,拒绝为3，是贸易商拒绝-->
+			<sql name="UPDATESHIPDETAIL" isBatch="true" >
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus = 903,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE shipId = $currentShipId 
+					]]></content>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请状态，拒绝为3，是贸易商拒绝 -->
+			<sql name="UPDATESHIP" >
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus= 903,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $currentShipId 
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="updateSelfFetchSapTransferCode" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list" forward="" >
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listSelfFtech</forward>
+	</operation>
+	
+	
+	
+	
+	 <operation name="cancelSelfFetch" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness" version="2.0"   forward="">
+		<method name="checkSelfFetchCancelStatus" businessClass="com.zzy.htms.logistic.transfer.SelfTransferBusiness"  invokeMethod="checkSelfFetchCancelStatus" exeOrder="1" version="2.0">
+		</method>
+        <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performCancelSelfFetch]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="performCancelSelfFetch" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="cancelSelfFetch" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="cancelSelfFetch" exeOrder="1" version="2.0">
+			<sql name="transferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean"  version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE
+			         from TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			         where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[listSelfFtech]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[listSelfFtech]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=cancelUpdateSelfFetch&transId=$[transId]&sapTransferCode=$[sapTransferCode]]]></address>
+		</forward>
+	</operation>
+	<operation name="cancelUpdateSelfFetch" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="modify" exeOrder="1" version="2.0">
+			<sql name="UPDATE_SELFFETCH" >
+				<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET 
+						SELFFETCH='1',
+						modifier=$userId,
+						modifyTime=$modifyTime
+				    WHERE TRANSID=$transId and SELFFETCH='9'
+				]]></content>
+			</sql>
+			<sql name="UPDATE_SELFFETCH2" >
+				<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET 
+						SELFFETCH='2',
+						modifier=$userId,
+						modifyTime=$modifyTime
+				    WHERE TRANSID=$transId and SELFFETCH='10'
+				]]></content>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER"  version="2.0">
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET
+					 transStatus=0,
+					 modifier=$userId,
+					 modifyTime=$modifyTime
+				    WHERE transId =$transId
+					]]></content>
+			</sql>
+			<!-- 更新调拨单明细状态-->
+			<sql name="UPDATE_DETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_TRANSFERDETAIL SET
+							transDetailStatus=0,
+				    		modifier=$userId,
+				    		modifyTime=$modifyTime
+				    	WHERE transId =$transId 
+					]]></content>
+			</sql>
+			
+			<!-- 更新更新原始调拨单对应的申请明细状态，为1分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE shipId = $currentShipId 
+					]]></content>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $currentShipId 
+					]]></content>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSERCODE" test="$[sapTransferCode]!=''">
+					<content><![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]></content>
+			</sql>
+		</method>
+		
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSelfFtech]]></address>
+		</forward>
+	</operation>
+</root>

@@ -1,0 +1,25 @@
+.cmenu-box{width:100%;height:40px;border:0;	border-collapse:collapse; 	border-spacing:0; text-align:center;float:left;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;}
+.cmenu-box tr{height:45px;text-align:center;float:left;text-vertical:middle;}
+.cmenu-item-box{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;color:#ffffff;font-size: 16px;cursor:pointer;}
+.cmenu-config{float:left;padding: 0 15px;border-right: 1px solid #1373d3;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;color:#ffffff;font-size: 16px;cursor:pointer;}
+.cmenu-item-name-box{padding: 0 15px;width:auto;height:45px;line-height:45px;text-align:center;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;}
+.cmenu-item-name-indent-box{width:auto;height:45px;line-height:45px;text-align:center;}
+.cmenu-item-name-before-icon-box{width:20px;}
+.cmenu-item-name-text-box{text-align:center;float:center;width:initial;}
+.cmenu-item-name-after-icon-box{width:20px;}
+.cmenu-item-name-before-icon{}
+.cmenu-item-name-text{color: #fff;font-size: 16px;line-height:45px;text-align:center;float:center;width:initial;}
+.cmenu-item-name-after-icon{}
+.cmitem-selected{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261cb;background:#1261cb;background-color:#1261cb;cursor:pointer;}
+.cmsubmenu-box{position:absolute;display:none;width:auto;height:45px;line-height:45px;text-align:center;}
+.cmsubmenu-item-box{}
+.cmsubmenu-item-name-box{width:auto;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-indent-box{width:auto;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-before-icon-box{width:20px;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-text-box{text-align:center;float:center;width:initial;}
+.cmsubmenu-item-name-after-icon-box{width:20px;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-before-icon{}
+.cmsubmenu-item-name-text{color: #fff;font-size: 16px;line-height:45px;text-align:center;float:center;width:initial;}
+.cmsubmenu-item-name-after-icon{}
+.cmsubmenu-item-selected{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261cb;background:#1261cb;background-color:#1261cb;cursor:pointer;}
+.cm-item-hover{}

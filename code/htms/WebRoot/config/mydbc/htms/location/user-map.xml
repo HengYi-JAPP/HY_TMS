@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.location.User">
+		<map property="openId" javaType="String" column="wxOpenId"  colType=""/>
+		
+		<map property="nickName" javaType="String" column="nickName"  colType=""/>
+		<map property="sex" javaType="String" column="sex"  colType=""/>
+		<map property="province" javaType="String" column="province"  colType=""/>
+		<map property="city" javaType="String" column="city"  colType=""/>
+		<map property="country" javaType="String" column="country"  colType=""/>
+		<map property="privilege" javaType="String" column="privilege"  colType=""/>
+		<map property="unionId" javaType="String" column="unionId"  colType=""/>
+		
+		<map property="driverMobile" javaType="String" column="driverMobile"  colType=""/>
+		<map property="vehicleNo" javaType="String" column="vehicleNo"  colType=""/>
+		<map property="driverId" javaType="String" column="driverId"  colType=""/>
+		<map property="logistics" javaType="String" column="logistics"  colType=""/>
+		<map property="identity" javaType="String" column="identity"  colType=""/>
+		
+		<map property="vehicleId" javaType="String" column="vehicleId"  colType=""/>
+		<map property="driverIdNum" javaType="String" column="driverIdNum"  colType=""/>
+		<map property="vehicleCount" javaType="String" column="vehicleCount"  colType=""/>
+
+		<map property="driverName" javaType="String" column="driverName"  colType=""/>
+
+		<map property="associateDriverName" javaType="String" column="associateDriverName"  colType=""/>
+		<map property="associateDriverMobile" javaType="String" column="associateDriverMobile"  colType=""/>
+		<map property="associateDriverIdNum" javaType="String" column="associateDriverIdNum"  colType=""/>
+		<map property="associateVehicleNo" javaType="String" column="associateVehicleNo"  colType=""/>
+
+		<map property="carrierName" javaType="String" column="carrierName"  colType=""/>
+
+	</bean>
+</root>

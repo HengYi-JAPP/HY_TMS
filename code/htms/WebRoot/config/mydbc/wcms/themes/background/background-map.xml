@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.background.BackgroundBean">
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="bgdId" javaType="java.lang.String" column="BGDID" colType=""/>
+		<map property="bgdCode" javaType="java.lang.String" column="BGDCODE" colType=""/>
+		<map property="bgdName" javaType="java.lang.String" column="BGDNAME" colType=""/>
+		<map property="bgdDesc" javaType="java.lang.String" column="BGDDESC" colType=""/>
+		<map property="bgdIcon" javaType="java.lang.String" column="BGDICON" colType=""/>
+		<map property="bgdContent" javaType="java.lang.String" column="BGDCONTENT" colType=""/>
+		<map property="bgdType" javaType="java.lang.String" column="BGDTYPE" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

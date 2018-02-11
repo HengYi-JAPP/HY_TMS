@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="toAddSubSystemUser" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="user_type_list" beanClass="com.zzy.htms.user.UserBean"
+			cacheName="user_type_list" cacheScope="request" ><![CDATA[
+			 SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TYPECODE='roleType'
+		]]></sql>
+		<sql name="select_carrier_list" beanClass="com.zzy.htms.logistic.carrier.CarrierBean"
+			cacheName="carrierList" cacheScope="request" ><![CDATA[
+			 SELECT TB_HTMS_CARRIER.CARRIERID,TB_HTMS_CARRIER.CARRIERNAME FROM TB_HTMS_CARRIER
+		]]></sql>
+		<forward name="listPage">jsp/privilege/user/add.jsp</forward>
+	</operation>
+	
+	<!-- 用户start -->
+	<!-- 添加 -->
+	<operation name="addUser" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"   caiidTable="TB_WSM_USER" caiidKey="USERID"  caiidName="TB_WSM_USER" caiidVar="userId">
+		INSERT INTO TB_WSM_USER (USERID,ACCOUNT,USERNAME,SEX,PHOTO,TEL,MOBILE,EMAIL,QQ,ISVALIDATE,DEPARTMENT,SUBDEPARTMENT,PASSWORD,USERTYPE,ORDERID,SALESNO，
+		CUSTOMERTYPE,EMPLOYNO,OAUSER,CARRIERID,CUSTOMERCODE,syncEMPLOYNO)
+        VALUES ($userId,$account,$userName,$sex,$photo,$tel,$mobile,$email,$qq,$isValidate,$department,$subDepartment,$password,$userType,$orderId,$salesNo,
+        $customerType,$employNo,$oaUser,$carrierId,$customerCode,$syncEmployNo)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listUser</forward>
+	</operation>
+	
+	<!-- 用户账户的唯一性校验 --><!--
+	<operation name="checkAccountUnique" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="checkAccountUnique" forward="">
+		<sql name="count" replace="AND ACCOUNT != '': ">
+			 SELECT COUNT(*) AS total FROM TB_WSM_USER WHERE ACCOUNT = $afterEncodingAccount AND ACCOUNT != $afterEncodingAccountFilter
+		</sql>
+		<forward name="listAction">contoller.do?operation=listUser</forward>
+		<forward name="addPage">console/jsp/privilege/user/add.jsp</forward>
+	</operation>	
+
+	-->
+	
+	<!-- 分页列表展示 -->
+	<operation name="listUser" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="list" forward="" cacheParams="userNameSH,accountSH,userNameSH,accountSH" cacheScopes="page,page,session,session" loadCacheForm="userForm">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_USER WHERE ACCOUNT LIKE '%$accountSH%' and USERNAME LIKE '%$userNameSH%' 
+		</sql>
+		
+		<!-- 按部门分组，同一部门排序号升序 -->
+		<sql name="list" beanClass="com.zzy.htms.user.UserBean"
+			cacheName="userList" cacheScope="request" isPage="true" pageField="ACCOUNT"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE   ACCOUNT LIKE '%$accountSH%' and USERNAME LIKE '%$userNameSH%' ORDER BY DEPARTMENT DESC,ACCOUNT desc
+		]]></sql>
+		<forward name="listPage">jsp/privilege/user/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteUser" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_USER WHERE USERID = $checkUserId
+		</sql>
+		<sql name="deleteUserGroup" isBatch="true">
+			DELETE FROM TB_WSM_USER_GROUP WHERE USERID = $checkUserId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listUser</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewUser" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.zzy.htms.user.UserBean"
+			cacheName="userViewBean" cacheScope="request">
+			 SELECT * FROM TB_WSM_USER WHERE  USERID = $userId
+		</sql>
+		<sql name="user_type_list" beanClass="com.zzy.htms.user.UserBean"
+			cacheName="user_type_list" cacheScope="request" ><![CDATA[
+			 SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TYPECODE='roleType'
+		]]></sql>
+		<sql name="select_carrier_list" beanClass="com.zzy.htms.logistic.carrier.CarrierBean"
+			cacheName="carrierList" cacheScope="request" ><![CDATA[
+			 SELECT TB_HTMS_CARRIER.CARRIERID,TB_HTMS_CARRIER.CARRIERNAME FROM TB_HTMS_CARRIER
+		]]></sql>
+		<forward name="modifyPage">jsp/privilege/user/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/user/view.jsp</forward>
+	</operation>
+
+
+	
+	
+	<operation name="modifyUser" businessClass="com.mobilecn.privilege.user.UserBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify" beanClass="com.mobilecn.privilege.user.UserBean">
+			UPDATE TB_WSM_USER  SET 
+				   ACCOUNT		= $account,
+	           	   USERNAME      = $userName,
+	               SEX           = $sex,
+	               PHOTO         = $photo,
+	               TEL           = $tel,
+	               MOBILE        = $mobile,
+	               EMAIL         = $email,
+	               QQ            = $qq,
+	               ISVALIDATE    = $isValidate,
+	               DEPARTMENT    = $department,
+	               SUBDEPARTMENT = $subDepartment,
+	               PASSWORD      = $password,
+	               USERTYPE		= $userType,
+	               ORDERID		= $orderId,	
+	               SALESNO      =$salesNo,   
+	               CUSTOMERTYPE =$customerType,
+	               EMPLOYNO     =$employNo,
+	               OAUSER       =$oaUser,  
+	               CARRIERID	=$carrierId, 
+	               CUSTOMERCODE =$customerCode,
+	               syncEmployNo = $syncEmployNo
+	         WHERE  USERID = $userId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listUser</forward>
+	</operation>
+	
+	<!-- 
+	UPDATE $TABLE SET $VARNAME=$VARVALUE  WHERE  $IDNAME = $IDVALUE 
+	 -->
+	<!-- 用户end -->
+</root>

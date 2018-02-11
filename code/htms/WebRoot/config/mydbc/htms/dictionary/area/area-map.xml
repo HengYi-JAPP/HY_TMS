@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.dictionary.area.AreaBean">
+		<map property="areaId" javaType="int" column="areaId"  colType=""/>
+		<map property="parentAreaId" javaType="int" column="parentAreaId"  colType=""/>
+		<map property="areaCode" javaType="String" column="areaCode"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+		<map property="areaLevel" javaType="int" column="areaLevel"  colType=""/>
+		<map property="areaRoute" javaType="String" column="areaRoute"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="areaLongTitue" javaType="String" column="areaLongTitue"  colType=""/>
+		<map property="areaLaTitue" javaType="String" column="areaLaTitue"  colType=""/>
+		<map property="areaParentCode" javaType="String" column="areaParentCode"  colType=""/>
+		<map property="isLeaf" javaType="int" column="isLeaf"  colType=""/>
+	</bean>
+</root>

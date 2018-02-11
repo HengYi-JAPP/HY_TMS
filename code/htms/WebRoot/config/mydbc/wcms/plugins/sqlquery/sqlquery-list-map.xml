@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.sqlquery.SQLQueryListBean">
+		<map property="configId" javaType="java.lang.String" column="CONFIGID" colType=""/>
+		<map property="queryId" javaType="java.lang.String" column="QUERYID" colType=""/>
+		<map property="title" javaType="java.lang.String" column="TITLE" colType=""/>
+		<map property="varName" javaType="java.lang.String" column="VARNAME" colType=""/>
+		<map property="width" javaType="java.lang.String" column="WIDTH" colType=""/>
+		<map property="align" javaType="java.lang.String" column="ALIGN" colType=""/>
+		<map property="valign" javaType="java.lang.String" column="VALIGN" colType=""/>
+		<map property="target" javaType="java.lang.String" column="TARGET" colType=""/>
+		<map property="exchange" javaType="java.lang.String" column="EXCHANGE" colType=""/>
+		<map property="isView" javaType="java.lang.String" column="ISVIEW" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+	</bean>
+</root>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toListSubSystemServiceList" businessClass="com.mobilecn.plugins.service.ServiceListBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.plugins.service.ServiceBean"
+			cacheName="serviceViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SERVICE WHERE   SERVICEID=$checkServiceId
+		</sql>	
+		<forward name="viewPage"><![CDATA[contoller.do?operation=listSubSystemServiceList]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addSubSystemServiceList" businessClass="com.mobilecn.plugins.service.ServiceListBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="insert" caiidTable="TB_WSM_INFO_SERVICE_LIST" caiidKey="CONFIGID"  caiidName="SERVICE_LIST" caiidVar="serviceListConfigId">
+		INSERT INTO TB_WSM_INFO_SERVICE_LIST (CONFIGID,SERVICEID,TITLE,VARNAME,WIDTH,ALIGN,VALIGN,TARGET,EXCHANGE,ISVIEW,ISVALIDATE,SHOWORDER)
+		VALUES($serviceListConfigId,$checkServiceId,$title,$varName,$width,$align,$valign,$target,$exchange,$isView,$isValidate,$showOrder)
+		</sql>
+		<forward name="listAction">contoller.do?operation=toListSubSystemServiceList</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemServiceList" businessClass="com.mobilecn.plugins.service.ServiceListBusiness"
+		invokeMethod="list" forward="" cacheList="titleSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total 
+			FROM TB_WSM_INFO_SERVICE_LIST
+			WHERE  SERVICEID=$checkServiceId AND TITLE LIKE '%$titleSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.service.ServiceListBean"
+			cacheName="serviceListList" cacheScope="request" isPage="true" pageField="CONFIGID"><![CDATA[
+			    SELECT TB_WSM_INFO_SERVICE_LIST.* 
+				FROM TB_WSM_INFO_SERVICE_LIST 
+				WHERE  SERVICEID=$checkServiceId AND TITLE LIKE '%$titleSH%'  
+				ORDER BY SHOWORDER				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/service/subsystem/list/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemServiceList" businessClass="com.mobilecn.plugins.service.ServiceListBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE_LIST WHERE CONFIGID=$checkConfigId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=toListServiceList</forward>
+	</operation>
+	
+	<!--service实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	
+	<operation name="viewSubSystemServiceList" businessClass="com.mobilecn.plugins.service.ServiceListBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.service.ServiceListBean"
+			cacheName="serviceListViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SERVICE_LIST WHERE  CONFIGID=$configId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/service/subsystem/list/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/service/subsystem/list/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemServiceList" businessClass="com.mobilecn.plugins.service.ServiceListBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_SERVICE_LIST SET 
+			SERVICEID=$checkServiceId, 
+			TITLE=$title,         
+			VARNAME=$varName,     
+			WIDTH=$width,         
+			ALIGN=$align,         
+			VALIGN=$valign,       
+			TARGET=$target,       
+			EXCHANGE=$exchange,   
+			ISVIEW=$isView,       
+			ISVALIDATE=$isValidate,
+			SHOWORDER=$showOrder
+		 WHERE  CONFIGID=$configId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=toListSubSystemServiceList]]></forward>
+	</operation>
+</root>

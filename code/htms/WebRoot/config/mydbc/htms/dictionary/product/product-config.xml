@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="modifyProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_PRODUCT 
+				    SET typeId = $typeId ,productName = $productName ,productCode = 
+				        $productCode ,productDesc = $productDesc ,sapNo = $sapNo 
+				        ,isValidate = $isValidate 
+				    WHERE TB_HTMS_PRODUCT.productId = $productId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listProduct]]></address>
+		</forward>
+	</operation>
+	<operation name="viewProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.dictionary.ProductBean" cacheType="bean" cacheName="productViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT 
+				    WHERE TB_HTMS_PRODUCT.productId = $productId 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCTTYPE" beanClass="com.zzy.htms.dictionary.ProductTypeBean" cacheType="list" cacheName="productTypeList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCTTYPE.typeId ,TB_HTMS_PRODUCTTYPE.typeName 
+				        ,TB_HTMS_PRODUCTTYPE.typeCode ,TB_HTMS_PRODUCTTYPE.typeDesc 
+				        ,TB_HTMS_PRODUCTTYPE.isValidate 
+				    FROM TB_HTMS_PRODUCTTYPE ORDER BY TB_HTMS_PRODUCTTYPE.typeId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_PRODUCTTYPE" beanClass="com.zzy.htms.dictionary.ProductTypeBean" cacheType="bean" cacheName="productTypeViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCTTYPE.typeId ,TB_HTMS_PRODUCTTYPE.typeName 
+				        ,TB_HTMS_PRODUCTTYPE.typeCode ,TB_HTMS_PRODUCTTYPE.typeDesc 
+				        ,TB_HTMS_PRODUCTTYPE.isValidate 
+				    FROM TB_HTMS_PRODUCTTYPE , TB_HTMS_PRODUCT 
+				    WHERE TB_HTMS_PRODUCTTYPE.typeId =TB_HTMS_PRODUCT.typeId AND 
+				        TB_HTMS_PRODUCT.productId = $productId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/product/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/product/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_PRODUCT 
+				    WHERE TB_HTMS_PRODUCT.productId = $productId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listProduct]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_PRODUCTTYPE" beanClass="com.zzy.htms.dictionary.ProductTypeBean" cacheType="list" cacheName="productTypeList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCTTYPE.typeId ,TB_HTMS_PRODUCTTYPE.typeName 
+				        ,TB_HTMS_PRODUCTTYPE.typeCode ,TB_HTMS_PRODUCTTYPE.typeDesc 
+				        ,TB_HTMS_PRODUCTTYPE.isValidate 
+				    FROM TB_HTMS_PRODUCTTYPE ORDER BY TB_HTMS_PRODUCTTYPE.typeId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/product/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_PRODUCT" caiidKey="productId" caiidName="productId" caiidVar="productId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_PRODUCT ( productId, typeId, productName, 
+				        productCode, productDesc, sapNo, isValidate) 
+				        VALUES($productId,$typeId,$productName,$productCode,$productDesc,$sapNo,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listProduct]]></address>
+		</forward>
+	</operation>
+	<operation name="listProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness" version="2.0"  forward="" loadCacheForm="productForm">
+		<method name="默认查询" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_PRODUCT 
+				    WHERE TB_HTMS_PRODUCT.productName LIKE'%$productNameSH%' 
+				    AND TB_HTMS_PRODUCT.productCode LIKE'%$productCodeSH%' 
+				    
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.dictionary.ProductBean" cacheType="list" cacheName="productList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT 
+				    WHERE TB_HTMS_PRODUCT.productName LIKE'%$productNameSH%' 
+				    AND TB_HTMS_PRODUCT.productCode LIKE'%$productCodeSH%'  
+				    ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/product/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="loadAllProduct" businessClass="com.zzy.htms.dictionary.product.ProductBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadAllProduct" beanClass="com.zzy.htms.dictionary.product.ProductBean"><![CDATA[
+			   SELECT TB_HTMS_PRODUCT.*  FROM  TB_HTMS_PRODUCT WHERE ISVALIDATE=1
+		]]></sql>
+		
+	</operation>
+</root>

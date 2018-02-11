@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.layout.UnitBean">
+		<map property="unitId" javaType="java.lang.String" column="UNITID" colType=""/>
+		<map property="layoutId" javaType="java.lang.String" column="LAYOUTID" colType=""/>
+	</bean>
+</root>

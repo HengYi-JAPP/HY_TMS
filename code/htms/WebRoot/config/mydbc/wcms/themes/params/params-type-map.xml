@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.params.ParamsBean">
+		<map property="themesId" javaType="java.lang.String" column="THEMESID" colType=""/>
+		<map property="paramsCode" javaType="java.lang.String" column="PARAMSCODE" colType=""/>
+		<map property="paramsName" javaType="java.lang.String" column="PARAMSNAME" colType=""/>
+		<map property="paramsDesc" javaType="java.lang.String" column="PARAMSDESC" colType=""/>
+		<map property="paramsType" javaType="java.lang.String" column="PARAMSTYPE" colType=""/>
+		<map property="paramsId" javaType="java.lang.String" column="PARAMSID" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="showOrder" javaType="java.lang.Integer" column="SHOWORDER" colType=""/>
+	</bean>
+
+</root>

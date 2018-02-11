@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.sales.ship.ShipBean">
+		<map property="shipId" javaType="int" column="shipId"  colType=""/>
+		<map property="shipDetailId" javaType="String" column="shipDetailId"  colType=""/>
+		<map property="corderId" javaType="int" column="corderId"  colType=""/>
+		<map property="customerId" javaType="int" column="customerId"  colType=""/>
+		<map property="shipCode" javaType="String" column="shipCode"  colType=""/>
+		<map property="applyTonNum" javaType="String" column="applyTonNum"  colType=""/>
+		<map property="applyPackNum" javaType="String" column="applyPackNum"  colType=""/>
+		<map property="actualTonNum" javaType="String" column="actualTonNum"  colType=""/>
+		<map property="actualPackNum" javaType="String" column="actualPackNum"  colType=""/>
+		<map property="planFreight" javaType="String" column="planFreight"  colType=""/>
+		<map property="actualFreight" javaType="String" column="actualFreight"  colType=""/>
+		<map property="freightUnit" javaType="String" column="freightUnit"  colType=""/>
+		<map property="shipNotice" javaType="String" column="shipNotice"  colType=""/>
+		<map property="applier" javaType="int" column="applier"  colType=""/>
+		<map property="applyTime" javaType="String" column="applyTime"  colType=""/>
+		<map property="applyStatus" javaType="int" column="applyStatus"  colType=""/>
+		<map property="approver" javaType="String" column="approver"  colType=""/>
+		<map property="approveTime" javaType="String" column="approveTime"  colType=""/>
+		<map property="approveNotice" javaType="String" column="approveNotice"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifier" javaType="String" column="modifier"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="customerName" javaType="String" column="customerName"  colType=""/>
+		<map property="corderCode" javaType="String" column="corderCode"  colType=""/>
+		<map property="mapId" javaType="String" column="mapId"  colType=""/>
+		<map property="targetCorderId" javaType="String" column="targetCorderId"  colType=""/>
+		<map property="shipDetailStatus" javaType="String" column="shipDetailStatus"  colType=""/>
+		<map property="caddrId" javaType="String" column="caddrId"  colType=""/>
+		<map property="codetailCertificateDesc" javaType="String" column="codetailCertificateDesc"  colType=""/>
+		<map property="codetailId" javaType="String" column="codetailId"  colType=""/>
+	
+		<map property="meterialNo" javaType="String" column="meterialNo"  colType=""/>
+		<map property="codetailCertificate" javaType="String" column="codetailCertificate"  colType=""/>
+		<map property="codetailCertificateDesc" javaType="String" column="codetailCertificateDesc"  colType=""/>
+		<map property="areaId" javaType="String" column="areaId"  colType=""/>
+		<map property="shipDetailStatus" javaType="String" column="shipDetailStatus"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+		<map property="caddrDetail" javaType="String" column="caddrDetail"  colType=""/>
+		<map property="customerCode" javaType="String" column="customerCode"  colType=""/>
+		<map property="caddrContactor" javaType="String" column="caddrContactor"  colType=""/>
+		
+		<map property="selfFetch" javaType="String" column="selfFetch"  colType=""/>		
+		<map property="fetchDriver" javaType="String" column="fetchDriver"  colType=""/>		
+		<map property="fetchMobile" javaType="String" column="fetchMobile"  colType=""/>		
+		<map property="fetchCar" javaType="String" column="fetchCar"  colType=""/>		
+		<map property="isUrgent" javaType="String" column="isUrgent"  colType=""/>
+		
+			
+		<map property="saleOrg" javaType="String" column="saleOrg"  colType=""/>
+		
+		<map property="factoryName" javaType="String" column="factoryName"  colType=""/>		
+		<map property="unitPrice" javaType="String" column="unitPrice"  colType=""/>		
+		<map property="caddrTelephone" javaType="String" column="caddrTelephone"  colType=""/>
+		<map property="saleMan" javaType="String" column="saleMan"  colType=""/>
+		
+		<map property="transStatus" javaType="int" column="transStatus"  colType=""/>
+		<map property="transId" javaType="String" column="transId"  colType=""/>
+		
+		<map property="shortStock" javaType="String" column="shortStock"  colType=""/>		
+		<map property="shortNotice" javaType="String" column="shortNotice"  colType=""/>
+		<map property="shortTime" javaType="String" column="shortTime"  colType=""/>
+		
+		<map property="totalFreight" javaType="String" column="totalFreight"  colType=""/>
+		
+		<map property="productId" javaType="String" column="productId"  colType=""/>
+		<map property="factoryId" javaType="String" column="factoryId"  colType=""/>
+		<map property="itemCode" javaType="String" column="itemCode"  colType=""/>
+		<map property="freightPrice" javaType="String" column="freightPrice"  colType=""/>
+		<map property="freight" javaType="String" column="freight"  colType=""/>
+		<map property="freightModel" javaType="String" column="freightModel"  colType=""/>
+		
+	</bean>
+</root>

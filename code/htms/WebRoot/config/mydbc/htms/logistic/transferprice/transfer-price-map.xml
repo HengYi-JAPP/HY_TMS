@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.transferprice.TransferPriceBean">
+		<map property="priceId" javaType="java.lang.String" column="PRICEID" colType=""/>
+		<map property="transId" javaType="java.lang.String" column="TRANSID" colType=""/>
+		<map property="priceType" javaType="java.lang.String" column="PRICETYPE" colType=""/>
+		<map property="freightModel" javaType="java.lang.String" column="FREIGHTMODEL" colType=""/>
+		<map property="customerPrice" javaType="java.lang.String" column="CUSTOMERPRICE" colType=""/>
+		<map property="carrierPrice" javaType="java.lang.String" column="CARRIERPRICE" colType=""/>
+		<map property="customerOnePrice" javaType="java.lang.String" column="CUSTOMERONEPRICE" colType=""/>
+		<map property="carrierOnePrice" javaType="java.lang.String" column="CARRIERONEPRICE" colType=""/>
+		<map property="priceUnit" javaType="java.lang.String" column="PRICEUNIT" colType=""/>
+		<map property="validateDate" javaType="java.lang.String" column="VALIDATEDATE" colType=""/>
+		<map property="priceNotice" javaType="java.lang.String" column="PRICENOTICE" colType=""/>
+		<map property="creator" javaType="java.lang.String" column="CREATOR" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="modifier" javaType="java.lang.String" column="MODIFIER" colType=""/>
+		<map property="modifyTime" javaType="java.lang.String" column="MODIFYTIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+
+</root>

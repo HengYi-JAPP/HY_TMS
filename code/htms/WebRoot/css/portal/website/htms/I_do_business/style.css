@@ -1,0 +1,370 @@
+
+/* column loader style */
+.I_do_business_column-loader-box{
+	width:100%;
+	vertical-align:top;
+	margin:10px 0px 0px 0px;
+	border-collapse:collapse;
+	border-spacing:0px;
+}
+/* column loader tr, th, td style */
+.I_do_business_column-loader-box tr,th,td{
+	border-spacing:0px;
+}
+/* column loader [column header] style */
+.I_do_business_column-loader-box-title{
+	vertical-align:top;
+	background-color:#31a3e8;
+	width:100%;
+	height:38px;
+}
+/* column loader [column header] heading style */
+.I_do_business_column-loader-box-title-box{
+	font-family:Arial,Simsun;
+	font-weight:normal;
+	font-size:14px;
+	font-color:#ffffff;
+	color:#ffffff;
+	letter-spacing:auto;
+	width:100%;
+	height:32px;
+	line-height:32px;
+	vertical-align:top;
+	border:0px;
+	padding:0px;
+	margin:0px;
+	border-collapse:collapse;
+	border-spacing:0px;
+	background-color:#31a3e8;
+}
+/* column loader [column header] title tr, th, td style */
+.I_do_business_column-loader-box-title-box tr,th,td{
+	border-spacing:0px;
+	border-collapse:collapse;
+}
+/* column loader [column head -logo] style */
+.I_do_business_column-loader-box-title-logo{
+	vertical-align:middle;
+	width:20px;
+	text-align:center;
+}
+/* column loader [column header - title content] style */
+.I_do_business_column-loader-box-title-name{
+	text-align:left;
+	vertical-align:middle;
+}
+/* column loader [section head - configuration area] style */
+.I_do_business_column-loader-box-title-config{
+	text-align:right;
+	vertical-align:middle;
+	width:auto;
+}
+/* column loader [column content] style definitions */
+.I_do_business_column-loader-box-content{
+	vertical-align:top;
+	width:100%;
+	height:auto;
+	background-color:#f0fbe0;
+}
+/* column loader [column content boxes] style definitions */
+.I_do_business_column-loader-box-content-box{
+	text-decoration:none;
+	width:100%;
+	height:auto;
+	visibility:visible;
+	vertical-align:top;
+	border-width:1px;
+	border-style:solid;
+	border-color:#31a3e8;
+	padding:0px;
+	margin:0px;
+	caption-side:top;
+	border-collapse:collapse;
+	border-spacing:0px;
+	background-color:rgb(255, 255, 255);
+}
+/* column loader [column content boxes] tr, th, td style definitions */
+.I_do_business_column-loader-box-content-box tr,th,td{
+	border-spacing:0px;
+}
+/* column loader [column content - an upper - left] Style Definitions */
+.I_do_business_column-loader-box-content-top-left{
+	height:0px;
+	width:0px;
+}
+/* column loader [column content - an upper - middle] Style Definitions */
+.I_do_business_column-loader-box-content-top-middle{
+	height:0px;
+	width:100%;
+}
+/* column loader [column content - an upper - right] style definitions */
+.I_do_business_column-loader-box-content-top-right{
+	height:0px;
+	width:0px;
+}
+/* column loader [column content - middle - left] Style Definitions */
+.I_do_business_column-loader-box-content-middle-left{
+	height:auto;
+	width:0px;
+}
+/* column loader [column content - middle - middle] Style Definitions */
+.I_do_business_column-loader-box-content-middle-middle{
+	width:100%;
+	height:auto;
+	vertical-align:top;
+	background-color:rgb(255, 255, 255);
+}
+/* column loader [column content - middle - right] style definitions */
+.I_do_business_column-loader-box-content-middle-right{
+	height:auto;
+	width:0px;
+}
+/* column loader [column content - lower part - left] Style Definitions */
+.I_do_business_column-loader-box-content-bottom-left{
+	height:0px;
+	width:0px;
+}
+/* column loader [column content - lower part - the middle] Style Definitions */
+.I_do_business_column-loader-box-content-bottom-middle{
+	width:100%;
+	height:0px;
+}
+/* column loader [column content - lower part - right] style definitions */
+.I_do_business_column-loader-box-content-bottom-right{
+	height:0px;
+	width:0px;
+}
+/* folder column */
+.I_do_business_folderColumn{
+	padding-left:5px;
+	caption-side:top;
+	border-collapse:separate;
+	list-style-type:none;
+	list-style-position:inside;
+	background-image:url(../../../../../simpleupload/themes/global/background/icon.png);
+	background-repeat:repeat;
+	background-position:-6px -146px;
+	overflow:visible;
+	overflow-x:visible;
+	overflow-y:visible;
+	background-attachment:scroll;
+	@media:all;
+	font-weight:normal;
+	font-style:normal;
+	font-variant:normal;
+	white-space:normal;
+	text-decoration:none;
+	text-transform:none;
+	direction:ltr;
+	width:12px;
+	height:12px;
+	display:block;
+	visibility:visible;
+	text-align:center;
+	vertical-align:middle;
+	position:relative;
+	cursor:auto;
+	float:right;
+	clear:none;
+	border-style:none;
+	border-top-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+	border-left-style:none;
+	outline-style:none;
+}
+/* folder column */
+.I_do_business_folderColumnHidden{
+	font-weight:normal;
+	@media:all;
+	font-variant:normal;
+	white-space:normal;
+	text-decoration:none;
+	text-transform:none;
+	direction:ltr;
+	width:12px;
+	height:12px;
+	display:none;
+	visibility:visible;
+	text-align:center;
+	vertical-align:middle;
+	position:relative;
+	cursor:auto;
+	float:right;
+	clear:none;
+	border-style:none;
+	border-top-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+	border-left-style:none;
+	outline-style:none;
+	padding-left:5px;
+	caption-side:top;
+	border-collapse:separate;
+	list-style-type:none;
+	list-style-position:inside;
+	background-image:url(../../../../../simpleupload/themes/global/background/icon.png);
+	background-repeat:repeat;
+	background-position:-6px -146px;
+	overflow:visible;
+	overflow-x:visible;
+	overflow-y:visible;
+	background-attachment:scroll;
+	font-style:normal;
+}
+/* unfolder column */
+.I_do_business_unfolderColumn{
+	overflow:visible;
+	background-position:-29px -146px;
+	overflow-y:visible;
+	background-attachment:scroll;
+	@media:all;
+	font-weight:normal;
+	font-style:normal;
+	font-variant:normal;
+	white-space:normal;
+	text-decoration:none;
+	text-transform:none;
+	direction:ltr;
+	width:12px;
+	height:12px;
+	display:block;
+	visibility:visible;
+	text-align:center;
+	vertical-align:middle;
+	position:relative;
+	cursor:auto;
+	float:right;
+	clear:none;
+	border-style:none;
+	border-top-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+	border-left-style:none;
+	outline-style:none;
+	padding-left:5px;
+	caption-side:top;
+	border-collapse:separate;
+	list-style-type:none;
+	list-style-position:inside;
+	background-image:url(../../../../../simpleupload/themes/global/background/icon.png);
+	background-repeat:repeat;
+	overflow-x:visible;
+}
+/* unfolder column */
+.I_do_business_unfolderColumnHidden{
+	font-weight:normal;
+	@media:all;
+	font-variant:normal;
+	white-space:normal;
+	text-decoration:none;
+	text-transform:none;
+	direction:ltr;
+	width:12px;
+	height:12px;
+	display:none;
+	visibility:visible;
+	text-align:center;
+	vertical-align:middle;
+	position:relative;
+	cursor:auto;
+	float:right;
+	clear:none;
+	border-style:none;
+	border-top-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+	border-left-style:none;
+	outline-style:none;
+	padding-left:5px;
+	caption-side:top;
+	border-collapse:separate;
+	list-style-type:none;
+	list-style-position:inside;
+	background-image:url(../../../../../simpleupload/themes/global/background/icon.png);
+	background-repeat:repeat;
+	background-position:-29px -146px;
+	overflow:visible;
+	overflow-x:visible;
+	overflow-y:visible;
+	background-attachment:scroll;
+	font-style:normal;
+}
+/* column more info */
+.I_do_business_columnMoreInfo{
+	font-weight:normal;
+	@media:all;
+	font-variant:normal;
+	white-space:normal;
+	text-decoration:none;
+	text-transform:none;
+	direction:ltr;
+	width:12px;
+	height:12px;
+	display:block;
+	visibility:visible;
+	text-align:center;
+	vertical-align:middle;
+	position:relative;
+	cursor:auto;
+	float:right;
+	clear:none;
+	border-style:none;
+	border-top-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+	border-left-style:none;
+	outline-style:none;
+	padding-left:5px;
+	caption-side:top;
+	border-collapse:separate;
+	list-style-type:none;
+	list-style-position:inside;
+	background-image:url(../../../../../simpleupload/themes/global/background/icon.png);
+	background-repeat:repeat;
+	background-position:-78px -146px;
+	overflow:visible;
+	overflow-x:visible;
+	overflow-y:visible;
+	background-attachment:scroll;
+	font-style:normal;
+}
+/* close column */
+.I_do_business_closeColumn{
+	background-position:-53px -146px;
+	background-repeat:repeat;
+	overflow-x:visible;
+	overflow-y:visible;
+	background-attachment:scroll;
+	@media:all;
+	font-weight:normal;
+	font-style:normal;
+	font-variant:normal;
+	white-space:normal;
+	text-decoration:none;
+	text-transform:none;
+	direction:ltr;
+	width:12px;
+	height:12px;
+	display:block;
+	visibility:visible;
+	text-align:center;
+	vertical-align:middle;
+	position:relative;
+	cursor:auto;
+	float:right;
+	clear:left;
+	border-style:none;
+	border-top-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+	border-left-style:none;
+	outline-style:none;
+	padding-left:5px;
+	caption-side:top;
+	border-collapse:separate;
+	list-style-type:none;
+	list-style-position:inside;
+	background-image:url(../../../../../simpleupload/themes/global/background/icon.png);
+	overflow:visible;
+}

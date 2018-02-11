@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean">
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="linkTypeId" javaType="java.lang.String" column="LINKTYPEID" colType=""/>
+		<map property="linkTypeCode" javaType="java.lang.String" column="LINKTYPECODE" colType=""/>
+		<map property="linkTypeName" javaType="java.lang.String" column="LINKTYPENAME" colType=""/>
+		<map property="linkTypeDesc" javaType="java.lang.String" column="LINKTYPEDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>		
+		<map property="isSystem" javaType="java.lang.String" column="ISSYSTEM" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		<map property="isShow" javaType="java.lang.String" column="SHOWLINKTYPE" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+		
+	</bean>
+</root>

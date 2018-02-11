@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+<operation name="COMBOXCUSTOMER" businessClass="com.zzy.htms.combox.ComBoxBusiness" version="2.0"  forward="" >
+		<method name="客户列表搜索" businessClass="com.zzy.htms.combox.ComBoxBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="ComBoxcustomer" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"   version="2.0"  isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+				    SELECT TB_HTMS_CUSTOMER.customerId, TB_HTMS_CUSTOMER.customerName FROM TB_HTMS_CUSTOMER
+				     Where isvalidate = 1 
+				    ORDER BY TB_HTMS_CUSTOMER.customerId Asc 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+
+</root>

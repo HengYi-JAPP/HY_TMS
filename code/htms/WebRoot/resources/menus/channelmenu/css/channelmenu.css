@@ -1,0 +1,92 @@
+/*
+.channel-menu{width:100%;height:30px;border:0;	border-collapse:collapse; 	border-spacing:0; }
+.channel-menu-item-selected{width:100px;height:30px;text-align:center;text-vertical:middle;bgcolor:#cccccc;background:#cccccc;background-color:#cccccc;cursor:pointer;}
+.channel-menu-item{width:100px;height:30px;text-align:center;text-vertical:middle;bgcolor:#eeeeee;background:#eeeeee;background-color:#eeeeee;cursor:pointer;}
+*/
+/*
+
+.channel-menu{width:100%;height: 40px;border:0;	border-collapse:collapse; 	border-spacing:0; text-align:center;float:left;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;}
+.channel-menu tr{height:45px;text-align:center;float:left;text-vertical:middle;}
+.channel-menu-item-selected{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261cb;background:#1261cb;background-color:#1261cb;cursor:pointer;}
+.channel-menu-item{float:left;padding: 0 15px;border-right: 1px solid #1373d3;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;color:#ffffff;font-size: 16px;cursor:pointer;}
+.channel-menu-item a{color: #fff;font-size: 16px;}
+.channel-menu-item-box{position:absolute;display:none;width:auto;height:auto;background:#787878;}
+.channel-menu-box{}
+*/
+
+
+
+
+/*
+
+.channel-menu-item-name-box{width:auto;height:45px;line-height:45px;text-align:center;}
+.channel-menu-item-name-box tr{text-align:center;}
+.channel-menu-item-name-indent-box{width:auto;}
+.channel-menu-item-name-before-icon-box{width:20px;}
+
+.channel-menu-item-name-text-box{text-align:center;float:center;width:initial;}
+.channel-menu-item-name-after-icon-box{width:20px;}
+
+.channel-menu-item-name-before-icon{}
+.channel-menu-item-name-text{color: #fff;font-size: 16px;line-height:45px;text-align:center;float:center;width:initial;}
+.channel-menu-item-name-after-icon{}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+.cmenu-box{width:100%;height:40px;border:0;	border-collapse:collapse; 	border-spacing:0; text-align:center;float:left;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;}
+.cmenu-box tr{height:45px;text-align:center;float:left;text-vertical:middle;}
+.cmenu-item-box{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;color:#ffffff;font-size: 16px;cursor:pointer;}
+.cmenu-config{float:left;padding: 0 15px;border-right: 1px solid #1373d3;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;color:#ffffff;font-size: 16px;cursor:pointer;}
+/*
+菜单盒
+菜单项盒
+菜单项名称盒：菜单名称缩进，菜单名称前ICON盒和ICON，菜单名称文字名称盒及文字，菜单名称后ICON盒和ICON
+
+*/
+
+.cmenu-item-name-box{padding: 0 15px;width:auto;height:45px;line-height:45px;text-align:center;bgcolor:#1261b0;background:#1261b0;;background-color:#1261b0;}
+.cmenu-item-name-indent-box{width:auto;height:45px;line-height:45px;text-align:center;}
+.cmenu-item-name-before-icon-box{width:20px;}
+.cmenu-item-name-text-box{text-align:center;float:center;width:initial;}
+.cmenu-item-name-after-icon-box{width:20px;}
+
+.cmenu-item-name-before-icon{}
+.cmenu-item-name-text{color: #fff;font-size: 16px;line-height:45px;text-align:center;float:center;width:initial;}
+.cmenu-item-name-after-icon{}
+/*频道选中时的效果*/
+.cmitem-selected{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261cb;background:#1261cb;background-color:#1261cb;cursor:pointer;}
+
+/*
+子菜单盒
+子菜单项盒
+子菜单项名称盒：菜单名称缩进，菜单名称前ICON盒和ICON，菜单名称文字名称盒及文字，菜单名称后ICON盒和ICON
+
+*/
+.cmsubmenu-box{position:absolute;display:none;width:auto;height:45px;line-height:45px;text-align:center;}
+.cmsubmenu-item-box{}
+.cmsubmenu-item-name-box{width:auto;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-indent-box{width:auto;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-before-icon-box{width:20px;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+.cmsubmenu-item-name-text-box{text-align:center;float:center;width:initial;}
+.cmsubmenu-item-name-after-icon-box{width:20px;height:45px;line-height:45px;text-align:center;text-vertical:middle;}
+
+.cmsubmenu-item-name-before-icon{}
+.cmsubmenu-item-name-text{color: #fff;font-size: 16px;line-height:45px;text-align:center;float:center;width:initial;}
+.cmsubmenu-item-name-after-icon{}
+/*子菜单选中时的效果*/
+.cmsubmenu-item-selected{float:left;padding: 0 15px;width:auto;height:45px;text-align:center;text-vertical:middle;bgcolor:#1261cb;background:#1261cb;background-color:#1261cb;cursor:pointer;}
+
+/*光标移动时的效果*/
+.cm-item-hover{}

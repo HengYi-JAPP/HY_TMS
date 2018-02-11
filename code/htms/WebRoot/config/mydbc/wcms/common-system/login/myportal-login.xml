@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 用户登录  查询用户信息-->
+	<operation name="LoginAction_of_myportal" businessClass="com.zzy.htms.login.HtmsLoginBusiness"
+		invokeMethod="list"  forward="" cacheParams="account" cacheScopes="session" beforeInvoke="beforeHtmsList" afterInvoke="afterHtmsList">
+		<!-- 按部门分组，同一部门排序号升序 -->
+		<sql name="userBeanList" beanClass="com.zzy.htms.user.HtmsUserBean" test="$[is_use_sso]=='false'"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE ACCOUNT=$account   
+		]]></sql>	
+		<!-- 单点登录时需要切换的SQL -->	
+		<sql name="userBeanList" beanClass="com.zzy.htms.user.HtmsUserBean"  test="$[is_use_sso]=='true'"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE ( EMPLOYNO=$account OR OAUSER=$oauser  )  
+		]]></sql>	
+		<!-- 自备车自提获取用户的SQL  用户名必须为客户编号
+		<sql name="customerUserBeanList" beanClass="com.zzy.htms.user.HtmsUserBean"  ><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE CUSTOMERCODE = $account  and CUSTOMERCODE  is not null 
+		]]></sql>	 
+		-->
+		<!--<forward name="loadAction">contoller.do?operation=loadUserPrivilege_of_commonSystem</forward>
+		-->
+		<forward name="listPage">contoller.do?operation=LogAction_of_myportal</forward>
+		<forward name="login">/jsp/login.jsp</forward>
+		<forward name="logAction">contoller.do?operation=LogAction_of_myportal</forward>
+	</operation>
+	
+	<!-- 用户登录验证通过之后，记录用户登录日志 -->
+	<operation name="LogAction_of_myportal" businessClass="com.mobilecn.common.log.LogBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="loginLogInfo" beanClass="com.mobilecn.common.log.LogBean" isPage="true" cacheType="bean"  cacheName="loginLogInfo" cacheScope="session">
+			SELECT * FROM TB_WSM_LOGIN_LOG WHERE
+			LOGUSER= $userId ORDER BY LOGID DESC
+		</sql>
+		<sql name="insert" caiidTable="TB_WSM_LOGIN_LOG" caiidKey="LOGID"  caiidName="TB_WSM_LOGIN_LOG" caiidVar="newLogId">
+			insert into TB_WSM_LOGIN_LOG 
+			(LOGID,LOGDESC,LOGIP,LOGUSER,LOGTIME,OPERATION,CREATETIME,ISVALIDATE)
+			values
+			($newLogId,$logDesc,$logIp,$userId,$logTime,$userOperation,$createTime,1)
+		</sql>	
+		<sql name="loginCount" cacheType="single"  cacheName="loginCount" cacheScope="session">
+			SELECT COUNT(LOGID) AS loginCount FROM TB_WSM_LOGIN_LOG WHERE
+			LOGUSER= $userId
+		</sql>	
+		<forward name="listPage">contoller.do?operation=console_of_myportal</forward>
+	</operation>
+	<!-- 用户end -->
+</root>

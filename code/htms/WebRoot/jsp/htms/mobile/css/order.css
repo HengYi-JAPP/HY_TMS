@@ -1,0 +1,173 @@
+/* 客户订单页面*/
+.ordercontent{
+	padding:15px 10px 15px 12px;
+	background-color: #eef0f2;
+}
+.order{
+	font-size: 15px;
+	color:#333333;
+}
+.factory{
+	font-size: 13px;
+	color:#333333;
+}
+.time{
+	font-size: 12px;
+	color:#bbbbbb;
+}
+.orderlist{
+	padding:10px 15px 13px 15px;
+}
+.desc{
+	padding:0px 0 5px 0;
+	color: #bbbbbb;
+	font-size: 15px;
+}
+.price{
+	color: #bbbbbb;
+	font-size: 12px;
+}
+.unitprice{
+	color: #ff7200;
+	font-size: 13px;
+}
+.applyamount{
+	float:right; 
+	font-size: 11px;
+	text-align: center;
+}
+.applybtn{
+	float: right;
+	border-radius: 10px;
+    width: 50px;
+    color: white;
+    background-color: #2daed3;
+    border-color: #2daed3;
+    border: 1px solid;
+    font-size: 12px;
+    text-align: center;
+    margin-top: -2px;
+    padding:5px 0 5px 0;
+}
+/* 客户申请页面*/
+.addrcontent{
+	padding:10px 10px 10px 12px;
+	border-bottom: 5px #eef0f2 solid;
+	background-color: white;
+}
+.customer{
+	font-size: 15px;
+	color: #333333;
+}
+.phone{
+	font-size: 13px;
+	color:#bbbbbb;
+}
+.address{
+	font-size:14px;
+	color:#666666;
+}
+.line{
+    padding: 0 10px;
+    color: #bbbbbb;
+    font-size: 1px;
+}
+
+.contentbtn{
+	/*position: fixed;
+	bottom: 0px;*/
+	width: 93%;
+	padding: 20px 14px 10px 11px;
+	background-color: #f0f1f3;
+	text-align: center;
+}
+.tonpacknum{
+	font-size: 14px;
+	color:#333333;
+	margin-top: 10px;
+}
+.applynum{
+	border-top: 1px #dddddd solid;
+	padding:5px 12px 5px 12px;
+	
+	
+}
+.numinput{
+	width:25%;
+	height: 20px;
+	border: none;
+	font-size: 14px;
+	color:#333333;
+	outline:none;
+	margin-left: 10px;
+}
+input:-moz-placeholder {
+　	color:#bbbbbb;
+	font-size:14px;
+
+　　}
+/* 客户地址页面seladdress*/
+.custname{
+	margin-top:7px;
+	font-size: 17px;
+	color: #333333;
+}
+.custphone{
+	font-size: 13px;
+	color: #bbbbbb;
+	float: right;
+	margin-top: 5px;
+}
+.edita{
+	border-top:1px #edf1f4 solid;
+	margin-top: 13px;
+}
+/* 已申请列表*/
+.applied{
+	padding: 5px 5px 10px 5px;
+}
+.applieddesc{
+	color: #333333;
+	font-size: 16px;
+}
+.appliedprice{
+	color: #FD8940;
+	font-size: 14px;
+}
+.appliedamount{
+	font-size: 14px;
+	color:#333333;
+	margin-left: 13%;
+}
+.appliedaddress{
+	font-size:12px;
+	color:#666666;
+}
+.appliedcon{
+	padding:10px 10px 10px 12px;
+}
+.appliedaddr{
+	padding: 0 0 5px 10px;
+	width:96%;
+}
+.custaddr{
+	padding:10px 12px ;
+	border: 1px dashed  #BAE5EE;
+	background-color: #F8FCFD;
+}
+.appliedphone{
+	font-size: 13px;
+	color:#333333;
+	margin-left: 18px;
+}
+.appliednum{
+	padding: 7px  5px 10px 5px;
+}
+.number{
+	margin-right: 20px;
+}
+.custimg{
+	margin-top: 18px;
+	width: 10px;
+	float:right;
+}

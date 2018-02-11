@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.carrier.CarrierBean">
+		<map property="carrierId" javaType="int" column="carrierId"  colType=""/>
+		<map property="carrierName" javaType="String" column="carrierName"  colType=""/>
+		<map property="carrierCode" javaType="String" column="carrierCode"  colType=""/>
+		<map property="carrierArea" javaType="String" column="carrierArea"  colType=""/>
+		<map property="carrierContactor" javaType="String" column="carrierContactor"  colType=""/>
+		<map property="carrierTelephone" javaType="String" column="carrierTelephone"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+</root>

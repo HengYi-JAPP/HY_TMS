@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.column.ColumnBean">
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="parentColumnId" javaType="java.lang.String" column="PARENTCOLUMNID" colType=""/>
+		<map property="infoTypeId" javaType="java.lang.String" column="INFOTYPEID" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="columnName" javaType="java.lang.String" column="COLUMNNAME" colType=""/>
+		<map property="columnCode" javaType="java.lang.String" column="COLUMNCODE" colType=""/>
+		<map property="columnLoader" javaType="java.lang.String" column="COLUMNLOADER" colType=""/>
+		<map property="logo" javaType="java.lang.String" column="LOGO" colType=""/>
+		<map property="contentLink" javaType="java.lang.String" column="CONTENTLINK" colType=""/>
+		<map property="contentHeight" javaType="java.lang.String" column="CONTENTHEIGHT" colType=""/>
+		<map property="contentWidth" javaType="java.lang.String" column="CONTENTWIDTH" colType=""/>
+		<map property="columnContent" javaType="java.lang.String" column="COLUMNCONTENT" colType=""/>
+		<map property="moreLink" javaType="java.lang.String" column="MORELINK" colType=""/>
+		<map property="isMore" javaType="java.lang.String" column="ISMORE" colType=""/>
+		<map property="isPersonalize" javaType="java.lang.String" column="ISPERSONALIZE" colType=""/>
+		<map property="isAsyncLoad" javaType="java.lang.String" column="ISASYNCLOAD" colType=""/>
+		<map property="isDefaultLoad" javaType="java.lang.String" column="ISDEFAULTLOAD" colType=""/>
+		<map property="columnDesc" javaType="java.lang.String" column="COLUMNDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		
+		
+		<map property="unitId" javaType="java.lang.String" column="UNITID" colType=""/>
+		<map property="defaultOrder" javaType="int" column="DEFAULTORDER" colType=""/>
+		<map property="defaultShow" javaType="int" column="DEFAULTSHOW" colType=""/>
+		<map property="defaultOpen" javaType="int" column="DEFAULTOPEN" colType=""/>
+		<map property="defaultMove" javaType="int" column="DEFAULTMOVE" colType=""/>
+		
+		<map property="isShow" javaType="int" column="ISSHOW" colType=""/>
+		<map property="isOpen" javaType="int" column="ISOPEN" colType=""/>
+		<map property="isMove" javaType="int" column="ISMOVE" colType=""/>
+		<map property="showOrder" javaType="int" column="SHOWORDER" colType=""/>
+		<map property="isSystem" javaType="int" column="ISSYSTEM" colType=""/>
+		
+		<map property="columnSkin" javaType="java.lang.String" column="COLUMNSKIN" colType=""/>
+		<map property="indexColumnSkin" javaType="java.lang.String" column="INDEXCOLUMNSKIN" colType=""/>
+		<map property="viewColumnSkin" javaType="java.lang.String" column="VIEWCOLUMNSKIN" colType=""/>
+		<map property="listColumnSkin" javaType="java.lang.String" column="LISTCOLUMNSKIN" colType=""/>
+		
+		<map property="indexShowNum" javaType="java.lang.String" column="INDEXSHOWNUM" colType=""/>
+		<map property="listShowNum" javaType="java.lang.String" column="LISTSHOWNUM" colType=""/>
+		<map property="indexShowLen" javaType="java.lang.String" column="INDEXSHOWLEN" colType=""/>
+		
+		<map property="afterIcon" javaType="java.lang.String" column="AFTERICON" colType=""/>
+		<map property="beforeIcon" javaType="java.lang.String" column="BEFOREICON" colType=""/>
+		<map property="justContent" javaType="java.lang.String" column="JUSTCONTENT" colType=""/>
+		<map property="viewLink" javaType="java.lang.String" column="VIEWLINK" colType=""/>
+		<map property="userDefine" javaType="java.lang.String" column="USERDEFINE" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+	</bean>
+</root>

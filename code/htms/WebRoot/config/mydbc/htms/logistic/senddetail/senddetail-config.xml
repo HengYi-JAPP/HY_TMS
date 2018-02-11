@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="viewSendDetail" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.logistic.senddetail.SendDetailBean" cacheType="bean" cacheName="sendDetailViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SENDDETAIL.sendDetailId ,TB_HTMS_SENDDETAIL.sendId 
+				        ,TB_HTMS_SENDDETAIL.transDetailId 
+				        ,TB_HTMS_SENDDETAIL.transportId ,TB_HTMS_SENDDETAIL.transferId 
+				        ,TB_HTMS_SENDDETAIL.shipDetailId ,TB_HTMS_SENDDETAIL.codetailId 
+				        ,TB_HTMS_SENDDETAIL.shipId ,TB_HTMS_SENDDETAIL.caddrId 
+				        ,TB_HTMS_SENDDETAIL.productId ,TB_HTMS_SENDDETAIL.applyTonNum 
+				        ,TB_HTMS_SENDDETAIL.applyPackNum 
+				        ,TB_HTMS_SENDDETAIL.fetchTonNum 
+				        ,TB_HTMS_SENDDETAIL.fetchPackNum 
+				        ,TB_HTMS_SENDDETAIL.planFreight 
+				        ,TB_HTMS_SENDDETAIL.actulFreight 
+				        ,TB_HTMS_SENDDETAIL.freightUnit ,TB_HTMS_SENDDETAIL.useFreight 
+				        ,TB_HTMS_SENDDETAIL.transDetailNotice 
+				        ,TB_HTMS_SENDDETAIL.transDetailStatus 
+				        ,TB_HTMS_SENDDETAIL.creator ,TB_HTMS_SENDDETAIL.createTime 
+				        ,TB_HTMS_SENDDETAIL.modifier ,TB_HTMS_SENDDETAIL.modifyTime 
+				        ,TB_HTMS_SENDDETAIL.isValidate 
+				    FROM TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_SEND" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="list" cacheName="sendList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SEND.sendId ,TB_HTMS_SEND.transportId 
+				        ,TB_HTMS_SEND.vehicleId ,TB_HTMS_SEND.driverId 
+				        ,TB_HTMS_SEND.carrierId ,TB_HTMS_SEND.transId 
+				        ,TB_HTMS_SEND.sendCode ,TB_HTMS_SEND.planTime 
+				        ,TB_HTMS_SEND.applyTonNum ,TB_HTMS_SEND.applyPackNum 
+				        ,TB_HTMS_SEND.actaulTonNum ,TB_HTMS_SEND.actaulPackNum 
+				        ,TB_HTMS_SEND.planFreight ,TB_HTMS_SEND.actaulFreight 
+				        ,TB_HTMS_SEND.freightUnit ,TB_HTMS_SEND.sendStatus 
+				        ,TB_HTMS_SEND.signProof ,TB_HTMS_SEND.creator 
+				        ,TB_HTMS_SEND.createTime ,TB_HTMS_SEND.modifier 
+				        ,TB_HTMS_SEND.modifyTime ,TB_HTMS_SEND.isValidate 
+				    FROM TB_HTMS_SEND ORDER BY TB_HTMS_SEND.sendId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSFERDETAIL" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="transferDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.transDetailId 
+				        ,TB_HTMS_TRANSFERDETAIL.shipDetailId 
+				        ,TB_HTMS_TRANSFERDETAIL.transId ,TB_HTMS_TRANSFERDETAIL.shipId 
+				        ,TB_HTMS_TRANSFERDETAIL.caddrId 
+				        ,TB_HTMS_TRANSFERDETAIL.productId 
+				        ,TB_HTMS_TRANSFERDETAIL.applyTonNum 
+				        ,TB_HTMS_TRANSFERDETAIL.applyPackNum 
+				        ,TB_HTMS_TRANSFERDETAIL.fetchTonNum 
+				        ,TB_HTMS_TRANSFERDETAIL.fetchPackNum 
+				        ,TB_HTMS_TRANSFERDETAIL.planFreight 
+				        ,TB_HTMS_TRANSFERDETAIL.actulFreight 
+				        ,TB_HTMS_TRANSFERDETAIL.freightUnit 
+				        ,TB_HTMS_TRANSFERDETAIL.transDetailNotice 
+				        ,TB_HTMS_TRANSFERDETAIL.transDetailStatus 
+				        ,TB_HTMS_TRANSFERDETAIL.creator 
+				        ,TB_HTMS_TRANSFERDETAIL.createTime 
+				        ,TB_HTMS_TRANSFERDETAIL.modifier 
+				        ,TB_HTMS_TRANSFERDETAIL.modifyTime 
+				        ,TB_HTMS_TRANSFERDETAIL.isValidate 
+				    FROM TB_HTMS_TRANSFERDETAIL ORDER BY 
+				        TB_HTMS_TRANSFERDETAIL.transDetailId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSPORT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="list" cacheName="transportList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.transportId ,TB_HTMS_TRANSPORT.carrierId 
+				        ,TB_HTMS_TRANSPORT.transId ,TB_HTMS_TRANSPORT.transportCode 
+				        ,TB_HTMS_TRANSPORT.planTime ,TB_HTMS_TRANSPORT.applyTonNum 
+				        ,TB_HTMS_TRANSPORT.applyPackNum ,TB_HTMS_TRANSPORT.actaulTonNum 
+				        ,TB_HTMS_TRANSPORT.actaulPackNum ,TB_HTMS_TRANSPORT.planFreight 
+				        ,TB_HTMS_TRANSPORT.actaulFreight ,TB_HTMS_TRANSPORT.freightUnit 
+				        ,TB_HTMS_TRANSPORT.transportStatus ,TB_HTMS_TRANSPORT.creator 
+				        ,TB_HTMS_TRANSPORT.createTime ,TB_HTMS_TRANSPORT.modifier 
+				        ,TB_HTMS_TRANSPORT.modifyTime ,TB_HTMS_TRANSPORT.isValidate 
+				    FROM TB_HTMS_TRANSPORT ORDER BY TB_HTMS_TRANSPORT.transportId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.transId ,TB_HTMS_TRANSFER.shipId 
+				        ,TB_HTMS_TRANSFER.logisticsId ,TB_HTMS_TRANSFER.corderId 
+				        ,TB_HTMS_TRANSFER.customerId ,TB_HTMS_TRANSFER.shipCode 
+				        ,TB_HTMS_TRANSFER.applyTonNum ,TB_HTMS_TRANSFER.applyPackNum 
+				        ,TB_HTMS_TRANSFER.actualTonNum ,TB_HTMS_TRANSFER.actualPackNum 
+				        ,TB_HTMS_TRANSFER.planFreight ,TB_HTMS_TRANSFER.actualFreight 
+				        ,TB_HTMS_TRANSFER.freightUnit ,TB_HTMS_TRANSFER.shipNotice 
+				        ,TB_HTMS_TRANSFER.transStatus ,TB_HTMS_TRANSFER.creator 
+				        ,TB_HTMS_TRANSFER.createTime ,TB_HTMS_TRANSFER.modifier 
+				        ,TB_HTMS_TRANSFER.modifyTime ,TB_HTMS_TRANSFER.isValidate 
+				    FROM TB_HTMS_TRANSFER ORDER BY TB_HTMS_TRANSFER.transId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_SHIPDETAIL" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.shipDetailId ,TB_HTMS_SHIPDETAIL.shipId 
+				        ,TB_HTMS_SHIPDETAIL.caddrId ,TB_HTMS_SHIPDETAIL.codetailId 
+				        ,TB_HTMS_SHIPDETAIL.productId ,TB_HTMS_SHIPDETAIL.applyTonNum 
+				        ,TB_HTMS_SHIPDETAIL.applyPackNum 
+				        ,TB_HTMS_SHIPDETAIL.fetchTonNum 
+				        ,TB_HTMS_SHIPDETAIL.fetchPackNum 
+				        ,TB_HTMS_SHIPDETAIL.planFreight 
+				        ,TB_HTMS_SHIPDETAIL.actulFreight 
+				        ,TB_HTMS_SHIPDETAIL.freightUnit 
+				        ,TB_HTMS_SHIPDETAIL.shipDetailNotice 
+				        ,TB_HTMS_SHIPDETAIL.shipDetailStatus 
+				        ,TB_HTMS_SHIPDETAIL.createTime ,TB_HTMS_SHIPDETAIL.creator 
+				        ,TB_HTMS_SHIPDETAIL.modifier ,TB_HTMS_SHIPDETAIL.modifyTime 
+				        ,TB_HTMS_SHIPDETAIL.isValidate 
+				    FROM TB_HTMS_SHIPDETAIL ORDER BY TB_HTMS_SHIPDETAIL.shipDetailId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTORDERDETAIL" beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean" cacheType="list" cacheName="custOrderDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDERDETAIL.codetailId 
+				        ,TB_HTMS_CUSTORDERDETAIL.corderId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificate 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialNo 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderAmount 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.projectVolume 
+				        ,TB_HTMS_CUSTORDERDETAIL.volumeUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.conditionSutotal 
+				        ,TB_HTMS_CUSTORDERDETAIL.freight 
+				        ,TB_HTMS_CUSTORDERDETAIL.unitPrice 
+				        ,TB_HTMS_CUSTORDERDETAIL.docCondCount 
+				        ,TB_HTMS_CUSTORDERDETAIL.alreadyGetNum 
+				        ,TB_HTMS_CUSTORDERDETAIL.creator 
+				        ,TB_HTMS_CUSTORDERDETAIL.createTime 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifier 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifyTiime 
+				        ,TB_HTMS_CUSTORDERDETAIL.isValidate 
+				    FROM TB_HTMS_CUSTORDERDETAIL ORDER BY 
+				        TB_HTMS_CUSTORDERDETAIL.codetailId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_SHIP" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="shipList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIP.shipId ,TB_HTMS_SHIP.corderId 
+				        ,TB_HTMS_SHIP.customerId ,TB_HTMS_SHIP.shipCode 
+				        ,TB_HTMS_SHIP.applyTonNum ,TB_HTMS_SHIP.applyPackNum 
+				        ,TB_HTMS_SHIP.actualTonNum ,TB_HTMS_SHIP.actualPackNum 
+				        ,TB_HTMS_SHIP.planFreight ,TB_HTMS_SHIP.actualFreight 
+				        ,TB_HTMS_SHIP.freightUnit ,TB_HTMS_SHIP.shipNotice 
+				        ,TB_HTMS_SHIP.applier ,TB_HTMS_SHIP.applyTime 
+				        ,TB_HTMS_SHIP.applyStatus ,TB_HTMS_SHIP.approver 
+				        ,TB_HTMS_SHIP.approveTime ,TB_HTMS_SHIP.approveNotice 
+				        ,TB_HTMS_SHIP.creator ,TB_HTMS_SHIP.createTime 
+				        ,TB_HTMS_SHIP.modifier ,TB_HTMS_SHIP.modifyTime 
+				        ,TB_HTMS_SHIP.isValidate 
+				    FROM TB_HTMS_SHIP ORDER BY TB_HTMS_SHIP.shipId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.customerId ,TB_HTMS_CUSTOMER.customerCode 
+				        ,TB_HTMS_CUSTOMER.customerName ,TB_HTMS_CUSTOMER.customerNotice 
+				        ,TB_HTMS_CUSTOMER.customerAmount ,TB_HTMS_CUSTOMER.creator 
+				        ,TB_HTMS_CUSTOMER.createTime ,TB_HTMS_CUSTOMER.isValidate 
+				    FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.customerId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCT" beanClass="com.zzy.htms.dictionary.product.ProductBean" cacheType="list" cacheName="productList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_SEND" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="bean" cacheName="sendViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SEND.sendId ,TB_HTMS_SEND.transportId 
+				        ,TB_HTMS_SEND.vehicleId ,TB_HTMS_SEND.driverId 
+				        ,TB_HTMS_SEND.carrierId ,TB_HTMS_SEND.transId 
+				        ,TB_HTMS_SEND.sendCode ,TB_HTMS_SEND.planTime 
+				        ,TB_HTMS_SEND.applyTonNum ,TB_HTMS_SEND.applyPackNum 
+				        ,TB_HTMS_SEND.actaulTonNum ,TB_HTMS_SEND.actaulPackNum 
+				        ,TB_HTMS_SEND.planFreight ,TB_HTMS_SEND.actaulFreight 
+				        ,TB_HTMS_SEND.freightUnit ,TB_HTMS_SEND.sendStatus 
+				        ,TB_HTMS_SEND.signProof ,TB_HTMS_SEND.creator 
+				        ,TB_HTMS_SEND.createTime ,TB_HTMS_SEND.modifier 
+				        ,TB_HTMS_SEND.modifyTime ,TB_HTMS_SEND.isValidate 
+				    FROM TB_HTMS_SEND , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_SEND.sendId =TB_HTMS_SENDDETAIL.sendId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_TRANSFERDETAIL" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="bean" cacheName="transferDetailViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.transDetailId 
+				        ,TB_HTMS_TRANSFERDETAIL.shipDetailId 
+				        ,TB_HTMS_TRANSFERDETAIL.transId ,TB_HTMS_TRANSFERDETAIL.shipId 
+				        ,TB_HTMS_TRANSFERDETAIL.caddrId 
+				        ,TB_HTMS_TRANSFERDETAIL.productId 
+				        ,TB_HTMS_TRANSFERDETAIL.applyTonNum 
+				        ,TB_HTMS_TRANSFERDETAIL.applyPackNum 
+				        ,TB_HTMS_TRANSFERDETAIL.fetchTonNum 
+				        ,TB_HTMS_TRANSFERDETAIL.fetchPackNum 
+				        ,TB_HTMS_TRANSFERDETAIL.planFreight 
+				        ,TB_HTMS_TRANSFERDETAIL.actulFreight 
+				        ,TB_HTMS_TRANSFERDETAIL.freightUnit 
+				        ,TB_HTMS_TRANSFERDETAIL.transDetailNotice 
+				        ,TB_HTMS_TRANSFERDETAIL.transDetailStatus 
+				        ,TB_HTMS_TRANSFERDETAIL.creator 
+				        ,TB_HTMS_TRANSFERDETAIL.createTime 
+				        ,TB_HTMS_TRANSFERDETAIL.modifier 
+				        ,TB_HTMS_TRANSFERDETAIL.modifyTime 
+				        ,TB_HTMS_TRANSFERDETAIL.isValidate 
+				    FROM TB_HTMS_TRANSFERDETAIL , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_TRANSFERDETAIL.transDetailId 
+				        =TB_HTMS_SENDDETAIL.transDetailId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_TRANSPORT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="bean" cacheName="transportViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.transportId ,TB_HTMS_TRANSPORT.carrierId 
+				        ,TB_HTMS_TRANSPORT.transId ,TB_HTMS_TRANSPORT.transportCode 
+				        ,TB_HTMS_TRANSPORT.planTime ,TB_HTMS_TRANSPORT.applyTonNum 
+				        ,TB_HTMS_TRANSPORT.applyPackNum ,TB_HTMS_TRANSPORT.actaulTonNum 
+				        ,TB_HTMS_TRANSPORT.actaulPackNum ,TB_HTMS_TRANSPORT.planFreight 
+				        ,TB_HTMS_TRANSPORT.actaulFreight ,TB_HTMS_TRANSPORT.freightUnit 
+				        ,TB_HTMS_TRANSPORT.transportStatus ,TB_HTMS_TRANSPORT.creator 
+				        ,TB_HTMS_TRANSPORT.createTime ,TB_HTMS_TRANSPORT.modifier 
+				        ,TB_HTMS_TRANSPORT.modifyTime ,TB_HTMS_TRANSPORT.isValidate 
+				    FROM TB_HTMS_TRANSPORT , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_TRANSPORT.transportId =TB_HTMS_SENDDETAIL.transportId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="bean" cacheName="transferViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.transId ,TB_HTMS_TRANSFER.shipId 
+				        ,TB_HTMS_TRANSFER.logisticsId ,TB_HTMS_TRANSFER.corderId 
+				        ,TB_HTMS_TRANSFER.customerId ,TB_HTMS_TRANSFER.shipCode 
+				        ,TB_HTMS_TRANSFER.applyTonNum ,TB_HTMS_TRANSFER.applyPackNum 
+				        ,TB_HTMS_TRANSFER.actualTonNum ,TB_HTMS_TRANSFER.actualPackNum 
+				        ,TB_HTMS_TRANSFER.planFreight ,TB_HTMS_TRANSFER.actualFreight 
+				        ,TB_HTMS_TRANSFER.freightUnit ,TB_HTMS_TRANSFER.shipNotice 
+				        ,TB_HTMS_TRANSFER.transStatus ,TB_HTMS_TRANSFER.creator 
+				        ,TB_HTMS_TRANSFER.createTime ,TB_HTMS_TRANSFER.modifier 
+				        ,TB_HTMS_TRANSFER.modifyTime ,TB_HTMS_TRANSFER.isValidate 
+				    FROM TB_HTMS_TRANSFER , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_TRANSFER.transId =TB_HTMS_SENDDETAIL.transferId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_SHIPDETAIL" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="bean" cacheName="shipDetailViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.shipDetailId ,TB_HTMS_SHIPDETAIL.shipId 
+				        ,TB_HTMS_SHIPDETAIL.caddrId ,TB_HTMS_SHIPDETAIL.codetailId 
+				        ,TB_HTMS_SHIPDETAIL.productId ,TB_HTMS_SHIPDETAIL.applyTonNum 
+				        ,TB_HTMS_SHIPDETAIL.applyPackNum 
+				        ,TB_HTMS_SHIPDETAIL.fetchTonNum 
+				        ,TB_HTMS_SHIPDETAIL.fetchPackNum 
+				        ,TB_HTMS_SHIPDETAIL.planFreight 
+				        ,TB_HTMS_SHIPDETAIL.actulFreight 
+				        ,TB_HTMS_SHIPDETAIL.freightUnit 
+				        ,TB_HTMS_SHIPDETAIL.shipDetailNotice 
+				        ,TB_HTMS_SHIPDETAIL.shipDetailStatus 
+				        ,TB_HTMS_SHIPDETAIL.createTime ,TB_HTMS_SHIPDETAIL.creator 
+				        ,TB_HTMS_SHIPDETAIL.modifier ,TB_HTMS_SHIPDETAIL.modifyTime 
+				        ,TB_HTMS_SHIPDETAIL.isValidate 
+				    FROM TB_HTMS_SHIPDETAIL , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_SHIPDETAIL.shipDetailId =TB_HTMS_SENDDETAIL.shipDetailId 
+				        AND TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_CUSTORDERDETAIL" beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean" cacheType="bean" cacheName="custOrderDetailViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDERDETAIL.codetailId 
+				        ,TB_HTMS_CUSTORDERDETAIL.corderId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificate 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialNo 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderAmount 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.projectVolume 
+				        ,TB_HTMS_CUSTORDERDETAIL.volumeUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.conditionSutotal 
+				        ,TB_HTMS_CUSTORDERDETAIL.freight 
+				        ,TB_HTMS_CUSTORDERDETAIL.unitPrice 
+				        ,TB_HTMS_CUSTORDERDETAIL.docCondCount 
+				        ,TB_HTMS_CUSTORDERDETAIL.alreadyGetNum 
+				        ,TB_HTMS_CUSTORDERDETAIL.creator 
+				        ,TB_HTMS_CUSTORDERDETAIL.createTime 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifier 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifyTiime 
+				        ,TB_HTMS_CUSTORDERDETAIL.isValidate 
+				    FROM TB_HTMS_CUSTORDERDETAIL , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_CUSTORDERDETAIL.codetailId =TB_HTMS_SENDDETAIL.codetailId 
+				        AND TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_SHIP" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="bean" cacheName="shipViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIP.shipId ,TB_HTMS_SHIP.corderId 
+				        ,TB_HTMS_SHIP.customerId ,TB_HTMS_SHIP.shipCode 
+				        ,TB_HTMS_SHIP.applyTonNum ,TB_HTMS_SHIP.applyPackNum 
+				        ,TB_HTMS_SHIP.actualTonNum ,TB_HTMS_SHIP.actualPackNum 
+				        ,TB_HTMS_SHIP.planFreight ,TB_HTMS_SHIP.actualFreight 
+				        ,TB_HTMS_SHIP.freightUnit ,TB_HTMS_SHIP.shipNotice 
+				        ,TB_HTMS_SHIP.applier ,TB_HTMS_SHIP.applyTime 
+				        ,TB_HTMS_SHIP.applyStatus ,TB_HTMS_SHIP.approver 
+				        ,TB_HTMS_SHIP.approveTime ,TB_HTMS_SHIP.approveNotice 
+				        ,TB_HTMS_SHIP.creator ,TB_HTMS_SHIP.createTime 
+				        ,TB_HTMS_SHIP.modifier ,TB_HTMS_SHIP.modifyTime 
+				        ,TB_HTMS_SHIP.isValidate 
+				    FROM TB_HTMS_SHIP , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_SHIP.shipId =TB_HTMS_SENDDETAIL.shipId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="bean" cacheName="customerViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.customerId ,TB_HTMS_CUSTOMER.customerCode 
+				        ,TB_HTMS_CUSTOMER.customerName ,TB_HTMS_CUSTOMER.customerNotice 
+				        ,TB_HTMS_CUSTOMER.customerAmount ,TB_HTMS_CUSTOMER.creator 
+				        ,TB_HTMS_CUSTOMER.createTime ,TB_HTMS_CUSTOMER.isValidate 
+				    FROM TB_HTMS_CUSTOMER , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_CUSTOMER.customerId =TB_HTMS_SENDDETAIL.caddrId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+			<sql name="REF_VIEW_PRODUCT" beanClass="com.zzy.htms.dictionary.product.ProductBean" cacheType="bean" cacheName="productViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT , TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_PRODUCT.productId =TB_HTMS_SENDDETAIL.productId AND 
+				        TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/logistic/senddetail/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/logistic/senddetail/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="listSendDetail" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_SENDDETAIL 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.senddetail.SendDetailBean" cacheType="list" cacheName="sendDetailList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+				SELECT TB_HTMS_SENDDETAIL.*,TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,TB_HTMS_VEHICLE.VEHICLENO
+		            FROM TB_HTMS_SENDDETAIL,TB_HTMS_DRIVER,TB_HTMS_VEHICLE,TB_HTMS_SEND
+		            WHERE TB_HTMS_VEHICLE.VEHICLEID=TB_HTMS_SEND.VEHICLEID AND TB_HTMS_SEND.DRIVERID=TB_HTMS_DRIVER.DRIVERID
+		            AND TB_HTMS_SEND.SENDID=TB_HTMS_SENDDETAIL.SENDID
+		 			ORDER BY TB_HTMS_SENDDETAIL.sendDetailId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/senddetail/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteSendDetail" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_SENDDETAIL 
+				    WHERE TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendDetail]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddSendDetail" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="REF_SELECT_SEND" beanClass="com.zzy.htms.logistic.send.SendBean" cacheType="list" cacheName="sendList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SEND.sendId ,TB_HTMS_SEND.transportId 
+				        ,TB_HTMS_SEND.vehicleId ,TB_HTMS_SEND.driverId 
+				        ,TB_HTMS_SEND.carrierId ,TB_HTMS_SEND.transId 
+				        ,TB_HTMS_SEND.sendCode ,TB_HTMS_SEND.planTime 
+				        ,TB_HTMS_SEND.applyTonNum ,TB_HTMS_SEND.applyPackNum 
+				        ,TB_HTMS_SEND.actaulTonNum ,TB_HTMS_SEND.actaulPackNum 
+				        ,TB_HTMS_SEND.planFreight ,TB_HTMS_SEND.actaulFreight 
+				        ,TB_HTMS_SEND.freightUnit ,TB_HTMS_SEND.sendStatus 
+				         ,TB_HTMS_SEND.isValidate 
+				    FROM TB_HTMS_SEND ORDER BY TB_HTMS_SEND.sendId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSFERDETAIL" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="transferDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.transDetailId 
+				        ,TB_HTMS_TRANSFERDETAIL.shipDetailId 
+				        ,TB_HTMS_TRANSFERDETAIL.transId ,TB_HTMS_TRANSFERDETAIL.shipId 
+				        ,TB_HTMS_TRANSFERDETAIL.caddrId 
+				        ,TB_HTMS_TRANSFERDETAIL.productId 
+				        ,TB_HTMS_TRANSFERDETAIL.applyTonNum 
+				        ,TB_HTMS_TRANSFERDETAIL.applyPackNum 
+				        ,TB_HTMS_TRANSFERDETAIL.fetchTonNum 
+				        ,TB_HTMS_TRANSFERDETAIL.fetchPackNum 
+				        ,TB_HTMS_TRANSFERDETAIL.planFreight 
+				        ,TB_HTMS_TRANSFERDETAIL.actulFreight 
+				        ,TB_HTMS_TRANSFERDETAIL.freightUnit 
+				        ,TB_HTMS_TRANSFERDETAIL.transDetailNotice 
+				        ,TB_HTMS_TRANSFERDETAIL.transDetailStatus 
+				        ,TB_HTMS_TRANSFERDETAIL.creator 
+				        ,TB_HTMS_TRANSFERDETAIL.createTime 
+				        ,TB_HTMS_TRANSFERDETAIL.modifier 
+				        ,TB_HTMS_TRANSFERDETAIL.modifyTime 
+				        ,TB_HTMS_TRANSFERDETAIL.isValidate 
+				    FROM TB_HTMS_TRANSFERDETAIL ORDER BY 
+				        TB_HTMS_TRANSFERDETAIL.transDetailId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSPORT" beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="list" cacheName="transportList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSPORT.transportId ,TB_HTMS_TRANSPORT.carrierId 
+				        ,TB_HTMS_TRANSPORT.transId ,TB_HTMS_TRANSPORT.transportCode 
+				        ,TB_HTMS_TRANSPORT.planTime ,TB_HTMS_TRANSPORT.applyTonNum 
+				        ,TB_HTMS_TRANSPORT.applyPackNum ,TB_HTMS_TRANSPORT.actaulTonNum 
+				        ,TB_HTMS_TRANSPORT.actaulPackNum ,TB_HTMS_TRANSPORT.planFreight 
+				        ,TB_HTMS_TRANSPORT.actaulFreight ,TB_HTMS_TRANSPORT.freightUnit 
+				        ,TB_HTMS_TRANSPORT.transportStatus ,TB_HTMS_TRANSPORT.creator 
+				        ,TB_HTMS_TRANSPORT.createTime ,TB_HTMS_TRANSPORT.modifier 
+				        ,TB_HTMS_TRANSPORT.modifyTime ,TB_HTMS_TRANSPORT.isValidate 
+				    FROM TB_HTMS_TRANSPORT ORDER BY TB_HTMS_TRANSPORT.transportId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_TRANSFER" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="list" cacheName="transferList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFER.transId ,TB_HTMS_TRANSFER.shipId 
+				        ,TB_HTMS_TRANSFER.logisticsId ,TB_HTMS_TRANSFER.corderId 
+				        ,TB_HTMS_TRANSFER.customerId ,TB_HTMS_TRANSFER.shipCode 
+				        ,TB_HTMS_TRANSFER.applyTonNum ,TB_HTMS_TRANSFER.applyPackNum 
+				        ,TB_HTMS_TRANSFER.actualTonNum ,TB_HTMS_TRANSFER.actualPackNum 
+				        ,TB_HTMS_TRANSFER.planFreight ,TB_HTMS_TRANSFER.actualFreight 
+				        ,TB_HTMS_TRANSFER.freightUnit ,TB_HTMS_TRANSFER.shipNotice 
+				        ,TB_HTMS_TRANSFER.transStatus ,TB_HTMS_TRANSFER.creator 
+				        ,TB_HTMS_TRANSFER.createTime ,TB_HTMS_TRANSFER.modifier 
+				        ,TB_HTMS_TRANSFER.modifyTime ,TB_HTMS_TRANSFER.isValidate 
+				    FROM TB_HTMS_TRANSFER ORDER BY TB_HTMS_TRANSFER.transId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_SHIPDETAIL" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" cacheType="list" cacheName="shipDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIPDETAIL.shipDetailId ,TB_HTMS_SHIPDETAIL.shipId 
+				        ,TB_HTMS_SHIPDETAIL.caddrId ,TB_HTMS_SHIPDETAIL.codetailId 
+				        ,TB_HTMS_SHIPDETAIL.productId ,TB_HTMS_SHIPDETAIL.applyTonNum 
+				        ,TB_HTMS_SHIPDETAIL.applyPackNum 
+				        ,TB_HTMS_SHIPDETAIL.fetchTonNum 
+				        ,TB_HTMS_SHIPDETAIL.fetchPackNum 
+				        ,TB_HTMS_SHIPDETAIL.planFreight 
+				        ,TB_HTMS_SHIPDETAIL.actulFreight 
+				        ,TB_HTMS_SHIPDETAIL.freightUnit 
+				        ,TB_HTMS_SHIPDETAIL.shipDetailNotice 
+				        ,TB_HTMS_SHIPDETAIL.shipDetailStatus 
+				        ,TB_HTMS_SHIPDETAIL.createTime ,TB_HTMS_SHIPDETAIL.creator 
+				        ,TB_HTMS_SHIPDETAIL.modifier ,TB_HTMS_SHIPDETAIL.modifyTime 
+				        ,TB_HTMS_SHIPDETAIL.isValidate 
+				    FROM TB_HTMS_SHIPDETAIL ORDER BY TB_HTMS_SHIPDETAIL.shipDetailId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTORDERDETAIL" beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean" cacheType="list" cacheName="custOrderDetailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTORDERDETAIL.codetailId 
+				        ,TB_HTMS_CUSTORDERDETAIL.corderId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificate 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialNo 
+				        ,TB_HTMS_CUSTORDERDETAIL.meterialId 
+				        ,TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderAmount 
+				        ,TB_HTMS_CUSTORDERDETAIL.orderUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.projectVolume 
+				        ,TB_HTMS_CUSTORDERDETAIL.volumeUnit 
+				        ,TB_HTMS_CUSTORDERDETAIL.conditionSutotal 
+				        ,TB_HTMS_CUSTORDERDETAIL.freight 
+				        ,TB_HTMS_CUSTORDERDETAIL.unitPrice 
+				        ,TB_HTMS_CUSTORDERDETAIL.docCondCount 
+				        ,TB_HTMS_CUSTORDERDETAIL.alreadyGetNum 
+				        ,TB_HTMS_CUSTORDERDETAIL.creator 
+				        ,TB_HTMS_CUSTORDERDETAIL.createTime 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifier 
+				        ,TB_HTMS_CUSTORDERDETAIL.modifyTiime 
+				        ,TB_HTMS_CUSTORDERDETAIL.isValidate 
+				    FROM TB_HTMS_CUSTORDERDETAIL ORDER BY 
+				        TB_HTMS_CUSTORDERDETAIL.codetailId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_SHIP" beanClass="com.zzy.htms.sales.ship.ShipBean" cacheType="list" cacheName="shipList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_SHIP.shipId ,TB_HTMS_SHIP.corderId 
+				        ,TB_HTMS_SHIP.customerId ,TB_HTMS_SHIP.shipCode 
+				        ,TB_HTMS_SHIP.applyTonNum ,TB_HTMS_SHIP.applyPackNum 
+				        ,TB_HTMS_SHIP.actualTonNum ,TB_HTMS_SHIP.actualPackNum 
+				        ,TB_HTMS_SHIP.planFreight ,TB_HTMS_SHIP.actualFreight 
+				        ,TB_HTMS_SHIP.freightUnit ,TB_HTMS_SHIP.shipNotice 
+				        ,TB_HTMS_SHIP.applier ,TB_HTMS_SHIP.applyTime 
+				        ,TB_HTMS_SHIP.applyStatus ,TB_HTMS_SHIP.approver 
+				        ,TB_HTMS_SHIP.approveTime ,TB_HTMS_SHIP.approveNotice 
+				        ,TB_HTMS_SHIP.creator ,TB_HTMS_SHIP.createTime 
+				        ,TB_HTMS_SHIP.modifier ,TB_HTMS_SHIP.modifyTime 
+				        ,TB_HTMS_SHIP.isValidate 
+				    FROM TB_HTMS_SHIP ORDER BY TB_HTMS_SHIP.shipId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_CUSTOMER" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.customerId ,TB_HTMS_CUSTOMER.customerCode 
+				        ,TB_HTMS_CUSTOMER.customerName ,TB_HTMS_CUSTOMER.customerNotice 
+				        ,TB_HTMS_CUSTOMER.customerAmount ,TB_HTMS_CUSTOMER.creator 
+				        ,TB_HTMS_CUSTOMER.createTime ,TB_HTMS_CUSTOMER.isValidate 
+				    FROM TB_HTMS_CUSTOMER ORDER BY TB_HTMS_CUSTOMER.customerId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCT" beanClass="com.zzy.htms.dictionary.product.ProductBean" cacheType="list" cacheName="productList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/senddetail/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="modifySendDetail" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_SENDDETAIL 
+				    SET sendId = $sendId ,transDetailId = $transDetailId ,transportId = 
+				        $transportId ,transferId = $transferId ,shipDetailId = 
+				        $shipDetailId ,codetailId = $codetailId ,shipId = $shipId 
+				        ,caddrId = $caddrId ,productId = $productId ,applyTonNum = 
+				        $applyTonNum ,applyPackNum = $applyPackNum ,fetchTonNum = 
+				        $fetchTonNum ,fetchPackNum = $fetchPackNum ,planFreight = 
+				        $planFreight ,actulFreight = $actulFreight ,freightUnit = 
+				        $freightUnit ,useFreight = $useFreight ,transDetailNotice = 
+				        $transDetailNotice ,transDetailStatus = $transDetailStatus 
+				        ,creator = $creator ,createTime = $createTime ,modifier = 
+				        $modifier ,modifyTime = $modifyTime ,isValidate = $isValidate 
+				    WHERE TB_HTMS_SENDDETAIL.sendDetailId = $sendDetailId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendDetail]]></address>
+		</forward>
+	</operation>
+	<operation name="addSendDetail" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.senddetail.SendDetailBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_SENDDETAIL" caiidKey="sendDetailId" caiidName="sendDetailId" caiidVar="sendDetailId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_SENDDETAIL ( sendDetailId, sendId, transDetailId, 
+				        transportId, transferId, shipDetailId, codetailId, shipId, 
+				        caddrId, productId, applyTonNum, applyPackNum, fetchTonNum, 
+				        fetchPackNum, planFreight, actulFreight, freightUnit, 
+				        useFreight, transDetailNotice, transDetailStatus, creator, 
+				        createTime, modifier, modifyTime, isValidate) 
+				        VALUES($sendDetailId,$sendId,$transDetailId,$transportId,$transferId,$shipDetailId,$codetailId,$shipId,$caddrId,$productId,$applyTonNum,$applyPackNum,$fetchTonNum,$fetchPackNum,$planFreight,$actulFreight,$freightUnit,$useFreight,$transDetailNotice,$transDetailStatus,$creator,$createTime,$modifier,$modifyTime,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSendDetail]]></address>
+		</forward>
+	</operation>
+</root>

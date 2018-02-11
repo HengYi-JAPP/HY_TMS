@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="addSelfSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert">
+		INSERT INTO TB_SYSTEM (SYSID,SYSCODE,SYSNAME,SYSPATH,SYSDESC,SHOWORDER,ISVALIDATE,USERID,ISSYSTEM)
+		VALUES($sysId,$sysCode,$sysName,$sysPath,$sysDesc,$showOrder,$isValidate,$userId,$isSystem)
+		</sql>	
+		<forward name="listAction">jsp/portal/website/pesonal/system/list.jsp</forward>
+	</operation>
+
+	
+	<!-- 删除 -->
+	<operation name="deleteSelfSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_SYSTEM WHERE SYSID = $sysId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_USER_SYSTEM WHERE SYSID = $sysId
+		</sql>
+		<!-- 后面与系统相关的频道、布局、栏目、个性化记录、信息也要全部删除。 -->
+		<forward name="listAction">jsp/portal/website/pesonal/system/list.jsp</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSelfSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemViewBean" cacheScope="request">
+			 SELECT *   FROM TB_SYSTEM WHERE SYSID = $sysId
+		</sql>
+		<forward name="modifyPage">jsp/portal/website/pesonal/system/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/website/pesonal/system/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySelfSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_SYSTEM SET 
+			SYSNAME=$sysName,
+			SYSPATH=$sysPath,
+			SHOWORDER=$showOrder
+		 WHERE  SYSID = $sysId
+		</sql>	
+		<forward name="listAction">jsp/portal/website/pesonal/system/list.jsp</forward>
+	</operation>
+	
+	
+	
+	
+	<!-- 为系统初始化权限 end -->
+	<!-- 用户end -->
+</root>

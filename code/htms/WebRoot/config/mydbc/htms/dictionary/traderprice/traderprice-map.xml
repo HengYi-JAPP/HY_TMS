@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean">
+		<map property="mapId" javaType="String" column="mapId"  colType=""/>
+		<map property="priceId" javaType="int" column="priceId"  colType=""/>
+		<map property="routeId" javaType="int" column="routeId"  colType=""/>
+		<map property="priceType" javaType="int" column="priceType"  colType=""/>
+		<map property="customerPrice" javaType="String" column="customerPrice"  colType=""/>
+		<map property="carrierPrice" javaType="String" column="carrierPrice"  colType=""/>
+		<map property="priceStart" javaType="String" column="priceStart"  colType=""/>
+		<map property="priceEnd" javaType="String" column="priceEnd"  colType=""/>
+		<map property="priceUnit" javaType="String" column="priceUnit"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifier" javaType="String" column="modifier"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="factoryId" javaType="int" column="factoryId"  colType=""/>
+		<map property="areaId" javaType="int" column="areaId"  colType=""/>
+		<map property="productId" javaType="int" column="productId"  colType=""/>
+		<map property="productName" javaType="String" column="productName"  colType=""/>
+		<map property="factoryName" javaType="String" column="factoryName"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+		<map property="typeId" javaType="String" column="typeId"  colType=""/>
+		<map property="typeName" javaType="String" column="typeName"  colType=""/>
+		<map property="dicId" javaType="String" column="dicId"  colType=""/>
+		<map property="dicName" javaType="String" column="dicName"  colType=""/>
+		<map property="validateDate" javaType="String" column="validateDate"  colType=""/>
+		<map property="freightModel" javaType="String" column="freightModel"  colType=""/>
+		<map property="targetRouteId" javaType="String" column="targetRouteId"  colType=""/>
+		<map property="customerOnePrice" javaType="String" column="CUSTOMERONEPRICE"  colType=""/>
+		<map property="carrierOnePrice" javaType="String" column="CARRIERONEPRICE"  colType=""/>
+		<map property="priceNotice" javaType="String" column="priceNotice"  colType=""/>
+		
+	</bean>
+</root>

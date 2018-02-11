@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.dictionary.producttype.ProductTypeBean">
+		<map property="typeId" javaType="int" column="typeId"  colType=""/>
+		<map property="typeName" javaType="String" column="typeName"  colType=""/>
+		<map property="typeCode" javaType="String" column="typeCode"  colType=""/>
+		<map property="typeDesc" javaType="String" column="typeDesc"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+</root>

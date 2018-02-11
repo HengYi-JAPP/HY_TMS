@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="syncLocalHostCahce" businessClass="com.zzy.htms.cache.sync.CacheSynkerBusiness" version="2.0"  forward="" >
+		<method name="syncLocalHostCahce" businessClass="com.zzy.htms.cache.sync.CacheSynkerBusiness"  invokeMethod="syncLocalHost" exeOrder="1" version="2.0">
+		</method>
+		<forward name="AREA" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='AREA']]></condition>
+			<address><![CDATA[contoller.do?operation=listArea]]></address>
+		</forward>
+		<forward name="ROUTE" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='ROUTE']]></condition>
+			<address><![CDATA[contoller.do?operation=listRoute]]></address>
+		</forward>
+		<forward name="FACTORY" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='FACTORY']]></condition>
+			<address><![CDATA[contoller.do?operation=listFactory]]></address>
+		</forward>
+		<forward name="PRODUCT" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='PRODUCT']]></condition>
+			<address><![CDATA[contoller.do?operation=listProduct]]></address>
+		</forward>
+		<forward name="TRADE_PRICE" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='TRADE_PRICE']]></condition>
+			<address><![CDATA[contoller.do?operation=listTraderPrice]]></address>
+		</forward>
+		<forward name="CUSTOMER_PRICE" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='CUSTOMER_PRICE']]></condition>
+			<address><![CDATA[contoller.do?operation=listCustomerPrice]]></address>
+		</forward>
+		<forward name="TRANS_PRICE" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[syncType]'=='TRANS_PRICE']]></condition>
+			<address><![CDATA[contoller.do?operation=listTransPrice]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="reloadLocalHostCahce" businessClass="com.zzy.htms.cache.sync.CacheSynkerBusiness" version="2.0"  forward="" >
+		<method name="reloadLocalHostCahce" businessClass="com.zzy.htms.cache.sync.CacheSynkerBusiness"  invokeMethod="reloadLocalHostCache" exeOrder="1" version="2.0">
+		</method>
+	</operation>
+
+</root>

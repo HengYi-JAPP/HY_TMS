@@ -1,0 +1,5 @@
+SELECT TOP $pageCount * from (
+	SELECT TOP $endRow * from ( {$sql}) _alias_A_A where 1=1 ORDER BY {$field} desc) _alias_C_C 
+where {$field} not in(
+	SELECT TOP $beginRow {$field} from ({$sql}) _alias_B_B where 1=1 ORDER BY {$field} desc
+) ORDER BY {$field} desc

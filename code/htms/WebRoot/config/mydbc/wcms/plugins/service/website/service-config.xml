@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!--webref实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="listWebSiteWebServiceIndex" businessClass="com.mobilecn.plugins.service.ServiceBusiness"
+		invokeMethod="view" forward="">		
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_COLUMN WHERE COLUMNID=$columnId
+		</sql>	
+		<sql name="listService" beanClass="com.mobilecn.plugins.service.ServiceBean"
+			cacheName="serviceList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_SERVICE.* 
+				FROM TB_WSM_INFO_SERVICE,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SERVICE.SERVICEID  
+				ORDER BY TB_WSM_INFO_SERVICE.SERVICEID DESC				
+		]]></sql>
+		<sql name="listServiceList" beanClass="com.mobilecn.plugins.service.ServiceListBean"
+			cacheName="serviceListList" cacheScope="request" isPage="true" pageField="CONFIGID"><![CDATA[
+			    SELECT TB_WSM_INFO_SERVICE_LIST.* 
+				FROM TB_WSM_INFO_SERVICE_LIST,TB_WSM_INFO_SERVICE,TB_WSM_INFO_COLUMN 
+				WHERE  
+				TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND 
+				TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SERVICE.SERVICEID  AND 
+				TB_WSM_INFO_SERVICE.SERVICEID=TB_WSM_INFO_SERVICE_LIST.SERVICEID
+				ORDER BY TB_WSM_INFO_SERVICE_LIST.SHOWORDER				
+		]]></sql>		
+		<sql name="listServiceParams" beanClass="com.mobilecn.plugins.service.ServiceParamsBean"
+			cacheName="serivceParamsList" cacheScope="request" isPage="true" pageField="CONFIGID"><![CDATA[
+			    SELECT TB_WSM_INFO_SERVICE_PARAMS.* 
+				FROM TB_WSM_INFO_SERVICE_PARAMS,TB_WSM_INFO_SERVICE,TB_WSM_INFO_COLUMN 
+				WHERE  
+				TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND 
+				TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SERVICE.SERVICEID  AND 
+				TB_WSM_INFO_SERVICE.SERVICEID=TB_WSM_INFO_SERVICE_PARAMS.SERVICEID
+				ORDER BY TB_WSM_INFO_SERVICE_PARAMS.PARAMID DESC				
+		]]></sql>	
+	</operation>
+	
+</root>

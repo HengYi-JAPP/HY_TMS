@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 转向合并运费页面 -->
+	<operation name="toUserInforLocation" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="getUserInforLocation" exeOrder="1" version="2.0">
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[contoller.do?operation=listRegister]]></address>
+		</forward>
+		<forward name="locationPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==2]]></condition>
+			<address><![CDATA[jsp/htms/location/user.jsp]]></address>
+		</forward>
+		<forward name="listOrderPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==3]]></condition>
+			<address><![CDATA[jsp/htms/vstore/list.jsp]]></address>
+		</forward>
+		<forward name="listOrderPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==4]]></condition>
+			<address><![CDATA[jsp/htms/location/getLocation.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	<!-- 转向合并运费页面 -->
+	<operation name="registWXUserInfor" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="getUserInforLocation" exeOrder="1" version="2.0">
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+		    <condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[controller?operation=toUserInforLocation]]></address>
+		</forward>
+	</operation>
+	
+	
+   <operation name="getWXUserInfoByOpenId"  businessClass="com.zzy.htms.location.WeChatLocationBussiness" invokeMethod="list" >
+		<sql name="getWXUserInfoByOpenId"  beanClass="com.zzy.htms.location.User"   >
+		    <![CDATA[
+			        select * from tb_htms_wxuser where wxopenid= $openId
+		     ]]>
+		</sql>
+	</operation>
+	
+	
+	  <operation name="getSendByTransId"  businessClass="com.zzy.htms.location.WeChatLocationBussiness" invokeMethod="list" >
+		<sql name="getSendByTransId"  beanClass="com.zzy.htms.location.User"   >
+		    <![CDATA[
+			        select * from tb_htms_wxuser where wxopenid= $openId
+		     ]]>
+		</sql>
+	</operation>
+	
+
+	<operation name="getLocationConfig" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="getConfig" exeOrder="1" version="2.0">
+		</method>
+	</operation>
+	
+	
+	<operation name="submitLocation" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="saveLocation" exeOrder="1" version="2.0">
+		</method>
+	</operation>
+	
+	
+	<operation name="sendLocationTextMessage" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="sendLocationTextMessage" exeOrder="1" version="2.0">
+		    <sql name="transferList" beanClass="com.zzy.htms.logistic.transfer.TransferBean"  cacheType="list" cacheName="transferList" refCols="shipId"   refNames="refShipId"   version="2.0">
+				<content><![CDATA[
+					select * from tb_htms_transfer where transid =$transferId
+				]]></content>
+			</sql>
+			<sql name="transDetailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean"  version="2.0">
+				<content><![CDATA[
+					select * from tb_htms_transferdetail where transid =$transferId
+				]]></content>
+			</sql>
+		    <sql name="shipList"  beanClass="com.zzy.htms.sales.ship.ShipBean"  refCols="caddrId,customerId"  refNames="refAddrId,refCustomerId"   version="2.0" >
+				<content><![CDATA[
+					select * from tb_htms_ship where shipid =$refShipId
+				]]></content>
+			</sql>
+			<sql name="customerAddrList"  beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean"     version="2.0">
+				<content><![CDATA[
+					select * from tb_htms_customeraddr where cAddrId =$refAddrId
+				]]></content>
+			</sql>
+			<sql name="customerList"  beanClass="com.zzy.htms.sales.customer.CustomerBean"  version="2.0">
+				<content><![CDATA[
+					select * from tb_htms_customer where customerId =$refCustomerId
+				]]></content>
+			</sql>
+			<sql name="locationList"  beanClass="com.zzy.htms.location.LocationBean"  version="2.0">
+				<content><![CDATA[
+					Select * From tb_htms_location Where transid In (
+					  Select transid  From tb_htms_transfer Where shipid In (
+					     select shipid  from tb_htms_ship t  Where  customerId = $refCustomerId  And caddrid =$refAddrId
+					  )
+					) And issign = 1 And Rownum =  1  Order By locationid Desc 
+				]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	
+	<operation name="submitChangeSendStatusLocation" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="changeSendStatus" exeOrder="1" version="2.0">
+		</method>
+	</operation>
+	
+	<operation name="pauseCurrentRequest" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"   forward="">
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="pauseCurrentRequest" exeOrder="1" version="2.0">
+		</method>
+	</operation>
+	
+	<!-- 保存地理位置信息 -->
+    <operation name="saveSubmitLocation" businessClass="com.zzy.htms.location.WeChatLocationBussiness" invokeMethod="add"  >
+		<sql name="saveSubmitLocation"  isBatch="true" caiidTable="TB_HTMS_LOCATION" caiidKey="locationId" caiidName="locationId" caiidVar="locationId"  >
+			INSERT INTO TB_HTMS_LOCATION(
+				LOCATIONID ,  LATITUDE   ,  LONGITUDE  ,  WXOPENID   ,  TRANSID   ,  CREATETIME ,isSign)
+			VALUES(
+				$locationId ,  $latitude   ,  $longitude  ,  $openId   ,  $transId   , to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),$isSign)
+		</sql>
+	</operation>
+	
+	<!-- 保存最新的经过解析的地理位置信息 -->
+    <operation name="saveSendLocation" businessClass="com.zzy.htms.location.WeChatLocationBussiness" invokeMethod="add"  >
+		<sql name="saveSendLocation"  isBatch="true"  >
+			INSERT INTO TB_HTMS_SENDLOCATION(
+				  LATITUDE   ,  LONGITUDE  ,  WXOPENID   ,  TRANSID  , province ,  city,  district , CREATETIME    )
+			VALUES(
+				 $latitude   ,  $longitude  ,  $openId   ,  $transId , $province , $city, $district , to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'))
+		</sql>
+	</operation>
+
+	
+	<operation name="getSendLocationByTransId" businessClass="com.zzy.htms.location.WeChatLocationBussiness" invokeMethod="view"  >
+		<sql name="getSendLocationByTransId" beanClass="com.zzy.htms.location.SendLocation"  isEscapeQuotation="true"  isEscape="false" >
+			<![CDATA[ 
+			    select * from  tb_htms_sendlocation
+				where  TRANSID in ($transIds)
+			]]>
+		</sql>
+	</operation>
+	
+	<operation name="updateSendLocation" businessClass="com.zzy.htms.location.WeChatLocationBussiness" invokeMethod="add"  >
+		<sql name="updateSendLocation"  isBatch="true"  >
+			Update tb_htms_sendlocation
+				set   LATITUDE  = $latitude  ,  LONGITUDE = $longitude   ,  WXOPENID =$openId  , province = $province , 
+				     city =$city ,  district=$district , MODIFYTIME = to_char(sysdate,'yyyy-MM-dd HH24:mi:ss') 
+				where  TRANSID =$transId 
+		</sql>
+	</operation>
+	
+	<operation name="addRegWxUser" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="registerUser" exeOrder="" version="2.0">
+			<sql name="INSERT"   version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_WXUSER (wxOpenId,nickName,sex,province,city,country,headImgurl,unionId,driverMobile,identity,logistics,vehicleNo,driverName) 
+				        VALUES($openId,$nickName,$sex,$province,$city,$country,$headImgurl,$unionId,$driverMobile,$identity,$carrierName,$vehicleNo,$driverName) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	
+	<operation name="listWXUser" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"  forward="" loadCacheForm="wxUserFrom">
+		<method name="默认查询" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				      FROM TB_HTMS_WXUSER
+				       LEFT JOIN (SELECT TB_HTMS_DRIVER_VEHICLE.DRIVERID,COUNT(TB_HTMS_DRIVER_VEHICLE.VEHICLEID) AS VEHICLECOUNT 
+				       FROM  TB_HTMS_DRIVER_VEHICLE GROUP BY TB_HTMS_DRIVER_VEHICLE.DRIVERID) CCC
+				       ON  TB_HTMS_WXUSER.DRIVERID = CCC.DRIVERID 
+				      LEFT JOIN TB_HTMS_DRIVER ON TB_HTMS_DRIVER.DRIVERID = TB_HTMS_WXUSER.DRIVERID
+			               LEFT JOIN TB_HTMS_CARRIER ON TB_HTMS_CARRIER.CARRIERID = TB_HTMS_WXUSER.LOGISTICS
+	                	 WHERE   TB_HTMS_WXUSER.LOGISTICS = $login_user_carrier_id
+	                	 <if test="$[nickNameSH]!=''">
+	                	and   TB_HTMS_WXUSER.NICKNAME LIKE'%$nickNameSH%' 
+	                	 </if>
+	                	 <if test="$[driverNameSH]!=''">
+	                  		AND TB_HTMS_WXUSER.DRIVERNAME LIKE'%$driverNameSH%'  
+	                  	</if>
+	                  		ORDER BY TB_HTMS_WXUSER.WXOPENID 
+				    
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.location.User" cacheType="list" cacheName="wxUserList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+					SELECT TB_HTMS_WXUSER.*,CCC.VEHICLECOUNT,TB_HTMS_CARRIER.CARRIERNAME,
+					  CASE WHEN TB_HTMS_DRIVER.DRIVERNAME IS Null THEN TB_HTMS_WXUSER.DRIVERNAME
+					  Else   TB_HTMS_DRIVER.DRIVERNAME   END
+					  As associateDriverName,
+					  CASE WHEN TB_HTMS_DRIVER.DRIVERMOBILE IS Null THEN TB_HTMS_WXUSER.DRIVERMOBILE
+					  Else  TB_HTMS_DRIVER.DRIVERMOBILE  END
+					  As associateDriverMobile,
+					  CASE  WHEN TB_HTMS_DRIVER.DRIVERIDNUM IS Null THEN   TB_HTMS_WXUSER.IDENTITY 
+					  Else TB_HTMS_DRIVER.DRIVERIDNUM END
+					  As associateDriverIdNum
+			               FROM TB_HTMS_WXUSER
+			               LEFT JOIN (SELECT TB_HTMS_DRIVER_VEHICLE.DRIVERID,COUNT(TB_HTMS_DRIVER_VEHICLE.VEHICLEID) AS VEHICLECOUNT 
+			               FROM  TB_HTMS_DRIVER_VEHICLE GROUP BY TB_HTMS_DRIVER_VEHICLE.DRIVERID) CCC
+			               ON  TB_HTMS_WXUSER.DRIVERID = CCC.DRIVERID 
+			               LEFT JOIN TB_HTMS_DRIVER ON TB_HTMS_DRIVER.DRIVERID = TB_HTMS_WXUSER.DRIVERID
+			               LEFT JOIN TB_HTMS_CARRIER ON TB_HTMS_CARRIER.CARRIERID = TB_HTMS_WXUSER.LOGISTICS
+			                      WHERE  
+			                       TB_HTMS_WXUSER.LOGISTICS = $login_user_carrier_id
+	                	 <if test="$[nickNameSH]!=''">
+	                	and   TB_HTMS_WXUSER.NICKNAME LIKE'%$nickNameSH%' 
+	                	 </if>
+	                	 <if test="$[driverNameSH]!=''">
+	                  		AND TB_HTMS_WXUSER.DRIVERNAME LIKE'%$driverNameSH%'  
+	                  	</if>
+	                  		ORDER BY TB_HTMS_WXUSER.WXOPENID   
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/wxuser/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="viewWXUser" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.location.User" cacheType="list" cacheName="wxUserViewList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_WXUSER.*,TB_HTMS_CARRIER.CARRIERNAME,
+						 CASE WHEN TB_HTMS_DRIVER.DRIVERNAME IS Null THEN TB_HTMS_WXUSER.DRIVERNAME
+						  Else   TB_HTMS_DRIVER.DRIVERNAME   END As associateDriverName,
+						  CASE WHEN TB_HTMS_DRIVER.DRIVERMOBILE IS Null THEN TB_HTMS_WXUSER.DRIVERMOBILE
+						  Else  TB_HTMS_DRIVER.DRIVERMOBILE  END As associateDriverMobile,
+						  CASE  WHEN TB_HTMS_DRIVER.DRIVERIDNUM IS Null THEN   TB_HTMS_WXUSER.IDENTITY 
+						  Else TB_HTMS_DRIVER.DRIVERIDNUM END As associateDriverIdNum,
+						  CASE  WHEN TB_HTMS_VEHICLE.VEHICLENO IS Null THEN   TB_HTMS_WXUSER.VEHICLENO
+						  Else TB_HTMS_VEHICLE.VEHICLENO END As associateVehicleNo
+						    FROM TB_HTMS_WXUSER 
+						    LEFT JOIN TB_HTMS_DRIVER
+						    LEFT JOIN TB_HTMS_DRIVER_VEHICLE
+						    ON TB_HTMS_DRIVER.DRIVERID = TB_HTMS_DRIVER_VEHICLE.DRIVERID
+						    ON TB_HTMS_WXUSER.DRIVERID = TB_HTMS_DRIVER.DRIVERID
+						    LEFT JOIN TB_HTMS_VEHICLE
+						    ON TB_HTMS_DRIVER_VEHICLE.VEHICLEID = TB_HTMS_VEHICLE.VEHICLEID
+						    LEFT JOIN TB_HTMS_CARRIER 
+						    ON TB_HTMS_CARRIER.CARRIERID = TB_HTMS_WXUSER.LOGISTICS
+						    WHERE TB_HTMS_WXUSER.WXOPENID =$wxOpenId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/wxuser/view.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="toModifyWXUser" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="SELECT" beanClass="com.zzy.htms.location.User" cacheType="bean" cacheName="wxUserViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_WXUSER.*
+						    FROM TB_HTMS_WXUSER 
+						    WHERE TB_HTMS_WXUSER.WXOPENID =$wxOpenId
+					]]></content>
+			</sql>
+			<sql name="SELECT_CARRIER" beanClass="com.zzy.htms.logistic.carrier.CarrierBean" cacheType="list" cacheName="carrierList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CARRIER.carrierId,TB_HTMS_CARRIER.carrierName FROM TB_HTMS_CARRIER ORDER BY TB_HTMS_CARRIER.carrierId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/wxuser/modify.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="modifyWXUser" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0" forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true" caiidTable="TB_HTMS_WXUSER"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_WXUSER 
+				    SET TB_HTMS_WXUSER.driverName = $driverName,
+				     TB_HTMS_WXUSER.driverMobile = $driverMobile,
+				      TB_HTMS_WXUSER.identity = $identity,
+				       TB_HTMS_WXUSER.logistics = $logistics,
+				       TB_HTMS_WXUSER.vehicleNo = $vehicleNo
+				    WHERE TB_HTMS_WXUSER.WXOPENID = $wxOpenId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listWXUser]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteWXUser" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0" forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE_WXUSER_VEHICLE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_DRIVER_VEHICLE 
+				    WHERE TB_HTMS_DRIVER_VEHICLE.driverId = $driverId  
+					]]></content>
+			</sql>
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM  TB_HTMS_WXUSER 
+				    WHERE TB_HTMS_WXUSER.WXOPENID = $wxOpenId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listWXUser]]></address>
+		</forward>
+	</operation>
+	<!-- 关联司机 -->
+	<operation name="toAssociateDriver" businessClass="com.zzy.htms.logistic.driver.DriverBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.driver.DriverBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_DRIVER 
+				    WHERE TB_HTMS_DRIVER.CARRIERID=$carrierId AND TB_HTMS_DRIVER.ISVALIDATE='1'
+				     <if test="$[driverCodeSH]!=''">
+				  	 AND  TB_HTMS_DRIVER.driverCode LIKE'%$driverCodeSH%'
+				    </if>
+				     <if test="$[driverNameSH]!=''">
+				     AND TB_HTMS_DRIVER.driverName LIKE'%$driverNameSH%' 
+				     </if>
+				        
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.driver.DriverBean" cacheType="list" cacheName="driverList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_DRIVER.*
+				    FROM TB_HTMS_DRIVER 
+				    WHERE TB_HTMS_DRIVER.CARRIERID=$carrierId AND TB_HTMS_DRIVER.ISVALIDATE='1'
+				     <if test="$[driverCodeSH]!=''">
+				  	 AND  TB_HTMS_DRIVER.driverCode LIKE'%$driverCodeSH%'
+				    </if>
+				     <if test="$[driverNameSH]!=''">
+				     AND TB_HTMS_DRIVER.driverName LIKE'%$driverNameSH%' 
+				     </if>
+				    ORDER BY CASE
+           			 WHEN TB_HTMS_DRIVER.DRIVERID=$driverId then 0 else TB_HTMS_DRIVER.DRIVERID end	 
+					]]></content>
+			</sql>
+			<sql name="SELECT_DRIVER" beanClass="com.zzy.htms.location.User" cacheType="list" cacheName="wxDriverList" cacheScope="request" version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_WXUSER.DRIVERID
+				    FROM TB_HTMS_WXUSER 
+				    WHERE TB_HTMS_WXUSER.DRIVERID = $driverId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/wxuser/associateDriver.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="associateDriver" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0" >
+		<method name="默认新增" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true" caiidTable="TB_HTMS_WXUSER"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_WXUSER 
+				    SET TB_HTMS_WXUSER.driverId = $checkedDriverId
+				    WHERE TB_HTMS_WXUSER.WXOPENID = $wxOpenId
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	<!-- 关联车辆 -->
+	<operation name="toAssociateVehicle" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.vehicle.VehicleBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_VEHICLE 
+				    WHERE TB_HTMS_VEHICLE.CARRIERID=$carrierId AND TB_HTMS_VEHICLE.ISVALIDATE='1'
+				     <if test="$[vehicleCodeSH]!=''">
+				   	AND  vehicleCode LIKE'%$vehicleCodeSH%' 
+				    </if>
+				     <if test="$[vehicleNoSH]!=''">
+				    AND  vehicleNo LIKE'%$vehicleNoSH%' 
+				    </if>
+				    
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.vehicle.VehicleBean" cacheType="list" cacheName="vehicleList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+					SELECT TB_HTMS_VEHICLE.*
+				    FROM TB_HTMS_VEHICLE 
+				     WHERE TB_HTMS_VEHICLE.CARRIERID=$carrierId AND TB_HTMS_VEHICLE.ISVALIDATE='1'
+				     <if test="$[vehicleCodeSH]!=''">
+				   	AND  vehicleCode LIKE'%$vehicleCodeSH%' 
+				    </if>
+				     <if test="$[vehicleNoSH]!=''">
+				    AND  vehicleNo LIKE'%$vehicleNoSH%' 
+				    </if>
+				    ORDER BY CASE
+           			 WHEN TB_HTMS_VEHICLE.VEHICLEID IN 
+           			 (SELECT TB_HTMS_DRIVER_VEHICLE.VEHICLEID FROM TB_HTMS_DRIVER_VEHICLE WHERE TB_HTMS_DRIVER_VEHICLE.DRIVERID=$driverId)
+           			  then 0 else TB_HTMS_VEHICLE.VEHICLEID end	 
+					]]></content>
+			</sql>
+			<sql name="SELECT_VEHICLE" beanClass="com.zzy.htms.location.User" cacheType="list" cacheName="wxVehicleList" cacheScope="request" version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_DRIVER_VEHICLE.*
+				    FROM TB_HTMS_DRIVER_VEHICLE 
+				    WHERE TB_HTMS_DRIVER_VEHICLE.DRIVERID=$driverId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/wxuser/associateVehicle.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="associateVehicle" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0" >
+		<method name="默认新增" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true" version="2.0">
+					<content><![CDATA[
+					INSERT INTO TB_HTMS_DRIVER_VEHICLE(
+						driverId,vehicleId
+					)VALUES(
+						$driverId,$vehicleId
+					)
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	<operation name="cancleAssociateVehicle" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0" >
+		<method name="默认新增" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true" version="2.0">
+					<content><![CDATA[
+					DELETE FROM TB_HTMS_DRIVER_VEHICLE 
+				    WHERE TB_HTMS_DRIVER_VEHICLE.vehicleId = $vehicleId 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	
+	<operation name="myMessage" businessClass="com.zzy.htms.location.WeChatLocationBussiness" version="2.0"  forward="" >
+		<method name="我的信息" businessClass="com.zzy.htms.location.WeChatLocationBussiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.location.User" cacheType="list" cacheName="myMessageList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					SELECT TB_HTMS_WXUSER.NICKNAME,TB_HTMS_WXUSER.Logistics,
+                      TB_HTMS_DRIVER.DRIVERNAME,TB_HTMS_DRIVER.DRIVERMOBILE,
+                      TB_HTMS_CARRIER.CARRIERNAME,
+                      TB_HTMS_VEHICLE.VEHICLENO
+                    FROM TB_HTMS_CARRIER,TB_HTMS_WXUSER 
+                    LEFT JOIN TB_HTMS_DRIVER
+                    LEFT JOIN TB_HTMS_DRIVER_VEHICLE
+                    ON TB_HTMS_DRIVER.DRIVERID = TB_HTMS_DRIVER_VEHICLE.DRIVERID
+                    ON TB_HTMS_WXUSER.DRIVERID = TB_HTMS_DRIVER.DRIVERID
+                    LEFT JOIN TB_HTMS_VEHICLE
+                    ON TB_HTMS_DRIVER_VEHICLE.VEHICLEID = TB_HTMS_VEHICLE.VEHICLEID
+                    WHERE TB_HTMS_WXUSER.WXOPENID =$wxOpenId
+                    AND TB_HTMS_CARRIER.CARRIERID=TB_HTMS_WXUSER.LOGISTICS
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/vstore/viewMyMessage.jsp]]></address>
+		</forward>
+	</operation>
+</root>

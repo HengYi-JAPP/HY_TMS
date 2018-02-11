@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listInfoType" beanClass="com.mobilecn.portal.infotype.InfoTypeBean"
+			cacheName="infoTypeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_INFOTYPE WHERE ISVALIDATE='1'
+		]]></sql>
+		
+		<sql name="listColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.ISCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<sql name="listIndexColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listIndexColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.INDEXCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<sql name="listViewColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listViewColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.VIEWCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<sql name="listListColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listListColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.LISTCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		
+		<forward name="listPage">jsp/portal/console/column/add.jsp</forward>
+	</operation>
+	
+	<operation name="addColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidTable="TB_WSM_COLUMN" caiidKey="COLUMNID"  caiidName="TB_WSM_COLUMN" caiidVar="newColumnId">
+		INSERT INTO TB_WSM_COLUMN (COLUMNID,PARENTCOLUMNID,INFOTYPEID,SYSID,COLUMNNAME,COLUMNCODE,COLUMNLOADER,LOGO,CONTENTLINK,ISMORE,MORELINK,ISASYNCLOAD,ISDEFAULTLOAD,COLUMNDESC,ISVALIDATE,COLUMNSKIN,INDEXCOLUMNSKIN,VIEWCOLUMNSKIN,LISTCOLUMNSKIN,INDEXSHOWNUM,LISTSHOWNUM,INDEXSHOWLEN,JUSTCONTENT,VIEWLINK)
+		VALUES($newColumnId,$parentColumnId,$infoTypeId,$sysId,$columnName,$columnCode,$columnLoader,$logo,$contentLink,$isMore,$moreLink,$isAsyncLoad,$isDefaultLoad,$columnDesc,$isValidate,$columnSkin,$indexColumnSkin,$viewColumnSkin,$listColumnSkin,$indexShowNum,$listShowNum,$indexShowLen,$justContent,$viewLink)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listColumn</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="list" forward="" cacheParams="columnNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_COLUMN WHERE    COLUMNNAME LIKE '%$columnNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT * FROM TB_WSM_COLUMN WHERE    COLUMNNAME LIKE '%$columnNameSH%'
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/column/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_COLUMN WHERE COLUMNID=$checkColumnId
+		</sql><!--
+		<sql name="deletePrivilege"  isBatch="true">
+			 DELETE FROM TB_WSM_COLUMN_PRIVILEGE WHERE ROLEID=$checkColumnId
+		</sql>
+		<sql name="deleteGroup"  isBatch="true">
+			 DELETE FROM TB_WSM_GROUP_ROLE WHERE ROLEID=$checkColumnId
+		</sql>	
+		-->
+		<forward name="listAction">contoller.do?operation=listColumn</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_COLUMN WHERE COLUMNID=$columnId
+		</sql>
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.ISCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<sql name="listIndexColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listIndexColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.INDEXCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<sql name="listViewColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listViewColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.VIEWCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<sql name="listListColumnSkin" beanClass="com.mobilecn.themes.skin.SkinBean"
+			cacheName="listListColumnSkin" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_SKIN.* FROM TB_WSM_SKIN WHERE
+			     TB_WSM_SKIN.LISTCOLUMNSKIN=1 AND
+			     TB_WSM_SKIN.ISVALIDATE=1 AND
+			     TB_WSM_SKIN.THEMESID IN(
+			       SELECT TB_WSM_THEMES.THEMESID 
+			       FROM TB_WSM_THEMES
+			       WHERE TB_WSM_THEMES.ISVALIDATE=1
+			       )
+		]]></sql>
+		<forward name="modifyPage">jsp/portal/console/column/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/column/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_COLUMN SET 
+			PARENTCOLUMNID=$parentColumnId,
+			INFOTYPEID=$infoTypeId,
+			SYSID=$sysId,
+			COLUMNNAME=$columnName,
+			COLUMNCODE=$columnCode,
+			COLUMNLOADER=$columnLoader,
+			LOGO=$logo,
+			CONTENTLINK=$contentLink,
+			ISMORE=$isMore,
+			MORELINK=$moreLink,
+			ISASYNCLOAD=$isAsyncLoad,
+			ISDEFAULTLOAD=$isDefaultLoad,
+			COLUMNSKIN=$columnSkin,
+			INDEXCOLUMNSKIN=$indexColumnSkin,
+			VIEWCOLUMNSKIN=$viewColumnSkin,
+			LISTCOLUMNSKIN=$listColumnSkin,
+			COLUMNDESC=$columnDesc,
+			ISVALIDATE=$isValidate,
+			LISTSHOWNUM=$listShowNum,
+			INDEXSHOWNUM=$indexShowNum,
+			INDEXSHOWLEN=$indexShowLen,
+			JUSTCONTENT=$justContent,
+			VIEWLINK=$viewLink
+		 WHERE  COLUMNID=$columnId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listColumn</forward>
+	</operation>
+		
+	<!-- 为栏目指定可访问的角色  start-->
+	<operation name="toAddRoleForColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="view"  forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			  SELECT  TB_WSM_COLUMN.*  FROM TB_WSM_COLUMN  WHERE COLUMNID = $checkColumnId
+		</sql>
+		<sql name="roleOfColumn" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false"
+			cacheName="roleOfColumn" cacheScope="request">
+			  SELECT  TB_WSM_ROLE.*  FROM TB_WSM_ROLE WHERE TB_WSM_ROLE.ROLEID IN (SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_COLUMN,TB_WSM_ROLE  WHERE TB_WSM_ROLE_COLUMN.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_COLUMN.COLUMNID=$checkColumnId) ORDER BY TB_WSM_ROLE.ROLEID
+		</sql>
+		<sql name="canSelectRole" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false" 
+			cacheName="canSelectRole" cacheScope="request">
+			 SELECT  TB_WSM_ROLE.*  FROM  TB_WSM_ROLE,TB_WSM_COLUMN WHERE 
+				TB_WSM_COLUMN.COLUMNID=$checkColumnId AND 
+				TB_WSM_ROLE.SYSID =TB_WSM_COLUMN.SYSID AND 
+				TB_WSM_ROLE.ROLEID NOT IN(
+				                   SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_COLUMN,TB_WSM_ROLE  WHERE TB_WSM_ROLE_COLUMN.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_COLUMN.COLUMNID=$checkColumnId
+				 ) AND 
+				TB_WSM_ROLE.ISVALIDATE=1 
+				ORDER BY TB_WSM_ROLE.ROLEID 
+		</sql>
+		<forward name="viewPage">jsp/portal/console/column/assignRole.jsp</forward>
+	</operation>
+	
+	<operation name="doAddRoleForColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_ROLE_COLUMN WHERE  COLUMNID = $columnId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=addRoleForColumn</forward>
+	</operation>
+	<operation name="addRoleForColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_ROLE_COLUMN(COLUMNID,ROLEID) VALUES($columnId,$selectedRole)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listColumn]]></forward>
+	</operation>
+	<!-- 为栏目指定可访问的角色  end -->
+</root>

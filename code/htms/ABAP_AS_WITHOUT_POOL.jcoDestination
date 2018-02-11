@@ -1,0 +1,9 @@
+#for tests only !
+#Sat Jan 20 15:28:20 CST 2018
+jco.client.lang=zh
+jco.client.client=222
+jco.client.passwd=RFC_EOS
+jco.destination.expiration_time=50000
+jco.client.user=RFC_EOS
+jco.client.sysnr=00
+jco.client.ashost=192.168.0.225

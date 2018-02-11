@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<operation name="toAddOrderSyn" businessClass="com.zzy.htms.ordersyn.OrderSynBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.ordersyn.OrderSynBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+		<!--<sql name="userList" beanClass="com.zzy.htms.user.UserBean" cacheType="list" cacheName="userList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						 SELECT TB_WSM_USER.SALESNO  FROM TB_WSM_USER  ORDER BY DEPARTMENT DESC,ACCOUNT desc
+					]]></content>
+			</sql>
+		--></method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/custorder/orderSyn.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="toSyncSalesOrder" businessClass="com.zzy.htms.ordersyn.OrderSynBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.ordersyn.OrderSynBusiness"  invokeMethod="toSyncSalesOrder" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_ORDERSYN" caiidKey="synId" caiidName="synId" caiidVar="synId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_ORDERSYN ( synId, startTime, endTime,useTime,STARTDATE, ENDDATE, salesNo,creator,createTime,modifier,modifyTime) 
+				        VALUES($synId,$startTime,$endTime,$useTime,$startDate,$endDate,$salesNo,$userId,$endTime,$userId,$endTime) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustOrder]]></address>
+		</forward>
+	</operation>
+	
+	
+	<operation name="toSyncOrderUseOrderCode" businessClass="com.zzy.htms.ordersyn.OrderSynBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.ordersyn.OrderSynBusiness"  invokeMethod="toSyncOrderUseOrderCode" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_ORDERSYN" caiidKey="synId" caiidName="synId" caiidVar="synId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_ORDERSYN ( synId, startTime, endTime,useTime,STARTDATE, ENDDATE, salesNo,creator,createTime,modifier,modifyTime) 
+				        VALUES($synId,$startTime,$endTime,$useTime,$startDate,$endDate,$salesNo,$userId,$endTime,$userId,$endTime) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustOrder]]></address>
+		</forward>
+	</operation>
+</root>

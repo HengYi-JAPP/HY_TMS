@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!--把指定栏目分配给角色 -->
+	
+	
+		
+	<!-- 为栏目指定可访问的角色  start-->
+	<operation name="toAddRoleForSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="view"  forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelViewBean" cacheScope="request">
+			  SELECT  TB_WSM_CHANNEL.*  FROM TB_WSM_CHANNEL  WHERE CHANNELID = $checkChannelId
+		</sql>
+		<sql name="roleOfChannel" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false"
+			cacheName="roleOfChannel" cacheScope="request">
+			  SELECT  TB_WSM_ROLE.*  FROM TB_WSM_ROLE WHERE TB_WSM_ROLE.ROLEID IN (SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_CHANNEL,TB_WSM_ROLE  WHERE TB_WSM_ROLE_CHANNEL.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_CHANNEL.CHANNELID=$checkChannelId) ORDER BY TB_WSM_ROLE.ROLEID
+		</sql>
+		<sql name="canSelectRole" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false" 
+			cacheName="canSelectRole" cacheScope="request">
+			 SELECT  TB_WSM_ROLE.*  FROM  TB_WSM_ROLE,TB_WSM_CHANNEL WHERE 
+				TB_WSM_CHANNEL.CHANNELID=$checkChannelId AND 
+				TB_WSM_ROLE.SYSID =TB_WSM_CHANNEL.SYSID AND 
+				TB_WSM_ROLE.ROLEID NOT IN(
+				                   SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_CHANNEL,TB_WSM_ROLE  WHERE TB_WSM_ROLE_CHANNEL.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_CHANNEL.CHANNELID=$checkChannelId
+				 ) AND 
+				TB_WSM_ROLE.ISVALIDATE=1 
+				ORDER BY TB_WSM_ROLE.ROLEID 
+		</sql>
+		<forward name="viewPage"><![CDATA[jsp/portal/console/subconsole/channel/assignRole.jsp?sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<operation name="doAddRoleForSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_ROLE_CHANNEL WHERE  CHANNELID = $channelId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=addRoleForSubSystemChannel&sysId=$[sysId]]]></forward>
+	</operation>
+	<operation name="addRoleForSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_ROLE_CHANNEL(CHANNELID,ROLEID) VALUES($channelId,$selectedRole)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemChannel&sysId=$[sysId]]]></forward>
+	</operation>
+	<!-- 为栏目指定可访问的角色  end -->
+	
+	<!-- 为角色指定可访问的栏目  start -->
+	<operation name="toAssignChannelForRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.role.RoleBean"
+			cacheName="roleViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_ROLE WHERE ROLEID=$checkRoleId
+		</sql>
+		<sql name="channelCheckedList" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelCheckedList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_CHANNEL.* FROM TB_WSM_CHANNEL,TB_WSM_ROLE_CHANNEL WHERE TB_WSM_CHANNEL.SYSID=$sysId AND TB_WSM_CHANNEL.CHANNELID=TB_WSM_ROLE_CHANNEL.CHANNELID AND TB_WSM_ROLE_CHANNEL.ROLEID=$checkRoleId 
+		]]></sql>
+		<sql name="channelList" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_CHANNEL.* FROM TB_WSM_CHANNEL WHERE TB_WSM_CHANNEL.SYSID=$sysId AND TB_WSM_CHANNEL.CHANNELID NOT IN(SELECT CHANNELID FROM  TB_WSM_ROLE_CHANNEL WHERE TB_WSM_ROLE_CHANNEL.ROLEID=$checkRoleId)
+		]]></sql>
+		<forward name="viewPage"><![CDATA[jsp/privilege/subsystem/role/assignChannel.jsp?sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<operation name="assignChannelForRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="delete" >
+			 DELETE   FROM TB_WSM_ROLE_CHANNEL WHERE ROLEID=$checkRoleId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=executeAssignChannelForRole&sysId=$[sysId]]]></forward>
+	</operation>
+	<operation name="executeAssignChannelForRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >		
+		<sql name="insert" isBatch="true">
+		INSERT INTO TB_WSM_ROLE_CHANNEL (CHANNELID,ROLEID) VALUES($selectedChannel,$checkRoleId)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemRole&sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<!-- 为角色指定可访问的栏目  end -->
+	
+</root>

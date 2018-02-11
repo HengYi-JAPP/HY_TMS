@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="toAddSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="role_type_list" beanClass="com.zzy.htms.role.RoleBean"
+			cacheName="role_type_list" cacheScope="request" ><![CDATA[
+			 SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TYPECODE='roleType'
+		]]></sql>
+		<forward name="listPage">jsp/privilege/subsystem/role/add.jsp</forward>
+	</operation>
+	
+	<!-- 添加 -->	
+	<operation name="addSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidTable="TB_WSM_ROLE" caiidKey="ROLEID"  caiidName="TB_WSM_ROLE" caiidVar="roleId">
+		INSERT INTO TB_WSM_ROLE (ROLEID,ROLENAME,ROLEDESC,ISVALIDATE,SYSID，ROLETYPE)VALUES($roleId,$roleName,$roleDesc,$isValidate,$sysId,$roleType)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemRole&sysId=$[sysId]]]></forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="list" forward="" cacheParams="roleNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_ROLE WHERE SYSID=$sysId AND ROLENAME LIKE '%$roleNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.privilege.role.RoleBean"
+			cacheName="roleList" cacheScope="request" isPage="true" pageField="ROLEID"><![CDATA[
+			 SELECT * FROM TB_WSM_ROLE WHERE  SYSID=$sysId AND ROLENAME LIKE '%$roleNameSH%'
+		]]></sql>
+		<forward name="listPage">jsp/privilege/subsystem/role/list.jsp</forward>
+	</operation><!--
+	
+	<operation name="listSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="list" forward="" cacheParams="roleNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(TB_WSM_ROLE.*) AS total FROM TB_WSM_ROLE,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP,TB_WSM_USER WHERE 			
+			 SYSID=$sysId AND ROLENAME LIKE '%$roleNameSH%' AND 
+			 TB_WSM_ROLE.ROLEID = TB_WSM_GROUP_ROLE.ROLEID AND 
+			 TB_WSM_GROUP_ROLE.GROUPID = TB_WSM_USER_GROUP.GROUPID AND 
+			 TB_WSM_USER_GROUP.USERID = TB_WSM_USER.USERID AND 
+			 TB_WSM_USER.ACCOUNT = $account  
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.privilege.role.RoleBean"
+			cacheName="roleList" cacheScope="request" isPage="true" pageField="ROLEID"><![CDATA[
+			 SELECT TB_WSM_ROLE.* FROM TB_WSM_ROLE,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP,TB_WSM_USER WHERE  
+				SYSID=$sysId AND ROLENAME LIKE '%$roleNameSH%' AND 
+			 TB_WSM_ROLE.ROLEID = TB_WSM_GROUP_ROLE.ROLEID AND 
+			 TB_WSM_GROUP_ROLE.GROUPID = TB_WSM_USER_GROUP.GROUPID AND 
+			 TB_WSM_USER_GROUP.USERID = TB_WSM_USER.USERID AND 
+			 TB_WSM_USER.ACCOUNT = $account  
+		]]></sql>
+		<forward name="listPage">jsp/privilege/subsystem/role/list.jsp</forward>
+	</operation>
+
+	--><!-- 删除 -->
+	<operation name="deleteSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_ROLE WHERE ROLEID=$checkRoleId
+		</sql>
+		<sql name="deletePrivilege"  isBatch="true">
+			 DELETE FROM TB_WSM_ROLE_PRIVILEGE WHERE ROLEID=$checkRoleId
+		</sql>
+		<sql name="deleteGroup"  isBatch="true">
+			 DELETE FROM TB_WSM_GROUP_ROLE WHERE ROLEID=$checkRoleId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSubSystemRole</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.role.RoleBean"
+			cacheName="roleViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_ROLE WHERE ROLEID=$roleId
+		</sql>
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="role_type_list" beanClass="com.zzy.htms.role.RoleBean"
+			cacheName="role_type_list" cacheScope="request" ><![CDATA[
+			 SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TYPECODE='roleType'
+		]]></sql>
+		<forward name="modifyPage">jsp/privilege/subsystem/role/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/subsystem/role/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_ROLE SET 
+			ROLENAME=$roleName,
+			ROLEDESC=$roleDesc,
+			ROLETYPE=$roleType,
+			SYSID   =$sysId
+		 WHERE  ROLEID=$roleId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSubSystemRole</forward>
+	</operation>
+	<!-- 查询需要分配权限的角色，并进入分配权限角色，此处分配权限是指为角色指定可以访问的权限模块。注意：下面是从系统管理员的视角来分配的；如果以各个应用系统的管理员来说，应该与具体的应用系统做关联，该视角后期权限验证时或子系统验证时再实现 -->	
+	<operation name="toAssignPrivilegeForSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.role.RoleBean"
+			cacheName="roleViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_ROLE WHERE ROLEID=$checkRoleId
+		</sql>
+		<sql name="privilegeCheckedList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeCheckedList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_PRIVILEGE.* FROM TB_WSM_PRIVILEGE,TB_WSM_ROLE_PRIVILEGE WHERE TB_WSM_PRIVILEGE.PRIVID=TB_WSM_ROLE_PRIVILEGE.PRIVID AND TB_WSM_ROLE_PRIVILEGE.ROLEID=$checkRoleId AND TB_WSM_PRIVILEGE.ISVALIDATE=1
+		]]></sql>
+		<sql name="privilegeList" beanClass="com.mobilecn.privilege.privilege.PrivilegeBean"
+			cacheName="privilegeList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_PRIVILEGE WHERE SYSID=$sysId AND ISVALIDATE=1
+		]]></sql>
+		<forward name="viewPage">jsp/privilege/subsystem/role/assignPrivilege.jsp</forward>
+	</operation>
+	
+	<operation name="assignPrivilegeForSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="delete" >
+			 DELETE   FROM TB_WSM_ROLE_PRIVILEGE WHERE ROLEID=$roleId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=executeAssignPrivilegeForSubSystemRole</forward>
+	</operation>
+	<operation name="executeAssignPrivilegeForSubSystemRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >		
+		<sql name="insert" isBatch="true">
+		INSERT INTO TB_WSM_ROLE_PRIVILEGE (ROLEID,PRIVID)VALUES($roleId,$privId)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemRole</forward>
+	</operation>
+	
+	<!-- 用户end -->
+</root>

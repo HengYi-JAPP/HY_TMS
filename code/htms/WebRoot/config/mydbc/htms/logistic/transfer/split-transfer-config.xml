@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="toTransferSplit" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			
+			<sql name="TransferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="bean" cacheName="tranferViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE,
+					  TB_HTMS_CUSTORDER.CUSTOMERNAME,
+					  TB_HTMS_CUSTORDER.CUSTOMERCODE,
+					  TB_HTMS_CUSTORDER.saleMan,
+					  TB_HTMS_TRANSFER.createTime as approveAgreeTime,	
+					  TB_HTMS_SHIP.createTime as shipApplyTime,
+			          caddr.areaId,
+			          caddr.caddrDetail,
+			          caddr.caddrContactor,
+			          caddr.caddrTelephone
+			          from TB_HTMS_SHIP,TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			                where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			                AND TB_HTMS_SHIP.shipId=TB_HTMS_TRANSFER.Shipid
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+			<sql name="TRANSFERDETAIL" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" cacheType="list" cacheName="detailList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*,
+						       TB_HTMS_CUSTORDERDETAIL.meterialFactory,
+						       TB_HTMS_CUSTORDERDETAIL.codetailCertificateDesc,
+						       TB_HTMS_CUSTORDERDETAIL.appliableAmount,
+						       TB_HTMS_CUSTORDERDETAIL.appliedAmount,
+						       TB_HTMS_CUSTORDERDETAIL.freight,
+						       TB_HTMS_CUSTORDERDETAIL.unitPrice ,
+						       factory.factoryName,
+						       product.productname
+						       
+						  FROM TB_HTMS_TRANSFERDETAIL, TB_HTMS_CUSTORDERDETAIL 						  					  						  					  
+		                  left join TB_HTMS_FACTORY factory on factory.factoryId=TB_HTMS_CUSTORDERDETAIL.Factoryid
+		                  left join TB_HTMS_PRODUCT product on product.productId=TB_HTMS_CUSTORDERDETAIL.productid 
+						 WHERE TRANSID=$transId
+						 and TB_HTMS_CUSTORDERDETAIL.codetailId = TB_HTMS_TRANSFERDETAIL.codetailId
+						 order by transDetailId
+
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/transfer/split.jsp]]></address>
+		</forward>
+	</operation>
+	
+	
+	 <operation name="doTransferSplit" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="checkTransferSplitStatus" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="checkTransferSplitStatus" exeOrder="1" version="2.0">
+		</method>
+        <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listTransfer]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performTransferSplit]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 增加拆分后的调拨单 -->
+	<!-- 
+	1）插入增加载的调拨单，及调拨单明细；
+	2）更新原始调拨单明细的申请数据和包数;
+	3）生成承运商的运单，承运商不能为空。
+	
+	处理可以分为两类：
+	1、原有调拨单的数量更新，以及运单的生成处理；
+	2、新增调拨单的数据插入，以及运单的生成处理；
+	 -->
+	 <operation name="performTransferSplit" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness"  invokeMethod="list"   forward="" >
+			<!-- 更新原始调拨单申请吨数和包数 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER 
+				    SET 
+					    applyTonNum=$totalTon ,
+					    applyPackNum = $totalPack ,
+					    modifier=$userId,
+					    modifyTime=$modifyTime
+				    WHERE transId = $currentTransId
+					]]>
+			</sql>
+			<!-- 更新原始调拨单明细中申请吨数和包数 -->
+			<sql name="UPDATE_TRANS_DETAIL"  isBatch="true" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL  SET 
+						applyTonNum=$appliableTon ,
+					    applyPackNum = $appliablePack ,
+					    modifier=$userId,
+					    modifyTime=$modifyTime
+				    WHERE transDetailId = $currentTransDetailId
+					]]>
+			</sql>
+			
+			<!-- 更新更新原始调拨单对应的申请明细状态，为2分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =2,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE shipId = $currentShipId 
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=2,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $currentShipId 
+					]]>
+			</sql>
+			
+			<!-- 插入新的非默认的虚拟调拨单,isDefault=0 -->
+			<sql name="INSERTTRANSFER"  caiidTable="TB_HTMS_TRANSFER" caiidKey="transId" caiidName="transId" caiidVar="transId" >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSFER (transId, shipId,shipCode, logisticsId, corderId, caddrId,
+				        customerId, transferCode, applyTonNum, applyPackNum, actualTonNum, 
+				        actualPackNum, planFreight, actualFreight, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, transStatus, creator, createTime,isValidate,isDefault) 
+				        SELECT 
+				        $transId, shipId,shipCode, $logisticsId, corderId, caddrId,
+				        customerId, $transferCode, $splitTotalTon, $splitTotalPack, 0, 
+				        0, 0, 0, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, 0, $userId, $createTime,1,0
+				        FROM TB_HTMS_SHIP WHERE TB_HTMS_SHIP.shipId=$currentShipId
+					]]>
+			</sql>
+			<!-- 插入新的非默认的调拨单明细，可能批量 -->
+			<sql name="INSERTRANSFERDETAIL" isBatch="true" caiidTable="TB_HTMS_TRANSFERDETAIL" caiidKey="transDetailId" caiidName="transDetailId" caiidVar="transDetailId" >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSFERDETAIL (transDetailId, shipDetailId, itemCode,
+				        transId, shipId,codetailId, caddrId, productId, applyTonNum, applyPackNum, 
+				        fetchTonNum, fetchPackNum, planFreight, actulFreight, 
+				        freightUnit, transDetailNotice, transDetailStatus, creator, 
+				        createTime, isValidate,factoryId) 
+				        SELECT 
+				        $transDetailId, shipDetailId, itemCode,
+				        $transId, shipId,codetailId, caddrId, productId, $splitTonNum, $splitPackNum, 
+				        0, 0, 0, 0, 
+				        freightUnit, $splitNotice, 0, $userId, 
+				        $createTime, 1 , factoryId
+				        FROM TB_HTMS_TRANSFERDETAIL
+				        WHERE TB_HTMS_TRANSFERDETAIL.transDetailId=$currentTransDetailId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+			<forward name="listAction" >contoller.do?operation=listTransfer</forward>
+	</operation>
+	
+	
+	
+     <operation name="cancelTransferTransport" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="checkTransferCancelStatus" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="checkTransferCancelStatus" exeOrder="1" version="2.0">
+		</method>
+	    <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listTransfer]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performCancelTransferTransport]]></address>
+		</forward>
+	</operation>
+	
+	
+	<!-- 删除分拆的调拨单 -->
+	<!-- 删除之前，先从SAP中删除调拨单 -->
+	 <operation name="performCancelTransferTransport" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list" afterInvoke="deleteSapTransfer"  forward="" >
+	 	<!-- 查出要删除的当前调拨单 -->
+		<sql name="transferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean" >
+			<![CDATA[
+				select  TB_HTMS_TRANSFER.*,
+				  TB_HTMS_CUSTORDER.CORDERCODE
+		         from TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+		         where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+		          AND TB_HTMS_TRANSFER.TRANSID=$transId
+				]]>
+		</sql>
+		<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+		<forward name="listAction" >contoller.do?operation=doCancelTransferTransport</forward>
+	 </operation>
+	 
+	 
+	<!-- 调拨单承取消运单分配 -->
+	<operation name="doCancelTransferTransport" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness"  invokeMethod="list"   forward="" >
+			<!-- 取消调拨单对应的运单明细 -->
+			<sql name="INSERT_SPLIT_TRANSPORTDIATLE" ><![CDATA[
+						DELETE FROM TB_HTMS_TRANSPORTDETAIL 
+						WHERE transportId=(
+							SELECT transportId FROM TB_HTMS_TRANSPORT WHERE transId=$transId
+						)
+						AND transDetailStatus=0
+						
+					]]>
+			</sql>
+			<!-- 取消调拨单对应的运单 -->
+			<sql name="INSERT_SPLIT_TRANSPORT">
+					<![CDATA[
+						DELETE FROM  TB_HTMS_TRANSPORT
+						WHERE transId =$transId 
+						AND transportStatus = 0
+					]]>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET
+					 transStatus=0,
+					 modifier=$userId,
+					 modifyTime=$modifyTime
+				    WHERE transId =$transId
+					]]>
+			</sql>
+			<!-- 更新调拨单明细状态-->
+			<sql name="UPDATE_DETAIL" >
+					<![CDATA[
+						UPDATE TB_HTMS_TRANSFERDETAIL SET
+							transDetailStatus=0,
+				    		modifier=$userId,
+				    		modifyTime=$modifyTime
+				    	WHERE transId =$transId 
+					]]>
+			</sql>
+			<sql name="UPDATE_TRANSER_PRICE" >
+					<![CDATA[
+					delete from  TB_HTMS_TRANSFER_PRICE  WHERE transId =$transId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=doCancelTransferTransportEndCancel</forward>
+	</operation>
+	
+	
+	<!-- 调拨单承取消运单分配 -->
+	<operation name="doCancelTransferTransportEndCancel" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness"  invokeMethod="list"   forward="" >
+			<!-- 当前申请单对应的调拨单只有一个，而且是未分配时，则可以更新申请单状态为审批完成状态，允许撤消 -->
+			<!-- 通过计算同一申请号原始状态的调拨单数目，来决定后面是否更改申请单的状态 -->
+			<sql name="defaultTransferNum" refCols="defaultTransferNum" refNames="defaultTransferNum">
+					<![CDATA[
+					SELECT COUNT(*) AS defaultTransferNum FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId AND  transStatus=0
+					]]>
+			</sql>
+			<sql name="transferCount" refCols="transferCount" refNames="transferCount">
+					<![CDATA[
+					SELECT COUNT(*) AS transferCount FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId 
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请明细状态，为1分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE shipId = $transShipId and '1'=$defaultTransferNum AND '1'=$transferCount
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $transShipId  and '1'=$defaultTransferNum AND '1'=$transferCount
+					]]>
+			</sql>
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSERCODE" test="$[sapTransferCode]==''">
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+	</operation>
+	
+	
+	
+	
+	
+	 <operation name="deleteSplitTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="checkTransferDeleteStatus" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="checkTransferDeleteStatus" exeOrder="1" version="2.0">
+		</method>
+        <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listTransfer]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performDeleteSplitTransfer]]></address>
+		</forward>
+	</operation>
+	 
+	<!-- 删除分拆的调拨单 -->
+	<!-- 
+	1)把被删除的调拨单的数目加回到初始调拨单中去
+	2)删除对应的调拨单、调拨单明细
+	 -->
+	<operation name="performDeleteSplitTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness"  invokeMethod="list"  forward="" >
+			<!--查出补删除调拨单的吨数和包数 -->
+			<sql name="selectTransferNum" refCols="applyTonNum,applyPackNum" refNames="refApplyTonNum,refApplyPackNum">
+					<![CDATA[
+					SELECT applyTonNum,applyPackNum FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.transId = $currentTransId
+					]]>
+			</sql>
+			<sql name="selectDetailNum" refCols="APPLYTONNUM,APPLYPACKNUM,TRANSDETAILID,ITEMCODE" refNames="refDetailTonNum,refDetailPackNum,refDetailId,refItemCode">
+					<![CDATA[
+					SELECT APPLYTONNUM,APPLYPACKNUM,TRANSDETAILID,ITEMCODE 
+					FROM TB_HTMS_TRANSFERDETAIL  
+				    WHERE  transId = $currentTransId
+					]]>
+			</sql>
+			<sql name="selectDefault" refCols="transId" refNames="refDefaultTransId">
+					<![CDATA[
+					SELECT transId FROM TB_HTMS_TRANSFER  WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId AND ISDEFAULT=1
+					]]>
+			</sql>
+			<!-- 更新原始调拨单申请吨数和包数 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER SET 
+				    applyTonNum=to_number(applyTonNum)+to_number($refApplyTonNum),
+				    applyPackNum =to_number(applyPackNum)+to_number($refApplyPackNum) ,
+				    modifier=$userId,
+				    modifyTime=$modifyTime
+				    WHERE SHIPID = $transShipId AND ISDEFAULT=1
+					]]>
+			</sql>
+			<!-- 更新原始调拨单明细中申请吨数和包数 -->
+			<sql name="UPDATE_DETAIL" isBatch="true">
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL SET 				   
+				    applyTonNum=to_number(applyTonNum)+to_number($refDetailTonNum),
+				    applyPackNum = to_number(applyPackNum)+to_number($refDetailPackNum) ,
+				    modifier=$userId,
+				    modifyTime=$modifyTime
+				    WHERE 
+				    TB_HTMS_TRANSFERDETAIL.transId=$refDefaultTransId
+				    AND ITEMCODE=$refItemCode
+					]]>
+			</sql>
+			<!-- 删除调拨单明细-->
+			<sql name="UPDATE_DETAIL" >
+					<![CDATA[
+						DELETE FROM  TB_HTMS_TRANSFERDETAIL 
+				    	WHERE transId = $currentTransId
+					]]>
+			</sql>
+			<!-- 删除调拨单-->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					DELETE FROM TB_HTMS_TRANSFER 
+				    WHERE transId =$currentTransId
+					]]>
+			</sql>
+			
+			
+			<!-- 当前申请单对应的调拨单只有一个，而且是未分配时，则可以更新申请单状态为审批完成状态，允许撤消 -->
+			<!-- 通过计算同一申请号原始状态的调拨单数目，来决定后面是否更改申请单的状态 -->
+			<sql name="defaultTransferNum" refCols="defaultTransferNum" refNames="defaultTransferNum">
+					<![CDATA[
+					SELECT COUNT(*) AS defaultTransferNum FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId AND  transStatus=0
+					]]>
+			</sql>
+			<sql name="transferCount" refCols="transferCount" refNames="transferCount">
+					<![CDATA[
+					SELECT COUNT(*) AS transferCount FROM TB_HTMS_TRANSFER 
+				    WHERE TB_HTMS_TRANSFER.SHIPID = $transShipId 
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请明细状态，为1分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE shipId = $transShipId and '1'=$defaultTransferNum AND '1'=$transferCount
+					]]>
+			</sql>
+			<!-- 更新更新原始调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				     WHERE shipId = $transShipId  and '1'=$defaultTransferNum AND '1'=$transferCount
+					]]>
+			</sql>
+			
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+	</operation>
+	
+	
+	
+	
+    <operation name="doTransferAssign" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"   forward="">
+		<method name="checkTransferAssignStatus" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="checkTransferAssignStatus" exeOrder="1" version="2.0">
+		</method>
+        <forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'!='']]></condition>
+			<address><![CDATA[contoller.do?operation=listTransfer]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA['$[INVOKE_MESSAGE]'=='']]></condition>
+			<address><![CDATA[contoller.do?operation=performTransferAssign]]></address>
+		</forward>
+	</operation>
+	
+	<!-- 分配调拨单到承运商 -->
+	<!-- 
+	1）更新调拨单及明细状态；
+	2）更新发货申请及明细状态；
+	3）插入运单及明细。
+	 -->
+	 <operation name="performTransferAssign" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list"  loadCacheForm="splitForm"  afterInvoke="createSapTransfer"  forward="" >
+	 <!-- 查出调拨单及订单信息，创建SAP上的调拨单 -->
+			<sql name="transferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean"  >
+					<![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE,
+			          caddr.areaId,
+			          caddr.caddrDetail,
+			          caddr.caddrContactor,
+			          caddr.caddrTelephone
+			         from TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			         where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]>
+			</sql>
+			<sql name="detailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" >
+					<![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*
+						  FROM TB_HTMS_TRANSFERDETAIL
+						 WHERE TRANSID=$transId
+						 order by transDetailId
+					]]>
+			</sql>
+			<sql name="INSERT" caiidTable="TB_HTMS_TRANSFER_PRICE" caiidKey="transferPriceId" caiidName="transferPriceId" caiidVar="transferPriceId"  isEscapeQuotation="true"  isEscape="false" escapeQuotationVars="createTime,modifyTime" >
+				<![CDATA[
+				  <if test="$[customPrice]==1">
+					INSERT INTO TB_HTMS_TRANSFER_PRICE (priceId, transId,priceType, freightModel,customerPrice,carrierPrice,customerOnePrice,carrierOnePrice,
+			        priceUnit,priceNotice,creator,createTime,modifier,modifyTime,isValidate) 
+			        VALUES($transferPriceId,'$transId','$priceType', '$freightModel', '$customerPrice',  '$carrierPrice','$customerOnePrice','$carrierOnePrice',
+			        '$priceUnit','$priceNotice','$userId','$createTime','$userId','$modifyTime',1) 
+			      </if>  
+				]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+			<forward name="updateSapTransferCode" ><![CDATA[contoller.do?operation=doTransferAssignAfterSapCreated]]></forward>
+	 </operation>
+
+	<operation name="doTransferAssignAfterSapCreated" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list" afterInvoke="checkAssign"  loadCacheForm="splitForm"   forward="" >
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						transStatus=1,
+						modifier=$userId,
+					    modifyTime=$modifyTime
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<!-- 更新调拨单明细状态 -->
+			<sql name="UPDATE_DETAIL" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFERDETAIL  SET 
+						transDetailStatus=1,
+				    	modifier=$userId,
+				    	modifyTime=$modifyTime
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			
+			
+			<!-- 更新调拨单对应的申请明细状态，为2分拆或分派 -->
+			<sql name="UPDATESHIPDETAIL" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =2,
+							modifier=$userId,
+							modifyTime=$modifyTime 
+						WHERE 
+							shipId = $currentShipId 
+					]]>
+			</sql>
+			<!-- 更新调拨单对应的申请状态，为2分拆或分派 -->
+			<sql name="UPDATESHIP" >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=2,
+							modifier=$userId,
+							modifyTime=$modifyTime
+				    	WHERE 
+				    		shipId = $currentShipId 
+					]]>
+			</sql>
+			
+			<!-- 插入新分拆调拨单的运单 -->
+			<sql name="INSERT_SPLIT_TRANSPORT"  caiidTable="TB_HTMS_TRANSPORT" caiidKey="transportId" caiidName="transportId" caiidVar="assignTransportId" >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSPORT ( transportId, carrierId, transId,corderId, caddrId,
+				        transportCode, applyTonNum, applyPackNum, 
+				        actaulTonNum, actaulPackNum, planFreight, actaulFreight, 
+				        freightUnit, transportStatus, creator, createTime, isValidate,transportNotice,isMerger,mergerGroup) 
+				        
+				        SELECT $assignTransportId,$currentCarrierId,transId,corderId,caddrId,
+				        $transportCode,applyTonNum,applyPackNum,
+				        0,0,0,0,
+				        freightUnit,0,$userId,$createTime,1,$transportNotice,isMerger,mergerGroup
+				        FROM TB_HTMS_TRANSFER
+				        WHERE TB_HTMS_TRANSFER.transId=$transId
+					]]>
+			</sql>
+			<!-- 插入新分拆调拨单的运单明细 -->
+			<sql name="INSERT_SPLIT_TRANSPORTDIATLE" isBatch="true" caiidTable="TB_HTMS_TRANSPORTDETAIL" caiidKey="sportDetailId" caiidName="sportDetailId" caiidVar="sportDetailId"  >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSPORTDETAIL (sportDetailId, transDetailId, 
+				        transportId, transferId, shipDetailId, codetailId, shipId, 
+				        caddrId, productId,factoryId,itemCode, applyTonNum, applyPackNum, fetchTonNum, 
+				        fetchPackNum, planFreight, actulFreight, freightUnit, 
+				        transDetailNotice, transDetailStatus, creator, createTime,isValidate) 
+				        
+				        SELECT $sportDetailId,transDetailId,
+				        $assignTransportId,transId,shipDetailId,codetailId, shipId,
+				        caddrId,productId,factoryId,itemCode,applyTonNum,applyPackNum,0,
+				        0,0,0,freightUnit,
+				        $transDetailNotice,0,$userId,$createTime,1
+				        FROM TB_HTMS_TRANSFERDETAIL
+				        WHERE TB_HTMS_TRANSFERDETAIL.transDetailId=$currentTransDetailId
+					]]>
+			</sql>
+			<sql name="countTransportById"  refCols="transIdCountNum" refNames="refTransIdCountNum" >
+					<![CDATA[
+						select transId,count(transId) as transIdCountNum from  TB_HTMS_TRANSPORT 
+						where transId = $transId  Group By transId
+					]]>
+			</sql>
+			<!-- 如果分配有重复的记录，做特殊处理，让此处报错，否则可能生成两个调拨单数据，利用事物做回滚，回滚后进入到此afterInvoke方法删除之前创建的调拨单 -->
+			<sql name="deleteTransferDetailById" >
+					<![CDATA[
+					    <if test="$[refTransIdCountNum]!='1'">
+						    delete ssss111  from TB_HTMS1_TRANSPORTDETAIL111
+						</if>
+					]]>
+			</sql>
+			<sql name="deleteTransferById"  >
+					<![CDATA[
+					    <if test="$[refTransIdCountNum]!='1'">
+						    delete from TB_HTMS_TRANSPORT where transportId =  $assignTransportId
+						</if>
+					]]>
+			</sql>
+			<!-- 查出调拨单及订单信息，创建SAP上的调拨单 -->
+			<!--<sql name="transferBean" beanClass="com.zzy.htms.logistic.transfer.TransferBean" >
+					<![CDATA[
+					select  TB_HTMS_TRANSFER.*,
+					  TB_HTMS_CUSTORDER.CORDERCODE,
+			          caddr.areaId,
+			          caddr.caddrDetail,
+			          caddr.caddrContactor,
+			          caddr.caddrTelephone
+			         from TB_HTMS_CUSTORDER ,TB_HTMS_TRANSFER
+			          left join TB_HTMS_CUSTOMERADDR caddr on caddr.caddrId=TB_HTMS_TRANSFER.caddrId
+			         where TB_HTMS_TRANSFER.CORDERID=TB_HTMS_CUSTORDER.CORDERID  
+			          AND TB_HTMS_TRANSFER.TRANSID=$transId
+					]]>
+			</sql>
+			<sql name="detailList" beanClass="com.zzy.htms.logistic.transferdetail.TransferDetailBean" >
+					<![CDATA[
+						SELECT TB_HTMS_TRANSFERDETAIL.*
+						  FROM TB_HTMS_TRANSFERDETAIL
+						 WHERE TRANSID=$transId
+						 order by transDetailId
+					]]>
+			</sql>
+			-->
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSERCODE" test="$[sapTransferCode]!=''">
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+			<!--<forward name="updateSapTransferCode" ><![CDATA[contoller.do?operation=updateSapTransferCode&transId=$[transId]&sapTransferCode=$[sapTransferCode]]]></forward>
+	--></operation>
+	
+	<operation name="updateSapTransferCode" businessClass="com.zzy.htms.logistic.transfer.TransferSplitBusiness" invokeMethod="list" forward="" >
+			<!-- 更新调拨单状态 -->
+			<sql name="UPDATE_TRANSER" >
+					<![CDATA[
+					UPDATE TB_HTMS_TRANSFER  SET 
+						SAPTRANSCODE=$sapTransferCode
+				    WHERE 
+				    	transId = $transId
+					]]>
+			</sql>
+			<forward name="listPage" >contoller.do?operation=listTransfer</forward>
+	</operation>
+	
+	<!-- 物流跟踪详情 -->
+	<operation name="trackTransfer" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0"  forward="">
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="viewTrack" exeOrder="" version="2.0">
+			<sql name="VIEW_TRACK_TRANSFER"  beanClass="com.zzy.htms.logistic.transfer.TransferBean" cacheType="bean" cacheName="trackTransferBean" cacheScope="request" version="2.0">
+					<content><![CDATA[
+					SELECT TB_HTMS_TRANSFER.TRANSID, TB_HTMS_TRANSFER.saptranscode,TB_HTMS_SHIP.CREATETIME AS shipApplyTime,TB_HTMS_TRANSFER.CREATETIME AS approveAgreeTime,
+		               TB_HTMS_SENDLOCATION.PROVINCE,TB_HTMS_SENDLOCATION.CITY,TB_HTMS_SENDLOCATION.DISTRICT,
+		               TB_HTMS_SENDLOCATION.createTime,TB_HTMS_SENDLOCATION.modifyTime
+		               FROM TB_HTMS_SHIP
+				       LEFT JOIN TB_HTMS_TRANSFER 
+				       LEFT JOIN TB_HTMS_SENDLOCATION ON TB_HTMS_SENDLOCATION.TRANSID = TB_HTMS_TRANSFER.TRANSID
+		               ON TB_HTMS_TRANSFER.SHIPID = TB_HTMS_SHIP.SHIPID
+		               WHERE  TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+			<sql name="VIEW_TRACK_TRANSPORT"  beanClass="com.zzy.htms.logistic.transport.TransportBean" cacheType="bean" cacheName="trackTransportBean" cacheScope="request" version="2.0">
+					<content><![CDATA[
+					SELECT  TB_HTMS_TRANSPORT.CREATETIME AS assignTime,TB_HTMS_SEND.SENDSTATUS,TB_HTMS_TRANSPORT.TRANSPORTSTATUS,TB_HTMS_VEHICLE.VEHICLENO
+		           FROM TB_HTMS_TRANSFER
+		               LEFT JOIN TB_HTMS_TRANSPORT
+		               LEFT JOIN TB_HTMS_TRANSPORTSEND 
+		               LEFT JOIN TB_HTMS_SEND 
+		               LEFT JOIN TB_HTMS_VEHICLE ON TB_HTMS_SEND.VEHICLEID = TB_HTMS_VEHICLE.VEHICLEID
+		               ON TB_HTMS_TRANSPORTSEND.SENDID = TB_HTMS_SEND.SENDID
+		               ON TB_HTMS_TRANSPORT.TRANSPORTID = TB_HTMS_TRANSPORTSEND.TRANSPORTID
+		               ON TB_HTMS_TRANSFER.TRANSID = TB_HTMS_TRANSPORT.TRANSID
+		             WHERE TB_HTMS_TRANSFER.TRANSID=$transId
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/transfer/trackTransfer.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="getLocation" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness" version="2.0">
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.transfer.TransferBusiness"  invokeMethod="getLocation" exeOrder="" version="2.0">
+			<sql name="SELECTLOCATION"  beanClass="com.zzy.htms.location.SendLocation" cacheType="list" cacheName="locationBean" cacheScope="request" version="2.0">
+					<content><![CDATA[
+					 SELECT * FROM TB_HTMS_SENDLOCATION WHERE TB_HTMS_SENDLOCATION.TRANSID=$transId
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+</root>

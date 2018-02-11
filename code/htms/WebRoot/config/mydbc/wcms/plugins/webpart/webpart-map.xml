@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.webpart.WebPartBean">
+		<map property="infoId" javaType="java.lang.String" column="INFOID" colType=""/>
+		<map property="webName" javaType="java.lang.String" column="WEBNAME" colType=""/>
+		<map property="webContent" javaType="java.lang.String" column="WEBCONTENT" colType=""/>
+		<map property="webDesc" javaType="java.lang.String" column="WEBDESC" colType=""/>
+		<map property="creator" javaType="java.lang.String" column="CREATOR" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="modifier" javaType="java.lang.String" column="MODIFIER" colType=""/>
+		<map property="modifyTime" javaType="java.lang.String" column="MODIFYTIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

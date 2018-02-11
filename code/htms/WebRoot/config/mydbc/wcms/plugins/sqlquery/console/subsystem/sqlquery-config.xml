@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toAddSubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="listDataSource" beanClass="com.mobilecn.common.datasource.DatasourceBean"
+			cacheName="datasourceList" cacheScope="request" ><![CDATA[
+			    SELECT TB_DATASOURCE.*  FROM TB_DATASOURCE WHERE ISVALIDATE=1 ORDER BY TB_DATASOURCE.DBSID 
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/portal/console/plugins/sqlquery/subsystem/query/add.jsp]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addSubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="add"  forward="" >
+		
+		<sql name="insert" caiidName="TB_WSM_INFO_COLUMN" caiidVar="sqlQueryColumnInfoId">
+		INSERT INTO TB_WSM_INFO_SQLQUERY (QUERYID,DBSID,QUERYNAME,INDEXSQL,LISTSQL,VIEWSQL,SHOWSTYLE,SHOWNUM,ISVALIDATE,ISSHOWTITLE,SHOWLENGTH,REPLACESTRING,TITLEROWNUM,TITLECOLNUM,QUERYDESC,QUERYDETAILPAGE)
+		VALUES($sqlQueryColumnInfoId,$dbsId,$queryName,$indexSQL,$listSQL,$viewSQL,$showStyle,$showNum,$isValidate,$isShowTitle,$showLength,$replaceString,$titleRowNum,$titleColNum,$queryDesc,$queryDetailPage)
+		</sql>
+		<sql name="insert" >
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($sqlQueryColumnInfoId,$columnId,0,0,0,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemSQLQuery</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="list" forward="" cacheParams="columnIdSH,sqlqueryNameSH,curpage" cacheScopes="page,page,session">
+		
+		
+		<sql name="count">
+			 SELECT COUNT(TB_WSM_INFO_SQLQUERY.QUERYID) AS total 
+			FROM TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+			WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID AND TB_WSM_INFO_SQLQUERY.QUERYNAME LIKE '%$sqlqueryNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean"
+			cacheName="sqlqueryList" cacheScope="request" isPage="true" pageField="QUERYID"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY.* 
+				FROM TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID AND TB_WSM_INFO_SQLQUERY.QUERYNAME LIKE '%$sqlqueryNameSH%' 
+				ORDER BY TB_WSM_INFO_SQLQUERY.QUERYID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/sqlquery/subsystem/query/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY WHERE QUERYID=$checkQueryId
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE INFOID=$checkQueryId
+		</sql>	
+		<sql name="deleteList" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY_LIST WHERE QUERYID=$checkQueryId
+		</sql>	
+		<sql name="deleteParams" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY_PARAMS WHERE QUERYID=$checkQueryId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=listSubSystemSQLQuery</forward>
+	</operation>
+	
+	<!--sqlquery实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="toViewSubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="view" forward="">
+		<sql name="listDataSource" beanClass="com.mobilecn.common.datasource.DatasourceBean"
+			cacheName="datasourceList" cacheScope="request" ><![CDATA[
+			    SELECT TB_DATASOURCE.*  FROM TB_DATASOURCE WHERE ISVALIDATE=1 ORDER BY TB_DATASOURCE.DBSID 
+		]]></sql>
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT TB_WSM_COLUMN.*  FROM TB_WSM_COLUMN,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_COLUMN.COLUMNID=TB_WSM_COLUMN.COLUMNID AND TB_WSM_INFO_COLUMN.INFOID=$queryId
+		</sql>
+		<forward name="modifyPage"><![CDATA[contoller.do?operation=viewSubSystemSQLQuery]]></forward>
+		<forward name="viewPage"><![CDATA[contoller.do?operation=viewSubSystemSQLQuery]]></forward>
+	</operation>
+	<operation name="viewSubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean"
+			cacheName="sqlqueryViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SQLQUERY WHERE   QUERYID=$queryId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/sqlquery/subsystem/query/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/sqlquery/subsystem/query/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemSQLQuery" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_SQLQUERY SET 
+			QUERYNAME=$queryName,
+			QUERYDESC=$queryDesc,
+			INDEXSQL=$indexSQL,
+			LISTSQL=$listSQL,
+			VIEWSQL=$viewSQL,
+			QUERYDETAILPAGE=$queryDetailPage,
+			SHOWSTYLE=$showStyle,
+			SHOWNUM=$showNum,
+			ISVALIDATE=$isValidate,
+			ISSHOWTITLE=$isShowTitle,
+			SHOWLENGTH=$showLength,
+			REPLACESTRING=$replaceString,
+			TITLEROWNUM=$titleRowNum,
+			TITLECOLNUM=$titleColNum
+		 WHERE  QUERYID=$queryId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemSQLQuery]]></forward>
+	</operation>
+</root>

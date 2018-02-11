@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.layout.LayoutBean">
+		<map property="layoutId" javaType="java.lang.String" column="LAYOUTID" colType=""/>
+		<map property="channelId" javaType="java.lang.String" column="CHANNELID" colType=""/>
+		<map property="layoutName" javaType="java.lang.String" column="LAYOUTNAME" colType=""/>
+		<map property="layoutTempl" javaType="java.lang.String" column="LAYOUTTEMPL" colType=""/>
+		<map property="layoutLogo" javaType="java.lang.String" column="LAYOUTLOGO" colType=""/>
+		<map property="layoutSelectedLogo" javaType="java.lang.String" column="LAYOUTSELECTEDLOGO" colType=""/>
+		<map property="layoutDesc" javaType="java.lang.String" column="LAYOUTDESC" colType=""/>
+		<map property="isValidate" javaType="int" column="ISVALIDATE" colType=""/>
+		<map property="defaultOrder" javaType="int" column="DEFAULTORDER" colType=""/>
+		<map property="defaultSelect" javaType="int" column="DEFAULTSELECT" colType=""/>
+		<map property="defaultShow" javaType="int" column="DEFAULTSHOW" colType=""/>
+		<map property="isSelected" javaType="int" column="ISSELECTED" colType=""/>
+		<map property="isShow" javaType="int" column="ISSHOW" colType=""/>
+		<map property="showOrder" javaType="int" column="SHOWORDER" colType=""/>
+		<map property="isSystem" javaType="int" column="ISSYSTEM" colType=""/>
+		<map property="userDefine" javaType="java.lang.String" column="USERDEFINE" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		
+	</bean>
+</root>

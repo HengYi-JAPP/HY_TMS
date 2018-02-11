@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.privilege.role.RoleBean">
+		<map property="roleId" javaType="java.lang.String" column="ROLEID" colType=""/>
+		<map property="roleName" javaType="java.lang.String" column="ROLENAME" colType=""/>
+		<map property="roleDesc" javaType="java.lang.String" column="ROLEDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="isDefault" javaType="java.lang.String" column="ISDEFAULT" colType=""/>
+		<map property="defaultId" javaType="java.lang.String" column="DEFAULTID" colType=""/>
+	</bean>
+</root>

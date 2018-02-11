@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' ORDER BY SHOWORDER
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/subconsole/channel/add.jsp</forward>
+	</operation>
+	<operation name="addSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_CHANNEL" caiidKey="CHANNELID"  caiidName="TB_WSM_CHANNEL" caiidVar="newChannelId">
+		INSERT INTO TB_WSM_CHANNEL (CHANNELID,SYSID,CHANNELNAME,CHANNELURL,SELECTEDCLASS,DEFAULTCLASS,CHANNELDESC,LOADSTYLE,ISVALIDATE,DEFAULTORDER,DEFAULTSHOW,DEFAULTSELECT,BEFOREICON,AFTERICON,SHOWHEIGHT)
+		VALUES($newChannelId,$sysId,$channelName,$channelUrl,$selectedClass,$defaultClass,$channelDesc,$loadStyle,$isValidate,$defaultOrder,$defaultShow,$defaultSelect,$beforeIcon,$afterIcon,$showHeight)
+		</sql>
+		<sql name="insert"  caiidTable="TB_WSM_LAYOUT" caiidKey="LAYOUTID"  caiidName="TB_WSM_LAYOUT" caiidVar="newLayoutId">
+		INSERT INTO TB_WSM_LAYOUT (LAYOUTID,CHANNELID,LAYOUTNAME,LAYOUTTEMPL,LAYOUTDESC,ISVALIDATE,DEFAULTORDER,DEFAULTSELECT,DEFAULTSHOW)
+		VALUES($newLayoutId,$newChannelId,$channelName,' ',$channelDesc,1,1,1,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemChannel</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="list" forward="" cacheParams="channelNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_CHANNEL WHERE    SYSID=$sysId AND CHANNELNAME LIKE '%$channelNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelList" cacheScope="request" isPage="true" pageField="ROLEID"><![CDATA[
+			    SELECT * FROM TB_WSM_CHANNEL WHERE    SYSID=$sysId AND  CHANNELNAME LIKE '%$channelNameSH%'
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/subconsole/channel/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteUnitColumn" isBatch="true">
+			DELETE FROM tb_wsm_unit_column WHERE UNITID  IN(SELECT UNITID FROM tb_wsm_unit,TB_WSM_LAYOUT WHERE tb_wsm_unit.LAYOUTID=TB_WSM_LAYOUT.LAYOUTID AND CHANNELID=$checkChannelId)
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM tb_wsm_unit WHERE LAYOUTID IN(SELECT LAYOUTID FROM TB_WSM_LAYOUT WHERE CHANNELID=$checkChannelId)
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LAYOUT WHERE CHANNELID=$checkChannelId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_CHANNEL_COLUMN WHERE CHANNELID=$checkChannelId
+		</sql>
+		<sql name="deleteUserChannel"  isBatch="true">
+			 DELETE FROM tb_wsm_user_channel WHERE CHANNELID=$checkChannelId
+		</sql>
+		<sql name="deleteRoleChannel"  isBatch="true">
+			 DELETE FROM tb_wsm_role_channel WHERE  CHANNELID=$checkChannelId
+		</sql>	
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_CHANNEL WHERE CHANNELID=$checkChannelId
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemChannel&sysId=$[sysId]]]></forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>		
+		<forward name="modifyPage">jsp/portal/console/subconsole/channel/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/subconsole/channel/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_CHANNEL SET 
+			SYSID=$sysId,
+			CHANNELNAME=$channelName,
+			CHANNELURL=$channelUrl,
+			SELECTEDCLASS=$selectedClass,
+			DEFAULTCLASS=$defaultClass,
+			CHANNELDESC=$channelDesc,
+			LOADSTYLE=$loadStyle,
+			ISVALIDATE=$isValidate,
+			DEFAULTORDER=$defaultOrder,
+			DEFAULTSHOW=$defaultShow,
+			DEFAULTSELECT=$defaultSelect,
+			BEFOREICON=$beforeIcon,
+			AFTERICON=$afterIcon,
+			SHOWHEIGHT=$showHeight
+		 WHERE  CHANNELID=$channelId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSubSystemChannel</forward>
+	</operation>
+	
+	<!-- 为频道指定可访问的角色  start-->
+	<operation name="toAddRoleForSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="view"  forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelViewBean" cacheScope="request">
+			  SELECT  TB_WSM_CHANNEL.*  FROM TB_WSM_CHANNEL  WHERE CHANNELID = $checkChannelId
+		</sql>
+		<sql name="roleOfChannel" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false"
+			cacheName="roleOfChannel" cacheScope="request">
+			  SELECT  TB_WSM_ROLE.*  FROM TB_WSM_ROLE WHERE TB_WSM_ROLE.ROLEID IN (SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_CHANNEL,TB_WSM_ROLE  WHERE TB_WSM_ROLE_CHANNEL.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_CHANNEL.CHANNELID=$checkChannelId) ORDER BY TB_WSM_ROLE.ROLEID
+		</sql>
+		<sql name="canSelectRole" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false" 
+			cacheName="canSelectRole" cacheScope="request">
+			 SELECT  TB_WSM_ROLE.*  FROM  TB_WSM_ROLE,TB_WSM_CHANNEL WHERE 
+				TB_WSM_CHANNEL.CHANNELID=$checkChannelId AND 
+				TB_WSM_ROLE.SYSID =TB_WSM_CHANNEL.SYSID AND 
+				TB_WSM_ROLE.ROLEID NOT IN(
+				                   SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_CHANNEL,TB_WSM_ROLE  WHERE TB_WSM_ROLE_CHANNEL.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_CHANNEL.CHANNELID=$checkChannelId
+				 ) AND 
+				TB_WSM_ROLE.ISVALIDATE=1 
+				ORDER BY TB_WSM_ROLE.ROLEID 
+		</sql>
+		<forward name="viewPage">jsp/portal/console/subconsole/channel/assignRole.jsp</forward>
+	</operation>
+	
+	<operation name="doAddRoleForSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_ROLE_CHANNEL WHERE  CHANNELID = $channelId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=addRoleForSubSystemChannel</forward>
+	</operation>
+	<operation name="addRoleForSubSystemChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_ROLE_CHANNEL(CHANNELID,ROLEID) VALUES($channelId,$selectedRole)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemChannel]]></forward>
+	</operation>
+	<!-- 为频道指定可访问的角色  end -->
+		<!-- 为频道指定可访问的角色  end -->
+	<operation name="orderChannel" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="list" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheName="channelList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_CHANNEL WHERE   SYSID=$sysId ORDER BY defaultOrder
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/subconsole/channel/order.jsp</forward>
+	</operation>
+	<operation name="updateChannelOrder" businessClass="com.mobilecn.portal.channel.ChannelBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify" isBatch="true">		
+		 UPDATE TB_WSM_CHANNEL SET 
+			 defaultOrder=$showOrder
+		 WHERE CHANNELID    =$channelId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=orderChannel&sysId=$[sysId]]]></forward>
+	</operation>
+</root>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemConfig" businessClass="com.mobilecn.themes.loader.SysConfigLoader" invokeMethod="list" forward="" >
+	<sql name="loadAllSystemConfig" beanClass="com.mobilecn.privilege.sysconfig.SysConfigBean"><![CDATA[
+		    SELECT TB_WSM_SYS_CONF.*  
+		    FROM TB_WSM_SYS_CONF  
+		    WHERE   TB_WSM_SYS_CONF.ISVALIDATE=1  
+		    ORDER BY  SYSID, CONFIGID DESC				
+	]]></sql>
+</operation>
+</root>

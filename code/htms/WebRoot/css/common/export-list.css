@@ -1,0 +1,15 @@
+
+
+/* 列表样式 */
+.dataTable{ border:1px solid #CCCCCC; font-size:12px; padding-left:2px;table-layout:fixed;}/* 整个table 样式 */
+/* 列表标题行tr 样式 */
+.titleRow {  height:40px; background-color:#009ad6;  }
+/* 列表标题行tr 样式 */
+.headerRow {  height:40px; background-color:#009ad6;  }
+/* th 样式 */
+.headerRow td{ height:40px; font-size:12px; text-align:center; color:#000000; font-weight:bold; border:1px solid #CCCCCC;}/* td样式 */
+/* td 样式（奇数行）  */
+.dataRow { background:#F2F5F9;}
+/* 样式（偶数行样式） */
+.dataRow td{ background:#F2F5F9; height:25px; font-size:12px;  border:1px solid #CCCCCC;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}/* 样式（偶数行样式） */
+

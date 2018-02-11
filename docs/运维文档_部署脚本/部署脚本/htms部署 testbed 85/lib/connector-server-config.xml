@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 系统配置 -->
+	<system>
+		<!-- 系统ID，在同一系统的服务中必须是唯一 -->
+		<systemId>myportal</systemId>
+		<!-- 访问凭证，相当于访问密码 -->
+		<passport>myportal</passport>
+		<!-- 描述 -->	
+		<description>myportal</description>
+	</system>	
+</root>

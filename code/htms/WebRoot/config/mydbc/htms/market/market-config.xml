@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="marketGetCustomerAddrBeanById" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   >
+		<sql  name="customerAddrBean"  beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean">
+			SELECT  * from TB_HTMS_CUSTOMERAddr where caddrid= $caddrId
+		</sql>
+	</operation>
+	
+	<operation name="marketGetShipInfoById" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   >
+	     <sql name="shipViewBean" beanClass="com.zzy.htms.sales.ship.ShipBean" >
+				<![CDATA[
+						select tb_htms_ship.*,tb_htms_custorder.cordercode ,tb_htms_customeraddr.areaid,tb_htms_customer.customerCode 
+					 from tb_htms_ship left join tb_htms_custorder on tb_htms_ship.corderid= tb_htms_custorder.corderid 
+					 left join tb_htms_customeraddr  on tb_htms_ship.caddrid = tb_htms_customeraddr.caddrid 
+                     Left Join tb_htms_customer  On  tb_htms_customeraddr.customerId = tb_htms_customer.customerId 
+					 where shipid = $shipId
+				]]>
+		</sql>
+		<sql name="shipDetailViewBean" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" >
+				<![CDATA[
+					select tb_htms_shipdetail.*,tb_htms_custorderdetail.CODETAILCERTIFICATEDESC,tb_htms_custorderdetail.METERIALNO  
+					from tb_htms_shipdetail Left Join tb_htms_custorderdetail On  tb_htms_shipdetail.CODETAILID = tb_htms_custorderdetail.CODETAILID 
+					where tb_htms_shipdetail.shipid = $shipId
+				]]>
+		</sql>
+    </operation>
+    
+    <operation name="marketGetShipInfoByOrderNo" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   >
+	     <sql name="shipViewBean" beanClass="com.zzy.htms.sales.ship.ShipBean" ><![CDATA[
+				 select tb_htms_ship.*,tb_htms_custorder.cordercode 
+					 from tb_htms_ship left join tb_htms_custorder on tb_htms_ship.corderid= tb_htms_custorder.corderid 
+				 where tb_htms_ship.corderid  = (select corderid from tb_htms_custorder where cordercode = $orderNo)
+		]]></sql>
+		<sql name="shipDetailViewBean" beanClass="com.zzy.htms.sales.shipdetail.ShipDetailBean" ><![CDATA[
+				Select tb_htms_shipdetail.*,tb_htms_custorderdetail.CODETAILCERTIFICATEDESC,tb_htms_custorderdetail.METERIALNO  
+				from tb_htms_shipdetail Left Join tb_htms_custorderdetail On  tb_htms_shipdetail.CODETAILID = tb_htms_custorderdetail.CODETAILID 
+                Where  shipid In (
+                     select tb_htms_ship.shipid
+					 from tb_htms_ship 
+					 where corderid  = (select corderid from tb_htms_custorder where cordercode =  $orderNo  ) 
+			    )
+	    ]]></sql>
+    </operation>
+    
+	
+	<!-- 排货成功 业务逻辑-->
+	<operation name="marketPassShipApply" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   forward="" >
+			<!-- 更新申请明细状态，为审批通过 -->
+			<sql name="UPDATESHIPDETAIL" isBatch="true"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =1,
+							modifier=$userId,
+							applyTonNum=$applyTonNum,
+							modifyTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+						WHERE 
+							TB_HTMS_SHIPDETAIL.shipDetailId = $shipDetailId 
+					]]>
+			</sql>
+			<!-- 更新申请状态，为审批通过，及审批意见 -->
+			<sql name="UPDATESHIP"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=1,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = $approveNotice,
+							modifier=$userId,
+							modifyTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							shortStock=$shortStock,
+							shortNotice=$shortNotice,
+							applyTonNum=$sumApplyTonNum,
+							shortTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+				     WHERE TB_HTMS_SHIP.shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 
+			<sql name="updateTon"  >
+				<![CDATA[
+				UPDATE TB_HTMS_SHIP SET
+				     applyTonNum= (SELECT SUM(to_number(applyTonNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE shipId = $shipId 
+				]]>
+			</sql>
+			<sql name="updatePack"   >
+				<![CDATA[
+				UPDATE TB_HTMS_SHIP SET  applyPackNum= (SELECT SUM(to_number(applyPackNum)) FROM TB_HTMS_SHIPDETAIL WHERE TB_HTMS_SHIPDETAIL.shipId = $shipId )
+		    	WHERE TB_HTMS_SHIP.shipId = $shipId 
+				]]>
+			</sql>
+			 -->
+			<sql name="UPDATECODETAIL"  isBatch="true" >
+				<![CDATA[
+					UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+					APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($reducedApplyTonNum),
+					APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($reducedApplyTonNum)
+					WHERE CODETAILID=$codetailId 
+				]]>
+			</sql>
+			
+			<!-- 插入初始、默认的虚拟调拨单 -->
+			<sql name="INSERT"  caiidTable="TB_HTMS_TRANSFER" caiidKey="transId" caiidName="transId" caiidVar="transId"  >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSFER (transId, shipId,shipCode, logisticsId, corderId, caddrId,
+				        customerId, transferCode, applyTonNum, applyPackNum, actualTonNum, 
+				        actualPackNum, planFreight, actualFreight, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, transStatus, creator, createTime,isValidate,isDefault,dataresource) 
+				        SELECT 
+				        $transId, shipId,shipCode, $logisticsId, corderId, caddrId,
+				        customerId, $transferCode, applyTonNum, applyPackNum, 0, 
+				        0, 0, 0, freightUnit,
+				        selfFetch,fetchDriver,fetchMobile,fetchCar,isUrgent, 
+				        shipNotice, 0, $userId, to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),1,1,1
+				        FROM TB_HTMS_SHIP WHERE TB_HTMS_SHIP.shipId=$shipId
+					]]>
+			</sql>
+			<!-- 插入调拨单明细，可能批量 -->
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_TRANSFERDETAIL" caiidKey="transDetailId" caiidName="transDetailId" caiidVar="transDetailId"  >
+					<![CDATA[
+						INSERT INTO TB_HTMS_TRANSFERDETAIL (transDetailId, shipDetailId, itemCode,transId, shipId,codetailId, caddrId, 
+						productId,factoryId, applyTonNum, applyPackNum,fetchTonNum, fetchPackNum, planFreight, actulFreight,freightUnit, 
+						transDetailNotice, transDetailStatus, creator,createTime, isValidate) 
+				        SELECT 
+				        $transDetailId, shipDetailId, itemCode,$transId, shipId,codetailId, caddrId,
+				         productId,factoryId, $applyTonNum, applyPackNum, 0, 0, 0, 0,freightUnit, 
+				        shipDetailNotice, 0, $userId,to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'), 1
+				        FROM TB_HTMS_SHIPDETAIL
+				        WHERE TB_HTMS_SHIPDETAIL.shipDetailId=$shipDetailId
+					]]>
+			</sql>
+	</operation>
+	
+	
+	
+	<!-- 删除拍货相应的逻辑处理 -->
+	<operation name="marketNotPassShipApply" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   forward="" >
+			<sql name="deleteTransferdetail"  >
+					<![CDATA[
+						delete  from   TB_HTMS_transferdetail  
+						where transId in (select transid from  TB_HTMS_transfer  WHERE   shipId = $shipId) 
+					]]>
+			</sql>
+			<sql name="deleteTransfer"  >
+					<![CDATA[
+						delete from  TB_HTMS_transfer  WHERE   shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 更新申请明细状态，不通过 -->
+			<sql name="UPDATESHIPDETAIL"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =901,
+							modifier=$userId,
+							modifyTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss') 
+						WHERE  shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 更新申请状态，不通过 -->
+			<sql name="UPDATESHIP"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=901,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							approveNotice = $approveNotice,
+							modifier=$userId,
+							modifyTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss')
+				     WHERE shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 更新订单明细，把申请数量算回去 -->
+			<sql name="UPDATECODETAIL"  isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($reducedApplyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($reducedApplyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]>
+			</sql> 
+	</operation>
+	
+	<!-- 撤销排货对应的逻辑处理 -->
+	<operation name="marketCancelShipApply" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   forward="" >
+			<sql name="deleteTransferdetail"  >
+					<![CDATA[
+						delete  from   TB_HTMS_transferdetail  
+						where transId in (select transid from  TB_HTMS_transfer  WHERE   shipId = $shipId) 
+					]]>
+			</sql>
+			<sql name="deleteTransfer"  >
+					<![CDATA[
+						delete from  TB_HTMS_transfer  WHERE   shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 更新申请明细状态，不通过 -->
+			<sql name="UPDATESHIPDETAIL"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIPDETAIL SET 
+							shipDetailStatus =0,
+							modifier=$userId,
+						    applyTonNum= applyTonNum_backUp,
+							modifyTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss') 
+						WHERE  shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 更新申请状态，不通过 -->
+			<sql name="UPDATESHIP"  >
+					<![CDATA[
+						UPDATE TB_HTMS_SHIP SET 
+							applyStatus=0,
+							approver=$userId,
+							approveTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							modifier=$userId,
+							modifyTime=to_char(sysdate,'yyyy-MM-dd HH24:mi:ss'),
+							applyTonNum= (select sum(applyTonNum_backup) from TB_HTMS_SHIPDETAIL where shipId = $shipId  )
+				     WHERE shipId = $shipId 
+					]]>
+			</sql>
+			<!-- 更新订单明细，把申请数量算回去 -->
+			<sql name="UPDATECODETAIL"  isBatch="true" >
+					<![CDATA[
+						UPDATE TB_HTMS_CUSTORDERDETAIL SET 
+						APPLIABLEAMOUNT=to_number(APPLIABLEAMOUNT)+to_number($reducedApplyTonNum),
+						APPLIEDAMOUNT=to_number(APPLIEDAMOUNT)-to_number($reducedApplyTonNum)
+						WHERE CODETAILID=$codetailId
+					]]>
+			</sql> 
+	</operation>
+
+    <operation name="marketGetCustomerAddrBeanByCustomerId" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   >
+		<sql  name="customerAddrBeanList"  beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean">
+			SELECT  * from TB_HTMS_CUSTOMERAddr where customerId= $customerId
+		</sql>
+	</operation>
+
+    <operation name="marketGetCustomerAddrBeanByCustomerCode" businessClass="com.zzy.htms.webservice.market.order.HtmsArrangeGoodsBussiness"   >
+		<sql  name="customerAddrBeanList"  beanClass="com.zzy.htms.sales.customeraddr.CustomerAddrBean">
+			SELECT  * from TB_HTMS_CUSTOMERAddr where Customerid in (select customerid from tb_htms_customer where customercode =  $customerCode )
+		</sql>
+	</operation>
+
+</root>

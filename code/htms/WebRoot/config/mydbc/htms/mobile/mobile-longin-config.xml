@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 用户登录  查询用户信息-->
+	<operation name="Mobile-Login_of_myportal" businessClass="com.zzy.htms.mobile.LoginBusiness"
+		invokeMethod="list"  forward="" cacheParams="account" cacheScopes="session" beforeInvoke="beforeHtmsList" afterInvoke="afterHtmsList">
+		<!-- 按部门分组，同一部门排序号升序 -->
+		<sql name="userBeanList" beanClass="com.zzy.htms.user.HtmsUserBean" test="$[is_use_sso]=='false'"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE ACCOUNT=$account
+		]]></sql>	
+		<!-- 单点登录时需要切换的SQL -->	
+		<sql name="userBeanList" beanClass="com.zzy.htms.user.HtmsUserBean"  test="$[is_use_sso]=='true'"><![CDATA[
+			    SELECT * FROM TB_WSM_USER WHERE EMPLOYNO=$account OR OAUSER=$oauser 
+		]]></sql>	
+		
+		<!--<forward name="loadAction">contoller.do?operation=loadUserPrivilege_of_commonSystem</forward>
+		-->
+		<forward name="mobileLogin" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/mobile/list.jsp]]></address>
+		</forward>
+	</operation>
+	
+</root>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 角色组 start -->
+	<bean beanClass="com.mobilecn.privilege.group.GroupBean">
+		<map property="groupId" javaType="java.lang.String" column="GROUPID" colType=""/>
+		<map property="groupName" javaType="java.lang.String" column="GROUPNAME" colType=""/>
+		<map property="groupParentId" javaType="java.lang.String" column="GROUPPARENTID" colType=""/>
+		<map property="groupDesc" javaType="java.lang.String" column="GROUPDESC" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="isDefault" javaType="java.lang.String" column="ISDEFAULT" colType=""/>
+		<map property="defaultId" javaType="java.lang.String" column="DEFAULTID" colType=""/>
+	</bean>
+	<!-- 角色组 end -->
+</root>

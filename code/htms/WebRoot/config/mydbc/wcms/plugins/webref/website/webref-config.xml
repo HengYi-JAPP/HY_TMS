@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!--webref实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="listWebSiteWebRefIndex" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="view" forward="">		
+		<sql name="view" beanClass="com.mobilecn.plugins.webref.WebRefBean"
+			cacheName="webRefViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_INFO_REF WHERE INFOID IN (SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId)
+		</sql>			
+		
+	</operation>
+	
+</root>

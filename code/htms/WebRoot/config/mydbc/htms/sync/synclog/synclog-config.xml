@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="listSyncLog" businessClass="com.zzy.htms.synclog.HtmsSyncLogBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.synclog.HtmsSyncLogBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM  tb_htms_ordersyn 
+				    WHERE tb_htms_ordersyn.salesNo LIKE'%$salesNoSH%'
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.synclog.HtmsSyncLogBean" cacheType="list" cacheName="logList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+			select * from tb_htms_ordersyn
+				  where  tb_htms_ordersyn.salesNo LIKE'%$salesNoSH%' 
+				    ORDER BY tb_htms_ordersyn.startTime DESC
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sync/synclog/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="viewSyncLog" businessClass="com.zzy.htms.synclog.HtmsSyncLogBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.synclog.HtmsSyncLogBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.synclog.HtmsSyncLogBean" cacheType="bean" cacheName="logViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT *
+				    FROM tb_htms_ordersyn 
+				    WHERE tb_htms_ordersyn.synId = $synId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/sync/synclog/view.jsp]]></address>
+		</forward>
+	</operation>
+</root>

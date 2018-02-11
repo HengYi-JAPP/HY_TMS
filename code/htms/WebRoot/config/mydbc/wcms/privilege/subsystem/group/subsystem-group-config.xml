@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 用户组start -->
+		
+	<!-- 添加 -->
+	<operation name="toAddSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="list" forward="">		
+		<sql name="list" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_GROUP.*  FROM  TB_WSM_GROUP WHERE SYSID=$sysId   ORDER BY GROUPPARENTID,SHOWORDER ASC
+		]]></sql>
+		
+		<forward name="listPage">jsp/privilege/subsystem/group/add.jsp</forward>
+	</operation>
+	<operation name="addSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="add" afterInvoke="relaodGroup" forward="">
+		<sql name="insert"  caiidTable="TB_WSM_GROUP" caiidKey="GROUPID"  caiidName="TB_WSM_GROUP" caiidVar="groupId">
+		insert into TB_WSM_GROUP
+  		(GROUPID,GROUPNAME,GROUPPARENTID,GROUPDESC,SHOWORDER,ISVALIDATE,SYSID)
+		 values
+  		($groupId,$groupName,$groupParentId,$groupDesc,$showOrder,$isValidate,$sysId)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemGroup</forward>
+	</operation>
+
+	<!-- 树状结构 -->
+	<operation name="listSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="list" forward="" cacheParams="groupNameSH,curpage" cacheScopes="session,session">
+		<sql name="count">
+			  select count(*) as total from TB_WSM_GROUP WHERE SYSID=$sysId AND GROUPNAME LIKE '%$groupNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_WSM_GROUP WHERE SYSID=$sysId AND GROUPNAME LIKE '%$groupNameSH%' ORDER BY SHOWORDER
+		]]></sql>
+		<forward name="listPage">jsp/privilege/subsystem/group/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="delete"   beforeInvoke="loadRelativeGroup" afterInvoke="relaodGroup" forward="">
+		<sql name="delete" isBatch="true">
+			 DELETE FROM TB_WSM_GROUP WHERE  SYSID=$sysId AND GROUPID = $checkGroupId
+		</sql>
+		<sql name="deleteChildGroup" isBatch="true">
+			 DELETE FROM TB_WSM_GROUP WHERE  SYSID=$sysId AND GROUPID =$childGroups  
+		</sql>
+		<sql name="deleteUser"  isBatch="true">
+			 DELETE FROM TB_WSM_USER_GROUP WHERE GROUPID =$childGroups 
+		</sql>
+		<sql name="deleteRole" isBatch="true">
+			 DELETE FROM TB_WSM_GROUP_ROLE WHERE GROUPID =$childGroups 
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemGroup</forward>
+	</operation>
+
+	<operation name="listSubSystemCheckedGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="list" forward="" >		
+		<sql name="list" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_GROUP.*  FROM  TB_WSM_GROUP WHERE SYSID=$sysId  ORDER BY GROUPPARENTID,SHOWORDER ASC
+		]]></sql>		
+		<sql name="listChecked" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupCheckedList" cacheScope="request"><![CDATA[
+			   SELECT TB_WSM_GROUP.*  FROM  TB_WSM_GROUP WHERE TB_WSM_GROUP.GROUPID = (SELECT TB_WSM_GROUP.GROUPPARENTID  FROM  TB_WSM_GROUP  WHERE GROUPID = $groupId AND SYSID=$sysId) 
+		]]></sql>
+		<forward name="listPage">contoller.do?operation=viewSubSystemGroup</forward>
+	</operation>
+	
+	<!-- 查看单个记录 -->
+	<operation name="viewSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupViewBean" cacheScope="request">
+			  SELECT  TB_WSM_GROUP.*  FROM TB_WSM_GROUP  WHERE GROUPID = $groupId AND  SYSID=$sysId 
+		</sql>
+		
+		<forward name="modifyPage">jsp/privilege/subsystem/group/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/subsystem/group/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="modify" afterInvoke="relaodGroup" forward="">
+		<sql name="modify" beanClass="com.mobilecn.privilege.group.GroupBean">
+			update TB_WSM_GROUP
+           	   set GROUPNAME     = $groupName,
+	               GROUPPARENTID = $groupParentId,
+	               GROUPDESC     = $groupDesc,
+	               SHOWORDER     = $showOrder, 
+	               SYSID         = $sysId    
+         	 WHERE GROUPID = $groupId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemGroup</forward>
+	</operation>
+	
+
+	<!-- 为用户组分配用户  start-->
+	<!-- 下面的SQL用了比较多的IN 和GROUP BY，在数据量大的情况可能会比较慢-->
+	<operation name="toAddUserForSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="view"    forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupViewBean" cacheScope="request">
+			  SELECT  TB_WSM_GROUP.*  FROM TB_WSM_GROUP  WHERE GROUPID = $checkGroupId 
+		</sql>
+		<sql name="userOfGroup" beanClass="com.zzy.htms.user.HtmsUserBean"  isEscape="false"
+			cacheName="userOfGroup" cacheScope="request">
+			 SELECT  TB_WSM_USER.*  FROM TB_WSM_USER WHERE USERID IN( 
+			 SELECT  TB_WSM_USER.USERID  FROM TB_WSM_USER_GROUP,TB_WSM_USER  
+			 WHERE TB_WSM_USER_GROUP.USERID=TB_WSM_USER.USERID AND TB_WSM_USER_GROUP.GROUPID=$checkGroupId GROUP BY TB_WSM_USER.USERID
+			 )
+		</sql>
+		<sql name="canSelectUser" beanClass="com.zzy.htms.user.HtmsUserBean"  isEscape="false"
+			cacheName="canSelectUser" cacheScope="request">
+			 SELECT TB_WSM_USER.* FROM TB_WSM_USER WHERE TB_WSM_USER.ISVALIDATE='1' 
+			 AND TB_WSM_USER.USERID NOT IN (
+			 SELECT USERID FROM TB_WSM_USER_GROUP WHERE GROUPID=$checkGroupId
+			  GROUP BY TB_WSM_USER_GROUP.USERID) 
+		</sql>
+		<forward name="viewPage">jsp/privilege/subsystem/group/addUser.jsp</forward>
+	</operation>
+	
+	<operation name="doAddUserForSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="delete"  beforeInvoke="loadRelativeGroup"  forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_USER_GROUP WHERE  GROUPID = $checkGroupId
+		</sql>		
+		<!-- 当前组和子组中的对应的用户全部清除 -->
+		<sql name="deleteChild" isBatch="true"  notEescapeVars="childGroups">
+			  DELETE FROM  TB_WSM_USER_GROUP WHERE  USERID=$selectedUser AND GROUPID IN($childGroups)
+		</sql>	
+		<forward name="listAction">contoller.do?operation=addUserForSubSystemGroup</forward>
+	</operation>
+	<operation name="addUserForSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true" >
+			 INSERT INTO TB_WSM_USER_GROUP(GROUPID,USERID) VALUES($checkGroupId,$selectedUser)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemGroup</forward>
+	</operation>
+	<!-- 为用户组分配用户  end -->
+	
+	<!-- 为用户组分配角色  start-->
+	<operation name="toAddRoleForSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="view" beforeInvoke="loadRelativeGroup"  forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.group.GroupBean"
+			cacheName="groupViewBean" cacheScope="request">
+			  SELECT  TB_WSM_GROUP.*  FROM TB_WSM_GROUP  WHERE GROUPID = $checkGroupId
+		</sql>
+		<sql name="roleOfGroup" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false"
+			cacheName="roleOfGroup" cacheScope="request">
+			  SELECT  TB_WSM_ROLE.*  FROM TB_WSM_ROLE WHERE TB_WSM_ROLE.ROLEID IN (SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_GROUP_ROLE,TB_WSM_ROLE  WHERE TB_WSM_GROUP_ROLE.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_GROUP_ROLE.GROUPID IN($parentGroups) GROUP BY TB_WSM_ROLE.ROLEID)
+		</sql>
+		<sql name="canSelectRole" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false" 
+			cacheName="canSelectRole" cacheScope="request">
+			 SELECT  TB_WSM_ROLE.*  FROM  TB_WSM_ROLE WHERE TB_WSM_ROLE.ISVALIDATE='1' AND SYSID=$sysId
+		</sql>
+		<forward name="viewPage">jsp/privilege/subsystem/group/assignRole.jsp</forward>
+	</operation>
+	
+	<operation name="doAddRoleForSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="delete"  beforeInvoke="loadRelativeGroup"   forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_GROUP_ROLE WHERE  GROUPID = $checkGroupId
+		</sql>	
+		<!-- 当前组和子组中的对应的角色全部清除 -->
+		<sql name="deleteChild" isBatch="true"   notEescapeVars="childGroups">
+			  DELETE FROM  TB_WSM_GROUP_ROLE WHERE  ROLEID=$selectedRole AND GROUPID IN($childGroups)
+		</sql>		
+		<forward name="listAction">contoller.do?operation=addRoleForSubSystemGroup</forward>
+	</operation>
+	<operation name="addRoleForSubSystemGroup" businessClass="com.mobilecn.privilege.group.GroupBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_GROUP_ROLE(GROUPID,ROLEID) VALUES($checkGroupId,$selectedRole)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemGroup</forward>
+	</operation>
+	<!-- 为用户组分配角色  end -->
+	<!-- 用户组end -->
+</root>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.dictionary.route.RouteBean">
+		<map property="routeId" javaType="int" column="routeId"  colType=""/>
+		<map property="factoryId" javaType="int" column="factoryId"  colType=""/>
+		<map property="areaId" javaType="int" column="areaId"  colType=""/>
+		<map property="productId" javaType="int" column="productId"  colType=""/>
+		<map property="creator" javaType="int" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifier" javaType="int" column="modifier"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="productName" javaType="String" column="productName"  colType=""/>
+		<map property="factoryName" javaType="String" column="factoryName"  colType=""/>
+		<map property="areaName" javaType="String" column="areaName"  colType=""/>
+	</bean>
+</root>

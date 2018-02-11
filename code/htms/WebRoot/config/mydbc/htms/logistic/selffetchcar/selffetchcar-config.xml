@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="getSelfFetchCarCustomer" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness" version="2.0"  forward="" >
+		<method name="客户列表搜索" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+			<sql name="selectCustomer" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" 
+			cacheScope="request"   version="2.0"  isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+				    SELECT TB_HTMS_CUSTOMER.customerCode, TB_HTMS_CUSTOMER.customerName FROM TB_HTMS_CUSTOMER
+				     Where isvalidate = '1' 
+				    ORDER BY TB_HTMS_CUSTOMER.customerId Asc 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	
+	<operation name="addSelfFetchCar" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness"  invokeMethod="add"  exeOrder="" version="2.0">
+			<sql name="INSERT"  caiidTable="TB_HTMS_selffetchcar" caiidKey="carId" caiidName="carId" caiidVar="refCarId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_SELFFETCHCAR( carid, customerCode, vehicleNo, 
+				        remark, createTime, isValidate) 
+				        VALUES($refCarId,$customerCode,$vehicleNo,$remark,$createTime,'1')
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSelfFetchCar]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="toAddSelfFetchCar" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness" version="2.0"  forward="" >
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/selffetchcar/add.jsp]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="listSelfFetchCar" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness" version="2.0"  forward="" loadCacheForm="selfFetchCarForm">
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+				      SELECT COUNT(*) AS totalCount 
+					    FROM TB_HTMS_selffetchcar ,tb_htms_customer
+					    WHERE  TB_HTMS_selffetchcar.customerCode=tb_htms_customer.customerCode 
+					      and  tb_htms_customer.customername LIKE  '%$customerNameSH%' 
+					      AND TB_HTMS_selffetchcar.vehicleNo LIKE  '%$vehicleNoSH%' 
+					    	AND TB_HTMS_selffetchcar.ISVALIDATE='1'
+				       
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBean" cacheType="list" cacheName="selfFetchCarList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_selffetchcar.*,tb_htms_customer.customerName 
+					    FROM TB_HTMS_selffetchcar ,tb_htms_customer
+					    WHERE  TB_HTMS_selffetchcar.customerCode=tb_htms_customer.customerCode 
+					      and  tb_htms_customer.customername LIKE  '%$customerNameSH%' 
+					      AND TB_HTMS_selffetchcar.vehicleNo LIKE  '%$vehicleNoSH%' 
+					    	AND TB_HTMS_selffetchcar.ISVALIDATE='1'
+					    ORDER BY TB_HTMS_selffetchcar.customerCode asc
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/selffetchcar/list.jsp]]></address>
+		</forward>
+	</operation>
+
+	<operation name="deleteSelfFetchCar" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.logistic.selffetchcar.SelfFetchCarBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_selffetchcar 
+				        SET isValidate = '0' 
+				        WHERE TB_HTMS_selffetchcar.carId = $carId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listSelfFetchCar]]></address>
+		</forward>
+	</operation>
+</root>

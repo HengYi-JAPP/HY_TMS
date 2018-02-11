@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.sales.custorderdetail.CustOrderDetailBean">
+		<map property="codetailId" javaType="java.lang.String" column="CODETAILID" colType=""/>
+		<map property="corderId" javaType="java.lang.String" column="CORDERID" colType=""/>
+		<map property="saleNum" javaType="java.lang.String" column="SALENUM" colType=""/>
+		<map property="codetailCertificate" javaType="java.lang.String" column="CODETAILCERTIFICATE" colType=""/>
+		<map property="meterialFactory" javaType="java.lang.String" column="METERIALFACTORY" colType=""/>
+		<map property="meterialNo" javaType="java.lang.String" column="METERIALNO" colType=""/>
+		
+		<map property="meterialGroup" javaType="java.lang.String" column="METERIALGROUP" colType=""/>
+		<map property="meterialId" javaType="java.lang.String" column="METERIALID" colType=""/>
+		<map property="codetailCertificateDesc" javaType="java.lang.String" column="CODETAILCERTIFICATEDESC" colType=""/>
+		<map property="orderAmount" javaType="java.lang.String" column="ORDERAMOUNT" colType=""/>
+		<map property="orderUnit" javaType="java.lang.String" column="ORDERUNIT" colType=""/>
+		<map property="projectVolume" javaType="java.lang.String" column="PROJECTVOLUME" colType=""/>
+		<map property="volumeUnit" javaType="java.lang.String" column="VOLUMEUNIT" colType=""/>
+		<map property="conditionSutotal" javaType="java.lang.String" column="CONDITIONSUTOTAL" colType=""/>
+		<map property="freight" javaType="java.lang.String" column="FREIGHT" colType=""/>
+		<map property="unitPrice" javaType="java.lang.String" column="UNITPRICE" colType=""/>
+		<map property="docCondCount" javaType="java.lang.String" column="DOCCONDCOUNT" colType=""/>
+		<map property="notLimitStorage" javaType="java.lang.String" column="NOTLIMITSTORAGE" colType=""/>
+		<map property="postedStock" javaType="java.lang.String" column="POSTEDSTOCK" colType=""/>
+		<map property="unpostedStock" javaType="java.lang.String" column="UNPOSTEDSTOCK" colType=""/>
+		<map property="deliveryStatus" javaType="java.lang.String" column="DELIVERYSTATUS" colType=""/>
+		<map property="partialDelivery" javaType="java.lang.String" column="PARTIALDELIVERY" colType=""/>
+		<map property="dbPrice" javaType="java.lang.String" column="DBPRICE" colType=""/>
+		<map property="alreadyGetNum" javaType="java.lang.String" column="ALREADYGETNUM" colType=""/>
+		<map property="creator" javaType="java.lang.String" column="CREATOR" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="modifier" javaType="java.lang.String" column="MODIFIER" colType=""/>
+		<map property="modifyTiime" javaType="java.lang.String" column="MODIFYTIIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+			
+		<map property="appliableAmount" javaType="java.lang.String" column="APPLIABLEAMOUNT" colType=""/>
+		<map property="appliedAmount" javaType="java.lang.String" column="APPLIEDAMOUNT" colType=""/>
+		<map property="productId" javaType="java.lang.String" column="productId" colType=""/>
+		<map property="factoryId" javaType="java.lang.String" column="factoryId" colType=""/>
+		<map property="productName" javaType="java.lang.String" column="productName" colType=""/>
+		<map property="factoryName" javaType="java.lang.String" column="factoryName" colType=""/>
+		<map property="factoryGroup" javaType="java.lang.String" column="factoryGroup" colType=""/>
+		
+		<map property="shipPoint" javaType="java.lang.String" column="shipPoint" colType=""/>
+		<map property="shipPointDesc" javaType="java.lang.String" column="shipPointDesc" colType=""/>
+	</bean>
+
+</root>

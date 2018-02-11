@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="listTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" loadCacheForm="traderPriceForm">
+		<method name="默认查询" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+		<sql name="REF_SELECT_FACTORY" beanClass="com.zzy.htms.dictionary.factory.FactoryBean" cacheType="list" cacheName="factoryList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_FACTORY.factoryId ,TB_HTMS_FACTORY.factoryName 
+				        ,TB_HTMS_FACTORY.factoryCode ,TB_HTMS_FACTORY.factoryDesc 
+				        ,TB_HTMS_FACTORY.factoryAddress 
+				        ,TB_HTMS_FACTORY.factoryContactor 
+				        ,TB_HTMS_FACTORY.factoryTelphone ,TB_HTMS_FACTORY.isVlidate 
+				    FROM TB_HTMS_FACTORY ORDER BY TB_HTMS_FACTORY.factoryId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCT" beanClass="com.zzy.htms.dictionary.product.ProductBean" cacheType="list" cacheName="productList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/traderprice/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_TRADERPRICE 
+				    SET priceType = $priceType ,freightModel=$freightModel,
+				    	customerPrice = $customerPrice ,customerOnePrice = $customerOnePrice ,carrierOnePrice=$carrierOnePrice,
+				        carrierPrice = $carrierPrice ,priceStart = $priceStart ,priceEnd = $priceEnd 
+				        ,priceUnit = $priceUnit ,modifier = $userId ,modifyTime = $modifyTime,
+				        validateDate=$validateDate
+				    WHERE TB_HTMS_TRADERPRICE.priceId = $traderPriceId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listTraderPrice]]></address>
+		</forward>
+	</operation>
+	<operation name="viewTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean" cacheType="bean" cacheName="traderPriceViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_TRADERPRICE.*,tb_dictionary.dicName,tb_dic_type.typeName
+				    FROM TB_HTMS_TRADERPRICE,tb_htms_factory,tb_dictionary,tb_dic_type 
+				    WHERE TB_HTMS_TRADERPRICE.priceId = $traderPriceId AND TB_HTMS_TRADERPRICE.priceUnit=TB_DICTIONARY.dicId 
+            		AND TB_HTMS_TRADERPRICE.priceType=TB_DIC_TYPE.typeId
+					]]></content>
+			</sql>
+			<sql name="priceTypeBean" beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean" cacheType="list" cacheName="priceTypeBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DIC_TYPE WHERE TYPECODE='priceType' ORDER BY TYPEID
+					]]></content>
+			</sql>
+			<sql name="priceUnitBean" beanClass="com.zzy.htms.dictionary.transprice.DicBean" cacheType="list" cacheName="priceUnitBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TB_DIC_TYPE.TYPECODE='priceType' ORDER BY SHOWORDER
+					]]></content>
+			</sql>
+			<sql name="routeViewBean" beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean" cacheType="list" cacheName="routeViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productName,TB_HTMS_FACTORY.factoryName ,TB_HTMS_AREA.areaName,TB_HTMS_ROUTE.routeId
+				         FROM TB_HTMS_ROUTE, TB_HTMS_PRODUCT,TB_HTMS_AREA,TB_HTMS_FACTORY
+				            WHERE TB_HTMS_PRODUCT.productId=TB_HTMS_ROUTE.productId
+								        AND TB_HTMS_AREA.areaId=TB_HTMS_ROUTE.areaId AND TB_HTMS_FACTORY.factoryId=TB_HTMS_ROUTE.factoryId 
+				                AND TB_HTMS_ROUTE.ROUTEID=$checkRouteId
+								    ORDER BY TB_HTMS_ROUTE.routeId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/traderprice/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/traderprice/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<!--<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_TRADERPRICE 
+				    WHERE TB_HTMS_TRADERPRICE.priceId = $traderPriceId
+					]]></content>
+			</sql>
+			--><sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_TRADERPRICE 
+				    SET isValidate='0'
+				    WHERE TB_HTMS_TRADERPRICE.priceId = $traderPriceId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listTraderPrice]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="toBatchAddTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="searchForPrice" exeOrder="" version="2.0">
+			<sql name="price_type_list" beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean" cacheType="list" cacheName="price_type_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DIC_TYPE WHERE TYPECODE='priceType' ORDER BY TYPEID
+					]]></content>
+			</sql>
+			<sql name="price_unit_list" beanClass="com.zzy.htms.dictionary.transprice.DicBean" cacheType="list" cacheName="price_unit_list" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT * FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DICTIONARY.TYPEID=TB_DIC_TYPE.TYPEID AND TB_DIC_TYPE.TYPECODE='priceType' ORDER BY SHOWORDER
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_FACTORY" beanClass="com.zzy.htms.dictionary.FactoryBean" cacheType="list" cacheName="factoryList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_FACTORY.factoryId ,TB_HTMS_FACTORY.factoryName 
+				        ,TB_HTMS_FACTORY.factoryCode ,TB_HTMS_FACTORY.factoryDesc 
+				        ,TB_HTMS_FACTORY.factoryAddress 
+				        ,TB_HTMS_FACTORY.factoryContactor 
+				        ,TB_HTMS_FACTORY.factoryTelphone ,TB_HTMS_FACTORY.isVlidate 
+				    FROM TB_HTMS_FACTORY ORDER BY TB_HTMS_FACTORY.factoryId DESC 
+					]]></content>
+			</sql>
+			<sql name="REF_SELECT_PRODUCT" beanClass="com.zzy.htms.dictionary.ProductBean" cacheType="list" cacheName="productList" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_PRODUCT.productId ,TB_HTMS_PRODUCT.typeId 
+				        ,TB_HTMS_PRODUCT.productName ,TB_HTMS_PRODUCT.productCode 
+				        ,TB_HTMS_PRODUCT.productDesc ,TB_HTMS_PRODUCT.sapNo 
+				        ,TB_HTMS_PRODUCT.isValidate 
+				    FROM TB_HTMS_PRODUCT ORDER BY TB_HTMS_PRODUCT.productId DESC 
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/traderprice/batchAdd.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addBatchAllTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_TRADERPRICE" caiidKey="traderPriceId" caiidName="traderPriceId" caiidVar="traderPriceId"  version="2.0"  test="$[batchCustomerPrice]!=''||$[batchCarrierPrice]!=''">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_TRADERPRICE ( priceId, routeId, priceType,freightModel, 
+				        carrierOnePrice,customerOnePrice, priceStart, 
+				        priceEnd, priceUnit, creator, createTime, validateDate, 
+				        isValidate) 
+				        VALUES($traderPriceId,$bindRouteId,$priceType,$freightModel,
+				        $batchCarrierPrice,$batchCustomerPrice,$priceStart,$priceEnd,$priceUnit,$userId,$createTime,$validateDate,1) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listTraderPrice]]></address>
+		</forward>
+	</operation>
+	<operation name="addBatchSingleTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_TRADERPRICE" caiidKey="traderPriceId" caiidName="traderPriceId" caiidVar="traderPriceId"  version="2.0" test="$[batchCustomerPrice]!=''||$[batchCarrierPrice]!=''">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_TRADERPRICE ( priceId, routeId, priceType,freightModel, 
+				        customerPrice, carrierPrice, priceStart, 
+				        priceEnd, priceUnit, creator, createTime,validateDate, 
+				        isValidate) 
+				        VALUES($traderPriceId,$bindRouteId,$priceType,$freightModel,
+				        $batchCustomerPrice,$batchCarrierPrice,$priceStart,$priceEnd,
+				        $priceUnit,$userId,$createTime,$validateDate,1) 
+					]]></content>
+			</sql>
+			
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listTraderPrice]]></address>
+		</forward>
+	</operation>
+	<operation name="listTraderferPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"
+		invokeMethod="list" afterInvoke="">
+		<sql name="traderprice" beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean"><![CDATA[
+			   select tb_htms_traderprice.*,
+			       tb_htms_route.productid,
+			       tb_htms_route.factoryid,
+			       tb_htms_route.areaid,
+			      tb_htms_area.areaname,
+			      tb_htms_product.productname,
+			      tb_htms_factory.factoryname
+			  from tb_htms_traderprice, tb_htms_route,tb_htms_area,tb_htms_product,tb_htms_factory
+			   where tb_htms_route.routeid=tb_htms_traderprice.routeid and tb_htms_route.areaid=tb_htms_area.areaid and tb_htms_route.factoryid=tb_htms_factory.factoryid and tb_htms_route.productid=tb_htms_product.productid
+			 ORDER BY tb_htms_traderprice.priceId DESC
+
+		]]></sql>
+	</operation>
+	
+	<operation name="loadAllTraderPrice" businessClass="com.zzy.htms.dictionary.traderprice.TraderPriceBusiness"
+		invokeMethod="list" >
+			<sql name="loadAllTraderPrice" beanClass="com.zzy.htms.dictionary.traderprice.TraderPriceBean" cacheType="list" cacheName="traderPriceList" cacheScope="request"  >
+					<![CDATA[
+					 SELECT TRADER.*,
+				     TRADER.ROUTEID AS targeRoutetId,
+						DIC.DICNAME,
+						DTYPE.TYPENAME
+					FROM TB_HTMS_TRADERPRICE TRADER
+					LEFT JOIN TB_DICTIONARY DIC ON TRADER.PRICEUNIT = DIC.DICID
+					LEFT JOIN TB_DIC_TYPE DTYPE ON TRADER.PRICETYPE = DTYPE.TYPEID
+					WHERE TRADER.ISVALIDATE=1
+				     ORDER BY TRADER.PRICEID DESC
+					]]>
+			</sql>
+	</operation>
+</root>

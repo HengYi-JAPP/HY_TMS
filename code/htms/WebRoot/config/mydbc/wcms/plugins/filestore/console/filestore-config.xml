@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="saveFileStore" businessClass="com.mobilecn.plugins.filestore.FileStroeBusiness"
+		invokeMethod="saveFile" forward="" >
+		<sql name="delete" isBatch="true"><![CDATA[
+			    DELETE FROM TB_WSM_FILES_STORE WHERE FILEID =$__fileId
+		]]></sql>
+		<sql name="insert" isBatch="true">
+		INSERT INTO TB_WSM_FILES_STORE (FILEID,FILENAME,FILEFORMAT,FILESIZE,FILETYPE,DISKPATH,ACCESSCOUNT,CREATOR,CREATETIME,ISVALIDATE)
+		VALUES($__fileId,$__fileName,$__fileFormat,$__fileSize,'',$__diskPath,0,$userId,TO_CHAR(sysdate, 'YYYY-MM-DD HH24:MI:SS'),'1')
+		</sql>
+		<forward name="listAction"></forward>
+	</operation>
+
+	
+	<!-- 查询 -->
+	<operation name="fetchFileStore" businessClass="com.mobilecn.plugins.filestore.FileStroeBusiness"
+		invokeMethod="fetchFile" forward="" >		
+		<sql name="list" beanClass="com.mobilecn.plugins.filestore.FileBean"
+			cacheName="fileBeanList" cacheScope="session" isEscape="false"><![CDATA[
+			    SELECT * FROM TB_WSM_FILES_STORE WHERE FILEID=$__fileId AND  ISVALIDATE=1
+		]]></sql>
+		<forward name="listAction"></forward>
+	</operation>
+	
+	<!-- 删除 -->
+	<operation name="removeFileStore" businessClass="com.mobilecn.plugins.filestore.FileStroeBusiness"
+		invokeMethod="removeFile" forward="" >		
+		<sql name="delete" isBatch="true"><![CDATA[
+			    DELETE FROM TB_WSM_FILES_STORE WHERE FILEID =$__fileId
+		]]></sql>
+		<forward name="listAction"></forward>
+	</operation>
+</root>

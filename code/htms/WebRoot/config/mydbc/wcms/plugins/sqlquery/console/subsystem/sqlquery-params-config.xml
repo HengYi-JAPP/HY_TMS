@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toListSubSystemSQLQueryParams" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean"
+			cacheName="sqlqueryViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SQLQUERY WHERE   QUERYID=$checkQueryId
+		</sql>	
+		<forward name="viewPage"><![CDATA[contoller.do?operation=listSubSystemSQLQueryParams]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addSubSystemSQLQueryParams" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="insert" caiidTable="TB_WSM_INFO_SQLQUERY_PARAMS" caiidKey="PARAMID"  caiidName="SQLQUERY_PARAMS" caiidVar="sqlQueryParamId">
+		INSERT INTO TB_WSM_INFO_SQLQUERY_PARAMS (PARAMID,QUERYID,PARAMCODE,PARAMNAME,PARAMDESC,PARAMVAR,PARAMVALUE,ISVALIDATE)
+		VALUES($sqlQueryParamId,$checkQueryId,$paramCode,$paramName,$paramDesc,$paramVar,$paramValue,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=toListSubSystemSQLQueryParams</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemSQLQueryParams" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBusiness"
+		invokeMethod="list" forward="" cacheParams="paramNameSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total 
+			FROM TB_WSM_INFO_SQLQUERY_PARAMS
+			WHERE  QUERYID=$checkQueryId AND PARAMNAME LIKE '%$paramNameSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBean"
+			cacheName="sqlqueryParamsList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY_PARAMS.* 
+				FROM TB_WSM_INFO_SQLQUERY_PARAMS 
+				WHERE  QUERYID=$checkQueryId AND PARAMNAME LIKE '%$paramNameSH%'  
+				ORDER BY PARAMID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/sqlquery/subsystem/params/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemSQLQueryParams" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SQLQUERY_PARAMS WHERE PARAMID=$checkParamId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=toListSubSystemSQLQueryParams</forward>
+	</operation>
+	
+	<!--query实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	
+	<operation name="viewSubSystemSQLQueryParams" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBean"
+			cacheName="sqlqueryParamsViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SQLQUERY_PARAMS WHERE  PARAMID=$paramId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/sqlquery/subsystem/params/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/sqlquery/subsystem/params/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemSQLQueryParams" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_SQLQUERY_PARAMS SET 
+			QUERYID=$checkQueryId,
+			PARAMCODE=$paramCode,
+			PARAMNAME=$paramName,
+			PARAMDESC=$paramDesc,
+			PARAMVAR=$paramVar,
+			PARAMVALUE=$paramValue,
+			ISVALIDATE=$isValidate
+		 WHERE  PARAMID=$paramId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=toListSubSystemSQLQueryParams]]></forward>
+	</operation>
+</root>

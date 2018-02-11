@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.dictionary.factory.FactoryBean">
+		<map property="factoryId" javaType="int" column="factoryId"  colType=""/>
+		<map property="factoryName" javaType="String" column="factoryName"  colType=""/>
+		<map property="factoryCode" javaType="String" column="factoryCode"  colType=""/>
+		<map property="factoryDesc" javaType="String" column="factoryDesc"  colType=""/>
+		<map property="factoryAddress" javaType="String" column="factoryAddress"  colType=""/>
+		<map property="factoryContactor" javaType="String" column="factoryContactor"  colType=""/>
+		<map property="factoryTelphone" javaType="String" column="factoryTelphone"  colType=""/>
+		<map property="isVlidate" javaType="int" column="isVlidate"  colType=""/>
+	</bean>
+</root>

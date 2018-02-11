@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemThemesDefineType" businessClass="com.mobilecn.themes.loader.DefineTypeLoader" invokeMethod="list" forward="" >
+	<sql name="loadAllSystemThemesDefineType" beanClass="com.mobilecn.themes.definetype.DefineTypeBean"><![CDATA[
+		SELECT * FROM TB_WSM_THEMES_DEFINE_TYPE
+		WHERE TB_WSM_THEMES_DEFINE_TYPE.ISVALIDATE=1 AND
+			TB_WSM_THEMES_DEFINE_TYPE.THEMESID IN(
+			  SELECT  TB_WSM_SYS_THEMES.THEMESID  
+			    FROM TB_WSM_SYS_THEMES  
+			    GROUP BY THEMESID  
+			  )
+	]]></sql>
+</operation>
+</root>

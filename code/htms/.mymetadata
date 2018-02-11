@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="htms"
+  id="myeclipse.1475149086603"
+  context-root="/htms"
+  j2ee-spec="5.0"
+  archive="htms.war">
+  <attributes>
+    <attribute name="webrootdir" value="/WebRoot" />
+  </attributes>
+</project-module>
+

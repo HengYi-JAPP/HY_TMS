@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="toAddServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="list" forward="">
+		
+		<forward name="listPage"><![CDATA[jsp/htms/serviceuser/add.jsp]]></forward>
+	</operation>
+	
+	 <!-- [ServiceUserBean] 新增  -->
+	 <operation name="addServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="add" forward="">
+		<sql name="insert" caiidTable="TB_HTMS_SERVICEUSER" caiidName="TB_HTMS_SERVICEUSER" caiidKey="SUSERID"   caiidVar="suserId"><![CDATA[
+			INSERT INTO TB_HTMS_SERVICEUSER(SUSERID,SYSCODE,ACCOUNT,PASSWD,ISVALIDATE)
+			VALUES($suserId,$syscode,$sysAccount,$sysPwd,$isValidate)
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listServiceUser]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 列表查询  -->
+	 <operation name="listServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="list" forward="" loadCacheForm="serviceUserForm">
+		<sql name="count"><![CDATA[
+			SELECT COUNT(*) AS total   FROM TB_HTMS_SERVICEUSER WHERE ACCOUNT LIKE '%$accountSH%' and SYSCODE LIKE '%$sysCodeSH%'
+		]]></sql>
+		<sql name="list" beanClass="com.zzy.htms.services.user.ServiceUserBean" cacheName="serviceUserList" cacheScope="request" isPage="true" pageField=""><![CDATA[
+			SELECT * FROM TB_HTMS_SERVICEUSER WHERE ACCOUNT LIKE '%$accountSH%' and SYSCODE LIKE '%$sysCodeSH%' ORDER BY SUSERID DESC
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/htms/serviceuser/list.jsp]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 查看/预览  -->
+	 <operation name="viewServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.zzy.htms.services.user.ServiceUserBean" cacheName="serviceUserBean" cacheScope="request" ><![CDATA[
+			SELECT *  FROM TB_HTMS_SERVICEUSER WHERE SUSERID=$suserId
+		]]></sql>
+		<forward name="modifyPage"><![CDATA[jsp/htms/serviceuser/modify.jsp]]></forward>
+		<forward name="viewPage"><![CDATA[jsp/htms/serviceuser/view.jsp]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 修改 -->
+	 <operation name="modifyServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="modify" forward="">
+		<sql name="modify" ><![CDATA[
+			UPDATE TB_HTMS_SERVICEUSER SET
+				SYSCODE=$syscode,
+				ACCOUNT=$sysAccount,
+				PASSWD=$sysPwd
+			WHERE SUSERID=$suserId
+		]]></sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listServiceUser]]></forward>
+	</operation>
+
+	 <!-- [ServiceUserBean] 删除  -->
+	 <operation name="deleteServiceUser" businessClass="com.zzy.htms.services.user.ServiceUserBusiness" invokeMethod="delete" forward="">
+		<sql name="delete">
+			DELETE FROM  TB_HTMS_SERVICEUSER WHERE SUSERID=$suserId
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listServiceUser]]></forward>
+	</operation>
+</root>

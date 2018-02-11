@@ -1,0 +1,57 @@
+
+.webWinFrame {
+position: absolute;
+left:15px;
+top:15px;
+padding: 3px;
+background-color: #009ad6;
+}
+.webWin {
+width: 300px;
+border: 1px solid #bddff4;
+background-color: #FFFFFF;
+}
+/*.webWin .wTitle{
+line-height: 18px;
+padding: 2px;
+font-weight: bold;
+cursor:move;
+background-color:#1261b0;*/
+/*display:inline-block;*/
+/*white-space: nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}*/
+
+.webWin .wTitle{
+line-height: 18px;
+padding: 2px;
+font-weight: bold;
+cursor:move;
+background-color:#3b9dd8;
+/*display:inline-block;*/
+white-space: nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+color: #fff;
+}
+
+.webWin .wContent {
+overflow:hidden;
+}
+.webWin .wResizeBox {
+background-color: #80C65A;
+height: 5px;
+width: 5px;
+position: absolute;
+right: 5px;
+bottom: 5px;
+overflow:hidden;
+cursor:se-resize;
+}
+body {
+margin-left: 0px;
+margin-top: 0px;
+margin-right: 0px;
+margin-bottom: 0px;
+}

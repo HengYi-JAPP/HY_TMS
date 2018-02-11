@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	
+	<!-- 加载用户的系统列表 :
+	1、用户自定义的已经存在，且有权限访问的系统;
+	2、平台新增的，不在用户自定义列表的，有权限访问的系统；
+	-->
+	<operation name="loadSystem_of_commonSystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="list"  forward="" >
+		<!-- 获取用户有权限访问的个人门户列表 -->
+		<sql name="userSystemList"   beanClass="com.mobilecn.privilege.system.SystemBean"  cacheName="userSystemList" cacheScope="session" >
+		     SELECT TB_SYSTEM.* FROM TB_WSM_USER_GROUP,TB_WSM_GROUP,TB_SYSTEM  
+		        WHERE 
+		        TB_SYSTEM.ISINSIDE=1 AND 
+		        TB_SYSTEM.ISVALIDATE=1 AND 
+		        TB_WSM_USER_GROUP.USERID=$userId AND
+		        TB_WSM_USER_GROUP.GROUPID=TB_WSM_GROUP.GROUPID AND 
+		        TB_WSM_GROUP.SYSID=TB_SYSTEM.SYSID
+		     ORDER BY TB_SYSTEM.SHOWORDER
+		</sql>	
+		<!-- 用户自定义的系统列表 -->
+		<sql name="selfDefineSystemList"   beanClass="com.mobilecn.privilege.system.SystemBean"  cacheName="selfDefineSystemList" cacheScope="session" >
+			 SELECT TB_SYSTEM.*,TB_WSM_USER_SYSTEM.* FROM TB_SYSTEM,TB_WSM_USER_SYSTEM  
+			 WHERE 	
+			 TB_SYSTEM.ISINSIDE=1 AND 		
+			 TB_WSM_USER_SYSTEM.USERID=$userId AND 
+			 TB_WSM_USER_SYSTEM.SYSID=TB_SYSTEM.SYSID 
+		     ORDER BY USERORDER
+		</sql>	
+		
+		<!-- 此处还需要加载门户中的频道、栏目的访问权限 -->
+		<forward name="listPage">jsp/index.jsp</forward>
+	</operation>
+	
+	
+	<!-- 用户end -->
+</root>

@@ -1,0 +1,33 @@
+/*设置框架不显示滚动条，让滚动条出现在框架里面*/
+body { font-family:Verdana; font-size:14px;margin: 0;padding: 0;border: 0;text-align:center;overflow:hidden;}
+.clearfloat {clear:both; height:0; font-size: 1px; line-height: 0px;}
+#container {margin:0 auto; background:#FFFFFF;width:100%;}
+#header { }
+#horizonMenu { background:#09c; margin-bottom:5px; line-height:30px;height:30px;}
+#body {float:left; height:530px; width:100%;OVERFLOW:hidden;}		
+#footer {float:left;width:100%;}
+
+/**-- 详细布局样式 framework目录下 MutiTopPage.jsp 页面的层叠样式 --**/
+.header-warp{position:relative;height:44px;background:url(../images/common/framework/header-bg.png) repeat-x;border-bottom:#3b8ec2 2px solid;}
+.system-logo{width:240px;height:72px;float:left;}
+.login-info{position:absolute;left:260px;top:5px;color:#FFF;}
+.operate-bar{float: right; margin-top: 6px;margin-right: 40px;}
+.operate-bar li{float:left;margin:0 10px 0 0;}
+.operate-bar li img{ vertical-align:middle;margin:0 3px;}
+.operate-bar li a:visited{color:#FFF;}
+.operate-bar li a:hover,
+.operate-bar li a:active{color:#FF0;}
+
+/**-- 详细布局样式 framework目录下 BottomPage.jsp 页面的层叠样式 --**/
+.footer-layout{width:100%;background:url(../images/common/framework/footer-bg.gif) repeat-x;border-top:#b4cad8 1px solid;border-collapse: collapse; border-spacing:0;position: absolute;bottom: 0px;left: 0px;}
+.footer-layout td{height:27px;}
+.footer-left{padding:0 0 0 10px;}
+.footer-right{width:400px;padding:0 10px 0 0;text-align:right;}
+
+/**-- 详细布局样式 framework目录下 MutiMenuIndexPage.jsp 页面的层叠样式 --**/
+.system-main-layout-table{width:100%;height:100%;border-collapse:collapse;border-spacing:0;}
+.system-main-left{width:230px;height:100%;vertical-align:top;}
+.system-main-right{ vertical-align:top;}
+.system-main-hide-bar{width:5px;border-left:#6aadd8 1px solid;border-right:#6aadd8 1px solid; vertical-align:middle;}
+
+.system-scroll-box{height:100%;width:100%;overflow-y:scroll; overflow-x: hidden; }

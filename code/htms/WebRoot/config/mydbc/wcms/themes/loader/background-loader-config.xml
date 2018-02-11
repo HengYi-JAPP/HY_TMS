@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemBackground" businessClass="com.mobilecn.themes.loader.BackgroundLoader" invokeMethod="list" forward="" >
+	<sql name="loadAllSystemBackground" beanClass="com.mobilecn.themes.background.BackgroundBean"><![CDATA[
+		    SELECT TB_WSM_BACKGROUND.*,TB_WSM_SYS_BACKGROUND.SYSID  
+		    FROM TB_WSM_BACKGROUND,TB_WSM_SYS_BACKGROUND  
+		    WHERE   TB_WSM_BACKGROUND.ISVALIDATE=1 AND  TB_WSM_BACKGROUND.BGDID=TB_WSM_SYS_BACKGROUND.BGDID
+		    ORDER BY TB_WSM_SYS_BACKGROUND.SYSID, TB_WSM_BACKGROUND.BGDID DESC				
+	]]></sql>
+</operation>
+</root>

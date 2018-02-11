@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!--webref实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="viewSubSystemWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="view" forward="">		
+		<sql name="view" beanClass="com.mobilecn.plugins.webref.WebRefBean"
+			cacheName="webRefViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_INFO_REF WHERE INFOID IN (SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId)
+		</sql>			
+		<forward name="modifyPage">jsp/portal/console/plugins/webref/subsystem/webref.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/webref/subsystem/webref.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemWebRef" businessClass="com.mobilecn.plugins.webref.WebRefBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_REF WHERE INFOID IN (SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId)
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId
+		</sql>	
+		<sql name="insert"  caiidName="TB_WSM_INFO_COLUMN" caiidVar="refColumnInfoId">
+		INSERT INTO TB_WSM_INFO_REF (INFOID,REFNAME,REFLINK,REFDESC,CREATOR,CREATETIME,MODIFIER,MODIFYTIME,ISVALIDATE)
+		VALUES($refColumnInfoId,$refName,$refLink,$refDesc,$userId,$createTime,$userId,$modifyTime,$isValidate)
+		</sql>
+		<sql name="insert"  >
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($refColumnInfoId,$columnId,0,0,0,1)
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=viewSubSystemWebRef&sysId=$[sysId]&columnId=$[columnId]]]></forward>
+	</operation>
+</root>

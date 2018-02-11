@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="deleteFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						update  TB_HTMS_FACTORY  set isvlidate =0
+				    WHERE TB_HTMS_FACTORY.factoryId = $factoryId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listFactory]]></address>
+		</forward>
+	</operation>
+	<operation name="viewFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.dictionary.FactoryBean" cacheType="bean" cacheName="factoryViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_FACTORY.factoryId ,TB_HTMS_FACTORY.factoryName 
+				        ,TB_HTMS_FACTORY.factoryCode ,TB_HTMS_FACTORY.factoryDesc 
+				        ,TB_HTMS_FACTORY.factoryAddress 
+				        ,TB_HTMS_FACTORY.factoryContactor 
+				        ,TB_HTMS_FACTORY.factoryTelphone ,TB_HTMS_FACTORY.isVlidate 
+				    FROM TB_HTMS_FACTORY 
+				    WHERE TB_HTMS_FACTORY.factoryId = $factoryId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/factory/modify.jsp]]></address>
+		</forward>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/dictionary/factory/view.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_FACTORY 
+				    SET factoryName = $factoryName ,factoryCode = $factoryCode ,factoryDesc 
+				        = $factoryDesc ,factoryAddress = $factoryAddress 
+				        ,factoryContactor = $factoryContactor ,factoryTelphone = 
+				        $factoryTelphone ,isVlidate = $isVlidate 
+				    WHERE TB_HTMS_FACTORY.factoryId = $factoryId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listFactory]]></address>
+		</forward>
+	</operation>
+	<operation name="listFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness" version="2.0"  forward="" loadCacheForm="factoryForm" >
+		<method name="默认查询" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_FACTORY 
+				    WHERE TB_HTMS_FACTORY.factoryName LIKE'%$factoryNameSH%' 
+				     AND TB_HTMS_FACTORY.factoryCode  LIKE'%$factoryCodeSH%' 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.dictionary.factory.FactoryBean" cacheType="list" cacheName="factoryList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_FACTORY.factoryId ,TB_HTMS_FACTORY.factoryName 
+				        ,TB_HTMS_FACTORY.factoryCode ,TB_HTMS_FACTORY.factoryDesc 
+				        ,TB_HTMS_FACTORY.factoryAddress 
+				        ,TB_HTMS_FACTORY.factoryContactor 
+				        ,TB_HTMS_FACTORY.factoryTelphone ,TB_HTMS_FACTORY.isVlidate 
+				    FROM TB_HTMS_FACTORY 
+				    WHERE TB_HTMS_FACTORY.factoryName LIKE'%$factoryNameSH%' 
+				    AND TB_HTMS_FACTORY.factoryCode  LIKE'%$factoryCodeSH%' 			    
+				    ORDER BY TB_HTMS_FACTORY.factoryId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/factory/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_FACTORY" caiidKey="factoryId" caiidName="factoryId" caiidVar="factoryId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_FACTORY ( factoryId, factoryName, factoryCode, 
+				        factoryDesc, factoryAddress, factoryContactor, factoryTelphone, 
+				        isVlidate) 
+				        VALUES($factoryId,$factoryName,$factoryCode,$factoryDesc,$factoryAddress,$factoryContactor,$factoryTelphone,1) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listFactory]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/dictionary/factory/add.jsp]]></address>
+		</forward>
+	</operation>
+	
+		<operation name="loadAllFactory" businessClass="com.zzy.htms.dictionary.factory.FactoryBusiness"
+		invokeMethod="list" >
+		
+		<sql name="loadAllFactory" beanClass="com.zzy.htms.dictionary.factory.FactoryBean"><![CDATA[
+			   SELECT TB_HTMS_FACTORY.*  FROM  TB_HTMS_FACTORY WHERE ISVLIDATE=1
+		]]></sql>
+		
+	</operation>
+</root>

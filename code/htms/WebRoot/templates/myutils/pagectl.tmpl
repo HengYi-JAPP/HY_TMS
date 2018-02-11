@@ -1,0 +1,47 @@
+	<input	type="hidden" name="curpage" id="curpage" value="1">                   
+	<table width="100%" border="0" cellpadding="0" cellspacing="0"                 
+			class="footer-page" style="text-align:right;height: 20px;font-size:12px;">                     
+			<tr class="footer-page-table">                                                   
+				<td class="page_total" valign="center" align="left" nowrap="true"        
+					style="width:40%;">                                                          
+					共： {$totalCount} &nbsp;条， 当前：{$currentPage}/{$totalPage}页    
+				</td>                                                                            
+				<td valign="center" align="right" nowrap="true"                            
+					class="footer-page-table" style="width:60%;">                              
+					<a href="javascript:toPage(1)"                                    
+						style="margin-right:5px;">                                                 
+					<img src="{$relativePath}images/common/pagination/first.gif" border="0"                        
+						style="margin-right:5px;" /></a>                                           
+						<a href="javascript:toPage({$prevPage})"                                   
+						style="margin-right:5px;">                                                 
+					<img src="{$relativePath}images/common/pagination/prev.gif" border="0"                         
+						style="margin-right:5px;" /></a>                                           
+					<a href="javascript:toPage({$nextPage})"                                     
+						style="margin-right:5px;"><img src="{$relativePath}images/common/pagination/next.gif"        
+							border="0" /></a>
+					<a href="javascript:toPage({$lastPage})"                                 
+						style="margin-right:5px;"><img src="{$relativePath}images/common/pagination/last.gif"        
+							border="0" /></a>转到                                                             
+					<input type="text" value="{$gotoPageNo}"                            
+						name="pageIndex" id="pageIndex"  class="page-input"                                           
+						onKeyDown="javascript:if (event.keyCode==13){ toPage(this.value);}"                                 
+						style="width:30px;width:25px"  />                                          
+					                                                                            
+					<!--<input type="button" name="News$Pager" id="Submit1" value="go"         
+						class="go-btn"                                                             
+						onClick="javascript:toPage(document.getElementById('pageIndex').value);" />-->
+					<a href="javascript:toPage(document.getElementById('pageIndex').value);"   title="GO"                              
+						style="margin-right:5px;"><img src="{$relativePath}images/common/pagination/arrow-red.gif"        
+							border="0" />                                                            
+					</a>
+				</td>                                                                            
+			</tr>                                                                              
+		</table>                                                                             
+		<script type="text/javascript">                                                    
+						function toPage(pageNo){                                                     
+						if(pageNo == 0)pageNo = 1; if(pageNo > {$totalPage})return;                                                  
+						  document.getElementById("curpage").value = pageNo;                       
+						  if('{$fromName}'==''||'{$fromName}'=='null'){document.forms[0].submit();return;};                       
+						  document.getElementById("{$fromName}").submit();                         
+						}                                                                            
+		</script>           

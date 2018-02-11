@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.service.ServiceParamsBean">
+		<map property="paramId" javaType="java.lang.String" column="PARAMID" colType=""/>
+		<map property="serviceId" javaType="java.lang.String" column="SERVICEID" colType=""/>
+		<map property="paramCode" javaType="java.lang.String" column="PARAMCODE" colType=""/>
+		<map property="paramName" javaType="java.lang.String" column="PARAMNAME" colType=""/>
+		<map property="paramDesc" javaType="java.lang.String" column="PARAMDESC" colType=""/>
+		<map property="paramVar" javaType="java.lang.String" column="PARAMVAR" colType=""/>
+		<map property="paramValue" javaType="java.lang.String" column="PARAMVALUE" colType=""/>
+		<map property="isValidate" javaType="int" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

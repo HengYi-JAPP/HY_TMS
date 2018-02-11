@@ -1,0 +1,164 @@
+/* 列表页面标题 */
+.table_top_left {
+	width: 203px;
+	height: 28px;
+	font-size: 16px;
+	color: #1f2d3d;
+	font-family: Microsoft YaHei;
+}
+
+.table_top_left_backgound {
+	height: 28px;
+	font-size: 16px;
+	font-family: Microsoft YaHei;
+}
+
+.table_top_left_backgound_blank{
+	height: 28px;
+}
+
+.table_top_right{
+	width: 89px;
+	height: 28px;
+}
+.selectAll{width:30px}
+
+/*搜索条样式*/
+.searchbanner_left { height:31px; line-height:31px; background:#f0f5fb; border-bottom:1px solid #CCC; padding-left:10px; font-size:14px; font-weight:bold; color:#000;}
+.searchbanner_right { text-align:right; padding-right:10px; background:#f0f5fb; border-bottom:1px solid #CCC; }
+
+/***** 隐藏显示搜索栏样式 ************/
+.caption_hotrsearch{background-color:#018ad0; background-image:url(../../images/common/table-list/icon_search.gif);  height:25px; width:30px; border-style:none; background-repeat:no-repeat;} 
+.caption_hotinput{ background-color:#e6e7e8;background-image:url(../../images/common/table-list/Search_show.gif); height:19px; width:69px; border-style:none; background-repeat: no-repeat; cursor:pointer;  } 
+.caption_hotinput_over{background-color:#e6e7e8;background-image:url(../../images/common/table-list/Search_show.gif); height:19px; width:69px; border-style:none; background-repeat: no-repeat; cursor:pointer; }
+
+/* 查询条件标签样式 */
+.condition_label{ height:30px; background-color:#F4F4F4;  border-bottom:1px #CCCCCC solid; text-align:right;}
+/* 查询条件选项样式 */
+.condition_option{ padding-left:5px; height:30px;  border-left:1px solid #cccccc; border-right:1px solid #cccccc; border-bottom:1px solid #cccccc;}
+/* 输入框 */
+.input_text{ border:1px solid #ADACAB;margin-bottom:3px;} 
+
+
+
+/* 列表样式 */
+.dgbackground{ border:1px solid #CCCCCC; font-size:12px; padding-left:2px;table-layout:fixed;}/* 整个table 样式 */
+/* 整个table 样式 */
+.dgHeaderStyle {height:42px; background-color: #eef2f6; font-size:12px;color:#1f2d3d;font-family:Microsoft YaHei}/* 列表标题行tr 样式 */
+/* th 样式 */
+.dgHeaderStyle td{ height:40px; font-size:12px; text-align:center; color:#000000; font-weight:bold; border:1px solid #CCCCCC;}/* td样式 */
+/* th 样式 */
+.dgAlternatingItemStyle{ background:#FFFFFF}
+/* td 样式（奇数行） */
+.dgAlternatingItemStyle td{ background:#FFFFFF; height:25px; text-align:center; font-size:12px;font-family:Microsoft YaHei  border:1px solid #CCCCCC;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}/* td 样式（奇数行）  */
+/* td 样式（奇数行）  */
+.dgItemStyle { background:#F2F5F9;}
+/* 样式（偶数行样式） */
+.dgItemStyle td{ background:#F2F5F9; height:25px; font-size:12px;  border:1px solid #CCCCCC;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}/* 样式（偶数行样式） */
+
+/*编辑页面表格样式*/
+.edit-talbe{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+.edit-talbe td{
+	height:41px;
+	border: #d1d1d1 1px solid;
+	padding: 5px;
+	font-family: Microsoft YaHei;
+	font-size:14px;
+}
+ a{
+	text-decoration:none; color: #1b4fca;
+}
+.edit-talbe-label{
+	width: 100px;
+	background: #eef1f6;
+	font-size: 14px;
+	text-align: right;
+	min-width: 100px;
+	font-family: Microsoft YaHei;
+}
+.input-text {
+	border: 1px solid #ADACAB;
+	margin-bottom: 3px;
+}
+
+.button-self-style{
+	 height:24px;
+	 background:#fff;
+	 border: 1px solid #77b8df;
+	 border-radius: 4px;
+	 color: #2889c4;
+	 font-weight:700;
+}
+
+.button-custom-style{
+	width: 50px;
+	height:24px;
+	border-style:none;
+	background-repeat:no-repeat;
+	background-color:transparent;
+	color: #2889c4;
+	font-weight:bold;
+	font-size: 14px;
+	cursor:pointer;
+	border: 1px solid #77b8df;
+	border-radius: 4px;
+	padding: 0 10px;
+}
+
+.search-box{
+	text-align: center;
+	vertical-align:middle;
+}
+.footer-page{
+	border:0px;
+}
+.footer-page-table{
+	border:0px;
+	text-align: right;
+	vertical-align:middle;
+}
+.page_total{
+	border:0px;
+	}
+.footer-page-table{border:0px;}
+#pageFooter{
+	border:0px;
+	width:100%;
+}
+
+.edit-talbe td input[type="text"],select{
+	border: 1px solid #bfcbd9;
+	height: 27px;
+	background-color: #ffffff;
+	border-radius: 4px;
+	width: 130px;
+}
+.edit-talbe td textarea{
+	border: 1px solid #bfcbd9;
+	background-color: #ffffff;
+	border-radius: 4px;
+}
+.edit-talbe td input[type="password"]{
+	border: 1px solid #bfcbd9;
+	height: 27px;
+	background-color: #ffffff;
+	border-radius: 4px;
+	width: 130px;
+}
+.edit-talbe td input[type="checkbox"]{
+	vertical-align: middle;
+}
+.edit-talbe td input[type="radio"]{
+	vertical-align: middle;
+}
+
+.date{
+	 background: #fff url(datePicker.gif) no-repeat right;
+}

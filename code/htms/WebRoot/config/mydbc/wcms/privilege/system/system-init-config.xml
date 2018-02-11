@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toInitTemplateForSubsystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view" afterInvoke="initWebSiteTemplate" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"><![CDATA[
+			 SELECT * FROM TB_SYSTEM WHERE SYSID = $checkSysId
+		]]></sql>		
+		<forward name="viewPage">contoller.do?operation=listSystem</forward>
+	</operation>
+	<!-- 
+	先要初始化模板，如果没有模板，则先初始化模板；
+	再检测是否有关联的主题，如果没有，需要插入主题；
+	遍历模板目录，对每一个JSP模板，检测是否存在皮肤；如果不存在，则播入，如果存在，则获取ID；
+	解析模板中的styleClass，如果不存在则插入，如果存在，则存在则跳过
+	
+	后续：修改css文件生成的路径，提供css路径重新生成功能。
+	 -->
+	<operation name="toInitThemesForSubsystem" businessClass="com.mobilecn.privilege.system.SystemBusiness"
+		invokeMethod="view" afterInvoke="initWebSiteThemes" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.system.SystemBean"><![CDATA[
+			 SELECT * FROM TB_SYSTEM WHERE SYSID = $checkSysId
+		]]></sql>		
+		<forward name="viewPage">contoller.do?operation=listSystem</forward>
+	</operation>
+	
+</root>

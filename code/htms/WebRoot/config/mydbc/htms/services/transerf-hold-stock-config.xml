@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	
+	<operation name="loadTransferHoldStock" businessClass="com.zzy.htms.sales.custorder.CustOrderBusiness" invokeMethod="list"  forward="" >
+		<sql name="loadTransferHoldStock" beanClass="com.zzy.htms.logistic.transfer.TransferBean" >
+					<![CDATA[
+					select 
+					TB_HTMS_TRANSFER.Transfercode,
+					TB_HTMS_TRANSFER.Createtime,
+					TB_HTMS_CUSTORDER.Cordercode,
+					tb_htms_custorderdetail.codetailcertificate,
+					tb_htms_transferdetail.applytonnum,
+					tb_htms_transferdetail.applypacknum,
+					TB_HTMS_CUSTOMERADDR.CADDRDETAIL,
+					TB_HTMS_CUSTOMERADDR.Areaid,
+					TB_HTMS_CUSTOMERADDR.Caddrcontactor,
+					TB_HTMS_CUSTOMERADDR.Caddrtelephone
+					 from 
+					tb_htms_custorderdetail,TB_HTMS_CUSTORDER,
+					tb_htms_transferdetail,TB_HTMS_TRANSFER,TB_HTMS_CUSTOMERADDR
+					
+					where 
+					tb_htms_custorderdetail.codetailid=tb_htms_transferdetail.codetailid 
+					and TB_HTMS_CUSTORDER.Corderid=tb_htms_custorderdetail.corderid
+					and tb_htms_transferdetail.transid=TB_HTMS_TRANSFER.Transid
+					and TB_HTMS_TRANSFER.Caddrid=TB_HTMS_CUSTOMERADDR.Caddrid 
+					and TB_HTMS_TRANSFER.Saptranscode is null
+					]]>
+			</sql>
+		
+	
+	</operation>
+	
+</root>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddSubSystemPicLinkGroup" businessClass="com.mobilecn.plugins.piclink.PicLinkTypeBusiness"
+		invokeMethod="list" forward="" >	
+		<sql name="list" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_TYPE WHERE  SYSID=$sysId AND  ISVALIDATE=1
+		]]></sql>
+		<forward name="listPage">/jsp/portal/console/plugins/piclink/subsystem/group/add.jsp</forward>
+	</operation>
+	<operation name="addSubSystemPicLinkGroup" businessClass="com.mobilecn.plugins.piclink.PicLinkGroupBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidTable="TB_WSM_LINK_GROUP" caiidKey="LINKGROUPID"  caiidName="TB_WSM_LINK_GROUP" caiidVar="picLinkGroupId">
+		INSERT INTO TB_WSM_LINK_GROUP (LINKGROUPID,SYSID,LINKTYPEID,LINKGROUPNAME,LINKGROUPDESC,SHOWGROUPNAME,SHOWORDER,ISVALIDATE)
+		VALUES($picLinkGroupId,$sysId,$linkTypeId,$linkGroupName,$linkGroupDesc,$showGroupName,$showOrder,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLinkGroup</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemPicLinkGroup" businessClass="com.mobilecn.plugins.piclink.PicLinkGroupBusiness"
+		invokeMethod="list" forward="" cacheParams="linkGroupNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_LINK_GROUP WHERE  SYSID=$sysId AND LINKGROUPNAME LIKE '%$linkGroupNameSH%'  
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean"
+			cacheName="picLinkGroupList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_GROUP WHERE  SYSID=$sysId AND LINKGROUPNAME LIKE '%$linkGroupNameSH%' ORDER BY LINKTYPEID,SHOWORDER 
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/portal/console/plugins/piclink/subsystem/group/list.jsp?sysId=$[sysId]&columnId=$[columnId]]]></forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemPicLinkGroup" businessClass="com.mobilecn.plugins.piclink.PicLinkGroupBusiness"
+		invokeMethod="delete" forward="">
+		<!-- 删除所有相关的信息 -->
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LINK WHERE  LINKGROUPID =$checkLinkGroupId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_LINK_GROUP WHERE  LINKGROUPID =$checkLinkGroupId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLinkGroup</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSubSystemPicLinkGroup" businessClass="com.mobilecn.plugins.piclink.PicLinkGroupBusiness"
+		invokeMethod="view" forward="">
+		<sql name="list" beanClass="com.mobilecn.plugins.piclink.PicLinkTypeBean"
+			cacheName="picLinkTypeList" cacheScope="request"><![CDATA[
+			    SELECT * FROM TB_WSM_LINK_TYPE WHERE  ISVALIDATE=1
+		]]></sql>
+		<sql name="view" beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean"
+			cacheName="picLinkGroupViewBean" cacheScope="request"><![CDATA[
+			 SELECT * FROM TB_WSM_LINK_GROUP WHERE LINKGROUPID=$linkGroupId
+		]]></sql>
+		
+		<forward name="modifyPage">/jsp/portal/console/plugins/piclink/subsystem/group/modify.jsp</forward>
+		<forward name="viewPage">/jsp/portal/console/plugins/piclink/subsystem/group/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemPicLinkGroup" businessClass="com.mobilecn.plugins.piclink.PicLinkGroupBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_LINK_GROUP SET 
+		 	SYSID=$sysId,	
+		 	LINKTYPEID=$linkTypeId,	
+			LINKGROUPNAME=$linkGroupName,
+			LINKGROUPDESC=$linkGroupDesc,
+			SHOWGROUPNAME=$showGroupName,
+			SHOWORDER=$showOrder,
+			ISVALIDATE=$isValidate		
+		 WHERE LINKGROUPID=$linkGroupId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSubSystemPicLinkGroup</forward>
+	</operation>
+	
+	
+	<!-- 为栏目指定可访问的角色  end -->
+</root>

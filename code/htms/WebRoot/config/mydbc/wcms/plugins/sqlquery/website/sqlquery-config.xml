@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!--webref实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="listWebSiteSQLQueryIndex" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="view" forward="">		
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_COLUMN WHERE COLUMNID=$columnId
+		</sql>	
+		<sql name="listDataSource" beanClass="com.mobilecn.mydbc.dbpool.DatasourceBean"
+			cacheName="datasourceList" cacheScope="request" ><![CDATA[
+			    SELECT TB_DATASOURCE.*  FROM TB_DATASOURCE WHERE  TB_DATASOURCE.DBSID IN(
+				SELECT TB_WSM_INFO_SQLQUERY.DBSID 
+				FROM TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID
+				) AND   TB_DATASOURCE.ISVALIDATE=1 
+		]]></sql>
+		<sql name="listSQLQuery" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean"
+			cacheName="sqlqueryList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY.* 
+				FROM TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID  
+				ORDER BY TB_WSM_INFO_SQLQUERY.QUERYID DESC				
+		]]></sql>
+		<sql name="listSQLQueryList" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryListBean"
+			cacheName="sqlqueryListList" cacheScope="request" isPage="true" pageField="CONFIGID"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY_LIST.* 
+				FROM TB_WSM_INFO_SQLQUERY_LIST,TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  
+				TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND 
+				TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID  AND 
+				TB_WSM_INFO_SQLQUERY.QUERYID=TB_WSM_INFO_SQLQUERY_LIST.QUERYID
+				ORDER BY TB_WSM_INFO_SQLQUERY_LIST.SHOWORDER				
+		]]></sql>		
+		<sql name="listSQLQueryParams" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBean"
+			cacheName="sqlqueryParamsList" cacheScope="request" isPage="true" pageField="CONFIGID"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY_PARAMS.* 
+				FROM TB_WSM_INFO_SQLQUERY_PARAMS,TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  
+				TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND 
+				TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID  AND 
+				TB_WSM_INFO_SQLQUERY.QUERYID=TB_WSM_INFO_SQLQUERY_PARAMS.QUERYID
+				ORDER BY TB_WSM_INFO_SQLQUERY_PARAMS.PARAMID DESC				
+		]]></sql>	
+	</operation>
+	
+	<operation name="listWebSiteSQLQueryList" businessClass="com.mobilecn.plugins.sqlquery.SQLQueryBusiness"
+		invokeMethod="view" forward="">		
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_COLUMN WHERE COLUMNID=$columnId
+		</sql>	
+		<sql name="listDataSource" beanClass="com.mobilecn.mydbc.dbpool.DatasourceBean"
+			cacheName="datasourceList" cacheScope="request" ><![CDATA[
+			    SELECT TB_DATASOURCE.*  FROM TB_DATASOURCE WHERE  TB_DATASOURCE.DBSID IN(
+				SELECT TB_WSM_INFO_SQLQUERY.DBSID 
+				FROM TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID AND TB_WSM_INFO_SQLQUERY.QUERYID=$queryId 
+				) AND   TB_DATASOURCE.ISVALIDATE=1 
+		]]></sql>
+		<sql name="listSQLQuery" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryBean"
+			cacheName="sqlqueryList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY.* 
+				FROM TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID   AND TB_WSM_INFO_SQLQUERY.QUERYID=$queryId 
+				ORDER BY TB_WSM_INFO_SQLQUERY.QUERYID DESC				
+		]]></sql>
+		<sql name="listSQLQueryList" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryListBean"
+			cacheName="sqlqueryListList" cacheScope="request" ><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY_LIST.* 
+				FROM TB_WSM_INFO_SQLQUERY_LIST,TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  
+				TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND 
+				TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID  AND 
+				TB_WSM_INFO_SQLQUERY.QUERYID=TB_WSM_INFO_SQLQUERY_LIST.QUERYID 
+				 AND TB_WSM_INFO_SQLQUERY.QUERYID=$queryId 
+				ORDER BY TB_WSM_INFO_SQLQUERY_LIST.SHOWORDER				
+		]]></sql>		
+		<sql name="listSQLQueryParams" beanClass="com.mobilecn.plugins.sqlquery.SQLQueryParamsBean"
+			cacheName="sqlqueryParamsList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_INFO_SQLQUERY_PARAMS.* 
+				FROM TB_WSM_INFO_SQLQUERY_PARAMS,TB_WSM_INFO_SQLQUERY,TB_WSM_INFO_COLUMN 
+				WHERE  
+				TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND 
+				TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SQLQUERY.QUERYID  AND 
+				TB_WSM_INFO_SQLQUERY.QUERYID=TB_WSM_INFO_SQLQUERY_PARAMS.QUERYID
+				 AND TB_WSM_INFO_SQLQUERY.QUERYID=$queryId 
+				ORDER BY TB_WSM_INFO_SQLQUERY_PARAMS.PARAMID DESC				
+		]]></sql>	
+		<forward name="modifyPage">jsp/portal/website/plugins/sqlquery/list.jsp</forward>
+		<forward name="viewPage">jsp/portal/website/plugins/sqlquery/list.jsp</forward>
+	</operation>
+	
+</root>

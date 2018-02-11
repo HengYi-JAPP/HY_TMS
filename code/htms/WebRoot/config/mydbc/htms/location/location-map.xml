@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.location.LocationBean">
+		<map property="locationId"     javaType="String" column="locationId"  colType=""/>
+		<map property="latitude"   javaType="String" column="latitude"  colType=""/>
+		<map property="longitude"  javaType="String" column="longitude"  colType=""/>
+		<map property="transId"    javaType="String" column="transId"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="wxopenId"   javaType="String" column="wxopenId"  colType=""/>
+		<map property="isSign"     javaType="String" column="isSign"  colType=""/>
+	</bean>
+</root>

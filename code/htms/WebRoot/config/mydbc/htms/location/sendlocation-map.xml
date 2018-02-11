@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.location.SendLocation">
+		<map property="openId" javaType="String" column="wxOpenId"  colType=""/>
+		<map property="latitude" javaType="String" column="latitude"  colType=""/>
+		<map property="longitude" javaType="String" column="longitude"  colType=""/>
+		<map property="transId" javaType="String" column="transId"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		
+		<map property="province" javaType="String" column="province"  colType=""/>
+		<map property="city" javaType="String" column="city"  colType=""/>
+		<map property="district" javaType="String" column="district"  colType=""/>
+	</bean>
+</root>

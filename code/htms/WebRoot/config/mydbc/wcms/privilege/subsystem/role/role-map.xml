@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.role.RoleBean">
+		<map property="roleType" javaType="String" column="ROLETYPE"  colType=""/>
+		<map property="dicName" javaType="String" column="DICNAME"  colType=""/>
+		<map property="dicId" javaType="String" column="DICID"  colType=""/>
+	</bean>
+</root>

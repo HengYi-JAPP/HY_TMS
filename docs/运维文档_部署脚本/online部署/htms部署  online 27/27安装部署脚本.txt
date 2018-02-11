@@ -1,0 +1,102 @@
+﻿#创建目录
+mkdir -p /usr/local/deploy/2018013104/
+mkdir -p /usr/local/backup/2018013104/
+cd /usr/local/deploy/2018013104/
+
+#上传htms部署文件
+
+#停机备份
+/usr/local/tomcat6/bin/shutdown.sh
+cp -r  /usr/local/tomcat6/tmsdeploy/htms       /usr/local/backup/2018013104/
+cp -r  /usr/local/tomcat6/tmsdeploy/htms.war   /usr/local/backup/2018013104/
+cd /usr/local/backup/2018013104/
+ls
+
+#移除旧文件
+rm -rf /usr/local/tomcat6/tmsdeploy/htms
+rm -f /usr/local/tomcat6/tmsdeploy/htms.war
+
+##部署新工程
+cp -f /usr/local/deploy/2018013104/htms.war /usr/local/tomcat6/tmsdeploy/
+mkdir -p  /usr/local/tomcat6/tmsdeploy/htms/
+cp -f /usr/local/deploy/2018013104/htms.war /usr/local/tomcat6/tmsdeploy/htms/
+cd /usr/local/tomcat6/tmsdeploy/htms/
+jar -xvf htms.war
+rm -rf htms.war
+
+
+#删除catalina.out 日志
+zip /usr/local/tomcat6/logs/catalina2018013104.zip /usr/local/tomcat6/logs/catalina.out
+rm -rf /usr/local/tomcat6/logs/catalina.out
+
+#启动
+/usr/local/tomcat6/bin/startup.sh
+
+#启动sap服务端接口,登录htms系统后,访问如下链接,查看后台日志,启动完成后有对应的输出
+http://htms.hengyi.com/logtest.jsp
+
+
+#查看日志
+tail -f 100 /usr/local/tomcat6/logs/catalina.out
+
+
+更新代码后需要检查的内容
+1.检查发货申请,点击申请,查看地址是否显示正常   此检查可以确认sap的jar是否正常,如果不正常,需要用在线环境的jar包替换
+2.检查运费接口是否在运行
+3.检查订单同步接口是否很快的执行通过
+
+
+
+7105256927366774048
+
+数据库备份
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+
+exp htms/htms1356@ORCL    file=htms-2018013104.dmp owner=htms
+zip htms-2018013104.zip   htms-2018013104.dmp
+
+
+#复制本地文件，备份文件到86服务器上
+scp htms-2018013104.zip root@192.168.0.86:/opt/oracle_backup/
+
+
+
+windows:
+set NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+
+
+mv   /usr/local/backup/2018013104/htms       /usr/local/tomcat6/tmsdeploy/
+mv   /usr/local/backup/2018013104/htms.war   /usr/local/tomcat6/tmsdeploy/
+
+
+数据库解锁语句
+alter user htms identified by [password] account unlock;
+
+1.检查catalina.out 日志
+2.检查tb_htms_system_log表日志
+3.
+
+
+
+sql:导出
+imp htms/htms@orcl  full=y file=htms-2017-08-05.dmp ignore=y
+
+
+exp htms/htms1234@orcl  full=y file=htms-2017-09-15.dmp ignore=y
+
+
+
+
+SSO登录配置检查
+1.放开web.xml部分的cas部分权限
+2.修改web.xml的主机名称地址
+3.修改common-system 启用sso
+4.修改用户map关系
+5.使用此地址访问SSO  http://htms.hengyi.com/contoller.do?operation=LoginAction_of_myportal
+
+
+
+
+
+
+

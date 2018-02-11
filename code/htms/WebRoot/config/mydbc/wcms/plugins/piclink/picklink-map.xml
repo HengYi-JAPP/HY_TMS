@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.piclink.PicLinkBean">
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="linkId" javaType="java.lang.String" column="LINKID" colType=""/>
+		<map property="linkTypeId" javaType="java.lang.String" column="LINKTYPEID" colType=""/>
+		<map property="linkGroupId" javaType="java.lang.String" column="LINKGROUPID" colType=""/>
+		<map property="linkName" javaType="java.lang.String" column="LINKNAME" colType=""/>
+		<map property="linkTitle" javaType="java.lang.String" column="LINKTITLE" colType=""/>
+		<map property="linkAddr" javaType="java.lang.String" column="LINKADDR" colType=""/>
+		<map property="linkDesc" javaType="java.lang.String" column="LINKDESC" colType=""/>
+		<map property="linkIconPath" javaType="java.lang.String" column="LINKICONPATH" colType=""/>
+		<map property="linkIconWidth" javaType="java.lang.String" column="LINKICONWIDTH" colType=""/>
+		<map property="linkIconHeight" javaType="java.lang.String" column="LINKICONHEIGHT" colType=""/>
+		<map property="linkIconAddr" javaType="java.lang.String" column="LINKICONADDR" colType=""/>
+		<map property="showContents" javaType="java.lang.String" column="SHOWCONTENTS" colType=""/>
+		<map property="contents" javaType="java.lang.String" column="CONTENTS" colType=""/>
+		<map property="publisher" javaType="java.lang.String" column="PUBLISHER" colType=""/>
+		<map property="publishDatetime" javaType="java.lang.String" column="PUBLISHDATETIME" colType=""/>
+		<map property="drafter" javaType="java.lang.String" column="DRAFTER" colType=""/>
+		<map property="drafDatetime" javaType="java.lang.String" column="DRAFDATETIME" colType=""/>
+		<map property="showLinkIcon" javaType="java.lang.String" column="SHOWLINKICON" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+		<map property="userShowOrder" javaType="java.lang.String" column="USERSHOWORDER" colType=""/>
+		
+		<map property="isSee" javaType="java.lang.String" column="ISSEE" colType=""/>
+		<map property="isClick" javaType="java.lang.String" column="ISCLICK" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="isSystem" javaType="java.lang.String" column="ISSYSTEM" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		
+	</bean>
+</root>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toAddWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' AND SYSID IN(
+			  SELECT TB_WSM_COLUMN.SYSID FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webPart'  AND TB_WSM_COLUMN.ISVALIDATE=1
+			  )
+			   ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webPart'  AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/portal/console/plugins/webpart/add.jsp]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_WEB WHERE INFOID IN (SELECT INFOID FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId)
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE COLUMNID=$columnId
+		</sql>	
+		<sql name="insert"  caiidName="TB_WSM_INFO_COLUMN" caiidVar="webColumnInfoId"  lobKeyName="INFOID" lobKeyVar="webColumnInfoId">
+		INSERT INTO TB_WSM_INFO_WEB (INFOID,WEBNAME,WEBCONTENT,WEBDESC,CREATOR,CREATETIME,ISVALIDATE)
+		VALUES($webColumnInfoId,$webName,$webContent,$webDesc,$userId,$createTime,$isValidate)
+		</sql>
+		<sql name="insert" >
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($webColumnInfoId,$columnId,0,0,0,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listWebPart</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="list" forward="" cacheParams="columnIdSH,webNameSH,curpage" cacheScopes="page,page,session">
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' AND SYSID IN(
+			  SELECT TB_WSM_COLUMN.SYSID FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webPart'  AND TB_WSM_COLUMN.ISVALIDATE=1
+			  )
+			   ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webPart'  AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		
+		<sql name="count">
+			 SELECT COUNT(TB_WSM_INFO_WEB.INFOID) AS total 
+			FROM TB_WSM_INFO_WEB,TB_WSM_INFO_COLUMN 
+			WHERE  TB_WSM_INFO_COLUMN.COLUMNID LIKE '%$columnIdSH%' AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_WEB.INFOID AND TB_WSM_INFO_WEB.WEBNAME LIKE '%$webNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.webpart.WebPartBean"
+			cacheName="webPartList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_WEB.* 
+				FROM TB_WSM_INFO_WEB,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID LIKE '%$columnIdSH%' AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_WEB.INFOID AND TB_WSM_INFO_WEB.WEBNAME LIKE '%$webNameSH%' 
+				ORDER BY TB_WSM_INFO_WEB.CREATETIME DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/webpart/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_WEB WHERE INFOID=$checkInfoId
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE INFOID=$checkInfoId
+		</sql>		
+		<forward name="listAction">contoller.do?operation=listWebPart</forward>
+	</operation>
+	
+	<!--webpart实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	<operation name="toViewWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="view" forward="">
+		<sql name="listSystem" beanClass="com.mobilecn.privilege.system.SystemBean"
+			cacheName="systemList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_SYSTEM WHERE ISVALIDATE='1' AND SYSID IN(
+			  SELECT TB_WSM_COLUMN.SYSID FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webPart'  AND TB_WSM_COLUMN.ISVALIDATE=1
+			  )
+			   ORDER BY SHOWORDER
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_INFOTYPE WHERE TB_WSM_COLUMN.INFOTYPEID=TB_WSM_INFOTYPE.INFOTYPEID AND TB_WSM_INFOTYPE.INFOTYPECODE='webPart'  AND TB_WSM_COLUMN.ISVALIDATE=1  
+		]]></sql>
+		
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			 SELECT TB_WSM_COLUMN.*  FROM TB_WSM_COLUMN,TB_WSM_INFO_COLUMN WHERE TB_WSM_INFO_COLUMN.COLUMNID=TB_WSM_COLUMN.COLUMNID AND TB_WSM_INFO_COLUMN.INFOID=$infoId
+		</sql>
+		<forward name="modifyPage"><![CDATA[contoller.do?operation=viewWebPart]]></forward>
+		<forward name="viewPage"><![CDATA[contoller.do?operation=viewWebPart]]></forward>
+	</operation>
+	<operation name="viewWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.webpart.WebPartBean"
+			cacheName="webPartViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_INFO_WEB WHERE  INFOID=$infoId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/webpart/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/webpart/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifyWebPart" businessClass="com.mobilecn.plugins.webpart.WebPartBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_WEB SET 	
+		 	WEBNAME=$webName,
+		 	WEBCONTENT=$webContent,
+		 	WEBDESC=$webDesc,
+		 	MODIFIER=$userId,
+			MODIFYTIME=$modifyTime
+		 WHERE  INFOID=$infoId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listWebPart]]></forward>
+	</operation>
+</root>

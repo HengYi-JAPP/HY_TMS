@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="list" beanClass="com.mobilecn.common.dictionarytype.DictionaryTypeBean"
+			cacheName="dictionaryTypeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_DIC_TYPE WHERE  ISVALIDATE='1'  
+		]]></sql>
+		
+		<forward name="listPage">jsp/common/dictionary/add.jsp</forward>
+	</operation>
+	<operation name="addDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="add" forward="" afterInvoke="reloadDicrectory">
+		<sql name="insert"  caiidTable="TB_DICTIONARY" caiidKey="DICID"  caiidName="TB_DICTIONARY" caiidVar="dicId">
+		INSERT INTO TB_DICTIONARY (DICID,TYPEID,DICCODE,DICNAME,DICDESC,SHOWORDER,ISVALIDATE)
+		VALUES($dicId,$dicType,$dicCode,$dicName,$dicDesc,$showOrder,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDictionary</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="list" forward="" cacheParams="dicCodeSH,dicNameSH,dicCodeSH,dicNameSH,curpage" cacheScopes="page,page,session,session,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_DICTIONARY WHERE DICCODE LIKE '%$dicCodeSH%' AND DICNAME LIKE '%$dicNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.common.dictionary.DictionaryBean"
+			cacheName="dictionaryList" cacheScope="request" isPage="true" pageField="DICID"><![CDATA[
+			    SELECT TB_DICTIONARY.*,TB_DIC_TYPE.TYPECODE,TB_DIC_TYPE.TYPENAME FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DIC_TYPE.TYPEID=TB_DICTIONARY.TYPEID AND DICCODE LIKE '%$dicCodeSH%' AND DICNAME LIKE '%$dicNameSH%' ORDER BY TB_DICTIONARY.TYPEID,TB_DICTIONARY.SHOWORDER 
+		]]></sql>
+		<forward name="listPage">jsp/common/dictionary/list.jsp</forward>
+	</operation>
+	
+	<operation name="loadDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="list" forward="">
+		<sql name="list" beanClass="com.mobilecn.common.dictionary.DictionaryBean"><![CDATA[
+			    SELECT TB_DICTIONARY.*,TB_DIC_TYPE.TYPECODE,TB_DIC_TYPE.TYPENAME FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DIC_TYPE.TYPEID=TB_DICTIONARY.TYPEID AND TB_DICTIONARY.ISVALIDATE=1 
+		]]></sql>
+		<sql name="dictionaryTypeList" beanClass="com.mobilecn.common.dictionarytype.DictionaryTypeBean"><![CDATA[
+			    SELECT TB_DIC_TYPE.* FROM TB_DIC_TYPE WHERE ISVALIDATE=1   
+		]]></sql>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="delete" forward="" afterInvoke="reloadDicrectory">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_DICTIONARY WHERE DICID=$checkDicId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDictionary</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="view" forward="">
+		<sql name="list" beanClass="com.mobilecn.common.dictionarytype.DictionaryTypeBean"
+			cacheName="dictionaryTypeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_DIC_TYPE WHERE  ISVALIDATE='1'  
+		]]></sql>
+		<sql name="view" beanClass="com.mobilecn.common.dictionary.DictionaryBean"
+			cacheName="dictionaryViewBean" cacheScope="request">
+			 SELECT TB_DICTIONARY.*,TB_DIC_TYPE.TYPECODE,TB_DIC_TYPE.TYPENAME   FROM TB_DICTIONARY,TB_DIC_TYPE WHERE TB_DIC_TYPE.TYPEID=TB_DICTIONARY.TYPEID AND DICID=$dicId
+		</sql>
+		<forward name="modifyPage">jsp/common/dictionary/modify.jsp</forward>
+		<forward name="viewPage">jsp/common/dictionary/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyDictionary" businessClass="com.mobilecn.common.dictionary.DictionaryBusiness"
+		invokeMethod="modify" forward=""  afterInvoke="reloadDicrectory">
+		<sql name="modify">
+		 UPDATE TB_DICTIONARY SET 	
+		 TYPEID=$dicType,
+		 DICCODE=$dicCode,
+		 DICNAME=$dicName,
+		 DICDESC=$dicDesc,
+		 SHOWORDER=$showOrder,
+		 ISVALIDATE=$isValidate
+		 WHERE DICID=$dicId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listDictionary</forward>
+	</operation>
+		
+	<!-- 用户end -->
+</root>

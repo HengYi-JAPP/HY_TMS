@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.portal.column.params.ColumnParamsBean">
+		<map property="paramsId" javaType="java.lang.String" column="PARAMSID" colType=""/>
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="paramsVar" javaType="java.lang.String" column="PARAMSVAR" colType=""/>
+		<map property="paramsName" javaType="java.lang.String" column="PARAMSNAME" colType=""/>
+		<map property="paramsValue" javaType="java.lang.String" column="PARAMSVALUE" colType=""/>
+		<map property="paramsDefValue" javaType="java.lang.String" column="PARAMSDEFVALUE" colType=""/>
+		<map property="paramsDesc" javaType="java.lang.String" column="PARAMSDESC" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+
+</root>

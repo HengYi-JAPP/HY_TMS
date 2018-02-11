@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="addSubSystemService" businessClass="com.mobilecn.plugins.service.ServiceBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="insert"  caiidName="TB_WSM_INFO_COLUMN" caiidVar="serviceInfoId">
+		INSERT INTO TB_WSM_INFO_SERVICE (SERVICEID,SERVICENAME,SERVICEDESC,SERVICEADDRESS,INVOKEMETHOD,INVOKESTYLE,SEIVCEPLATFORM,SHOWSTYLE,SHOWNUM,ISVALIDATE,ISSHOWTITLE,SHOWLENGTH,REPLACESTRING,TITLEROWNUM,TITLECOLNUM)
+		VALUES($serviceInfoId,$serviceName,$serviceDesc,$serviceAddress,$invokeMethod,$invokeStyle,$seivcePlatform,$showStyle,$showNum,$isValidate,$isShowTitle,$showLength,$replaceString,$titleRowNum,$titleColNum)
+		</sql>
+		<sql name="insert" >
+		INSERT INTO TB_WSM_INFO_COLUMN (INFOID,COLUMNID,ISRECOMMEND,ISTOP,APPROVESTATUS,ISVALIDATE)
+		VALUES($serviceInfoId,$columnId,0,0,0,1)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSubSystemService</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSubSystemService" businessClass="com.mobilecn.plugins.service.ServiceBusiness"
+		invokeMethod="list" forward="" cacheParams="columnIdSH,serviceNameSH,curpage" cacheScopes="page,page,session">
+		
+		
+		<sql name="count">
+			 SELECT COUNT(TB_WSM_INFO_SERVICE.SERVICEID) AS total 
+			FROM TB_WSM_INFO_SERVICE,TB_WSM_INFO_COLUMN 
+			WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SERVICE.SERVICEID AND TB_WSM_INFO_SERVICE.SERVICENAME LIKE '%$serviceNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.service.ServiceBean"
+			cacheName="serviceList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_SERVICE.* 
+				FROM TB_WSM_INFO_SERVICE,TB_WSM_INFO_COLUMN 
+				WHERE  TB_WSM_INFO_COLUMN.COLUMNID=$columnId AND TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_SERVICE.SERVICEID AND TB_WSM_INFO_SERVICE.SERVICENAME LIKE '%$serviceNameSH%' 
+				ORDER BY TB_WSM_INFO_SERVICE.SERVICEID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/service/subsystem/service/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSubSystemService" businessClass="com.mobilecn.plugins.service.ServiceBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE WHERE SERVICEID=$checkServiceId
+		</sql>
+		<sql name="deleteInfoMap" isBatch="true">
+			DELETE FROM TB_WSM_INFO_COLUMN WHERE INFOID=$checkServiceId
+		</sql>		
+		<sql name="deleteList" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE_LIST WHERE SERVICEID=$checkServiceId
+		</sql>	
+		<sql name="deleteParams" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE_PARAMS WHERE SERVICEID=$checkServiceId
+		</sql>		
+		<forward name="listAction">contoller.do?operation=listSubSystemService</forward>
+	</operation>
+	
+	<!--service实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	
+	<operation name="viewSubSystemService" businessClass="com.mobilecn.plugins.service.ServiceBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.service.ServiceBean"
+			cacheName="serviceViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SERVICE WHERE   SERVICEID=$serviceId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/service/subsystem/service/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/service/subsystem/service/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifySubSystemService" businessClass="com.mobilecn.plugins.service.ServiceBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_SERVICE SET 
+			SERVICENAME=$serviceName,
+			SERVICEDESC=$serviceDesc,
+			SERVICEADDRESS=$serviceAddress,
+			INVOKEMETHOD=$invokeMethod,
+			INVOKESTYLE=$invokeStyle,
+			SEIVCEPLATFORM=$seivcePlatform,
+			SHOWSTYLE=$showStyle,
+			SHOWNUM=$showNum,
+			ISVALIDATE=$isValidate,
+			ISSHOWTITLE=$isShowTitle,
+			SHOWLENGTH=$showLength,
+			REPLACESTRING=$replaceString,
+			TITLEROWNUM=$titleRowNum,
+			TITLECOLNUM=$titleColNum
+		 WHERE  SERVICEID=$serviceId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemService]]></forward>
+	</operation>
+</root>

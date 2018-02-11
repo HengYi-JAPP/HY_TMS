@@ -1,0 +1,479 @@
+﻿ alter table TB_HTMS_CUSTORDER add CUSTOMERAMOUNT VARCHAR2(30);
+
+-- Add/modify columns 
+alter table TB_HTMS_TRANSFER add sapTransCode VARCHAR2(30);
+
+-- Add/modify columns 
+ alter table TB_HTMS_CUSTOMERADDR add AREACODE VARCHAR2(30);
+
+alter table TB_HTMS_TRANSPORT add TRANSPORTNOTICE VARCHAR2(300);
+
+alter table TB_HTMS_SEND  add   SENDTIME  VARCHAR2(30);
+
+-- Add/modify columns 
+alter table TB_HTMS_CUSTORDERDETAIL add shipPoint VARCHAR2(10);
+alter table TB_HTMS_CUSTORDERDETAIL add shipPointDesc VARCHAR2(60);
+
+
+
+alter Table TB_HTMS_TASKSCHEDULE add TASKTYPE varchar2(20) ;
+
+Alter Table  TB_HTMS_TASKSCHEDULE add TASKVALUE varchar2(20) ;
+
+
+-- 更新定时任务表数据
+Delete From TB_HTMS_TASKSCHEDULE ;
+INSERT INTO "TB_HTMS_TASKSCHEDULE" ("TASKID", "TASKNAME", "TASKDESC", "TASKINTERVAL", "TASKTIMEUNIT", "TASKCLASS", "ISUSE", "STARTDATETIME", "EDNDATETIME", "ISVALIDATE", "TASKTYPE", "TASKVALUE") VALUES ('3', '销售订单月同步', '每天指定某个特定的时间同步', NULL, '5', 'com.zzy.htms.schedule.SyncOrderScheduleByMonth', '1', '2017-08-31', NULL, '1', '2', '01:01:01');
+INSERT INTO "TB_HTMS_TASKSCHEDULE" ("TASKID", "TASKNAME", "TASKDESC", "TASKINTERVAL", "TASKTIMEUNIT", "TASKCLASS", "ISUSE", "STARTDATETIME", "EDNDATETIME", "ISVALIDATE", "TASKTYPE", "TASKVALUE") VALUES ('1', '定时任务测试', '定时任务测试', '10', '2', 'com.zzy.htms.schedule.TestScheduleTask', '1', '2017-08-15', NULL, '1', '1', NULL);
+INSERT INTO "TB_HTMS_TASKSCHEDULE" ("TASKID", "TASKNAME", "TASKDESC", "TASKINTERVAL", "TASKTIMEUNIT", "TASKCLASS", "ISUSE", "STARTDATETIME", "EDNDATETIME", "ISVALIDATE", "TASKTYPE", "TASKVALUE") VALUES ('2', '销售订单同步', NULL, '60', '3', 'com.zzy.htms.schedule.SyncOrderScheduleTask', '1', '2017-08-31', NULL, '1', '1', NULL);
+Commit;
+
+
+
+alter table TB_HTMS_CUSTORDERDETAIL modify partialDelivery VARCHAR2(10);
+
+alter table TB_HTMS_transferDETAIL  modify  transdetailnotice  VARCHAR2(300);
+
+create table tb_htms_serviceuser
+(
+  suserId    numeric,
+  syscode    varchar2(100),
+  account    varchar2(60),
+  passwd     varchar2(60),
+  isvalidate numeric default 1
+);
+
+alter table TB_HTMS_SHIP add shortStock numeric default 0;
+alter table TB_HTMS_SHIP add shortNotice VARCHAR2(500);
+alter table TB_HTMS_SHIP add shortTime VARCHAR2(30);
+
+
+create table TB_HTMS_TRANSFER_PRICE 
+(
+    priceId              Number(38)  not null,
+    transId               Number(38) ,
+    priceType             Number(38) ,
+    freightModel         Number(38) ,
+    customerPrice        Varchar2(30), 
+    carrierPrice         Varchar2(30), 
+    customerOnePrice     Varchar2(30), 
+    carrierOnePrice      Varchar2(30), 
+    priceUnit            varchar2(30),
+    validateDate         varchar2(30),
+    priceNotice          varchar2(300),
+    creator               Number(38) ,
+    createTime           varchar2(30),
+    modifier             Number(38) ,
+    modifyTime           varchar2(30),
+    isValidate            Number(38) 
+);
+
+alter table  TB_HTMS_TRANSFER_PRICE  add   constraint PK_TB_HTMS_TRANSFER_PRICE primary key (priceId) ;
+
+
+create table TB_HTMS_SHIP2PRICE 
+(
+    shipId               numeric,
+    priceId              numeric
+);
+
+/*==============================================================*/
+/* Table: TB_HTMS_SHIP_PRICE                                    */
+/*==============================================================*/
+create table TB_HTMS_SHIP_PRICE 
+(
+    priceId              Number(38)  not null,
+    priceType             Number(38) ,
+    freightModel         Number(38) ,
+    customerPrice        Varchar2(30), 
+    carrierPrice         Varchar2(30), 
+    customerOnePrice     Varchar2(30), 
+    carrierOnePrice      Varchar2(30), 
+    priceUnit            Varchar2(30),
+    validateDate         Varchar2(30),
+    priceNotice          Varchar2(300),
+    creator               Number(38) ,
+    createTime           Varchar2(30),
+    modifier              Number(38) ,
+    modifyTime           varchar(30),
+    isValidate             Number(38) ,
+    constraint PK_TB_HTMS_SHIP_PRICE primary key (priceId)
+);
+
+
+-- Create table
+create table TB_HTMS_ESTIMATE_FREIGHT
+(
+  FREIGHTID           INTEGER not null,
+  ORDERID             INTEGER,
+  ORDERCODE           VARCHAR2(30),
+  ITEMCODE            VARCHAR2(30),
+  ITEMID              INTEGER,
+  SHIPID              INTEGER,
+  TRANSFERID          INTEGER,
+  FREIGHTSTYLE        INTEGER,
+  FREIGHTMODEL        VARCHAR2(30),
+  VALIDATEDATE        VARCHAR2(30),
+  APPLYTONNUM         VARCHAR2(30),
+  FREIGHTPRICE        VARCHAR2(30),
+  FREIGHTAMOUNT       VARCHAR2(30),
+  PRICEID             INTEGER,
+  FREIGHTTIME         VARCHAR2(30),
+  USERID              INTEGER,
+  ISVALIDATE          INTEGER,
+  CUSTOMERID          NUMBER(38),
+  ESTIMATESTEP        NUMBER(38),
+  AREAID              NUMBER(38),
+  TOTALFREIGHT        VARCHAR2(30),
+  CARRIERPRICE        VARCHAR2(30),
+  CARRIERFREIGHT      VARCHAR2(30),
+  TOTALCARRIERFREIGHT VARCHAR2(30),
+  FREIGHTTYPE         NUMBER(38),
+  ROUTEID             NUMBER(38)
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+
+
+
+alter table TB_HTMS_ESTIMATE_FREIGHT
+  add constraint PK_TB_HTMS_ESTIMATE_FREIGHT primary key (FREIGHTID);
+  
+  
+  
+-- Create table
+create table TB_HTMS_FREIGHT
+(
+  FREIGHTID               INTEGER not null,
+  SHIPID                  INTEGER,
+  TRANSFERID              INTEGER,
+  SAPCODE                 VARCHAR2(30),
+  ITEMCODE                VARCHAR2(30),
+  FREIGHTTYPE             CHAR(10),
+  FREIGHTSTYLE            INTEGER,
+  FREIGHTMODEL            VARCHAR2(10),
+  VALIDATEDATE            VARCHAR2(30),
+  APPLYTONNUM             VARCHAR2(30),
+  FREIGHTPRICE            VARCHAR2(30),
+  FREIGHTAMOUNT           VARCHAR2(30),
+  PRICEID                 INTEGER,
+  CARRIERPRICE            VARCHAR2(30),
+  CARRIERFREIGHT          VARCHAR2(30),
+  TOTALFREIGHT            VARCHAR2(30),
+  TOTALCARRIERFREIGHT     VARCHAR2(30),
+  PLANFREIGHTSTYLE        INTEGER,
+  PLANFREIGHTMODEL        VARCHAR2(10),
+  PLANVALIDATEDATE        VARCHAR2(30),
+  PLANFREIGHTPRICE        VARCHAR2(30),
+  PLANPRICEID             INTEGER,
+  PLANFREIGHT             VARCHAR2(30),
+  PLANTOTALFREIGHT        VARCHAR2(30),
+  PLANTOTALCARRIERFREIGHT VARCHAR2(30),
+  FAVOURFREIGHT           VARCHAR2(30),
+  PLANCARRIERPRICE        VARCHAR2(30),
+  PLANCARRIERFREIGHT      VARCHAR2(30),
+  FREIGHTBALANCE          VARCHAR2(30),
+  FREIGHTTIME             VARCHAR2(30),
+  ISVALIDATE              INTEGER,
+  ISESTIMATE              NUMBER(38) default 1,
+  AREAID                  NUMBER(38),
+  ROUTEID                 NUMBER(38)
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_FREIGHT
+  add constraint PK_TB_HTMS_FREIGHT primary key (FREIGHTID);
+
+-- Add/modify columns 
+alter table TB_HTMS_FREIGHT add subItemCode VARCHAR2(30);
+
+
+
+insert into tb_wsm_privilege (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID, ISDEFAULT, DEFAUTLID, COLUMNID, MODULEID, OBJID)
+values (163, '承运商管理(物流)', 'carrier_to_logistics', '承运商管理(物流)', '/', 1, '17', '1', 6, 1, '0', null, null, null, null);
+
+insert into tb_wsm_privilege (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID, ISDEFAULT, DEFAUTLID, COLUMNID, MODULEID, OBJID)
+values (164, '运单管理(物流)', 'transport_to_logistics', '运单管理(物流)', 'contoller.do?operation=listTransportToLogistics', 163, '17', '1', 1, 1, '0', null, null, null, null);
+
+insert into tb_wsm_privilege (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID, ISDEFAULT, DEFAUTLID, COLUMNID, MODULEID, OBJID)
+values (165, '排车管理(物流)', 'send_to_logistics', '排车管理(物流)', 'contoller.do?operation=listSendToLogistics', 163, '17', '1', 10, 1, '0', null, null, null, null);
+
+insert into tb_wsm_privilege (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID, ISDEFAULT, DEFAUTLID, COLUMNID, MODULEID, OBJID)
+values (166, '司机管理(物流)', 'driver_to_logistics', '司机管理(物流)', 'contoller.do?operation=listDriverToLogistics', 163, '17', '1', 30, 1, '0', null, null, null, null);
+
+insert into tb_wsm_privilege (PRIVID, PRIVNAME, PRIVCODE, PRIVDESC, PRIVADDR, PRIVPARENTID, PRIVTYPE, ISVALIDATE, PRIVORDER, SYSID, ISDEFAULT, DEFAUTLID, COLUMNID, MODULEID, OBJID)
+values (167, '车辆管理(物流)', 'vehicle_to_logistics', '车辆管理(物流)', 'contoller.do?operation=listVehicleToLogistics', 163, '17', '1', 20, 1, '0', null, null, null, null);
+
+--  Delete From tb_wsm_privilege Where PRIVID  In(163,164,165,166,167) ;
+
+
+
+alter table TB_HTMS_CUSTORDER
+  add constraint UN_TB_HTMS_CUSTORDER unique (CORDERCODE);
+
+
+alter table TB_HTMS_CUSTORDERDETAIL
+  add constraint UQ_TB_HTMS_CUSTORDERDETAIL unique (CORDERID, CODETAILCERTIFICATE);
+
+
+alter table TB_HTMS_TRANSFER
+  add constraint UN__TB_HTMS_TRANSFER unique (TRANSFERCODE) ;
+
+
+
+--add from 20171009
+-- Add/modify columns 
+alter table TB_HTMS_TRANSFER add isMerger numeric;
+alter table TB_HTMS_TRANSFER add mergerGroup VARCHAR2(30);
+alter table TB_HTMS_TRANSFER add mergerTime VARCHAR2(30);
+alter table TB_HTMS_TRANSFER add mergerPerson VARCHAR2(30);
+
+
+
+-- Add/modify columns 
+alter table TB_HTMS_TRANSFER modify ISMERGER default 0;
+
+
+-- Add/modify columns 
+alter table TB_HTMS_TRANSPORT add isMerger numeric default 0;
+alter table TB_HTMS_TRANSPORT add mergerGroup VARCHAR2(30);
+
+
+ update TB_HTMS_TRANSFER set isMerger=0 Where ismerger Is Null ;
+ update TB_HTMS_TRANSPORT set isMerger=0 Where ismerger Is Null ;
+ 
+ 
+
+   alter table TB_HTMS_transport
+  add constraint UN_TB_HTMS_transport unique (transportCODE);
+  
+  
+     alter table TB_HTMS_send
+  add constraint UN_TB_HTMS_send unique (sendCODE);
+  
+  
+alter table TB_HTMS_CUSTOMER
+  add constraint UN_TB_CUSTOMERCODE unique (CUSTOMERCODE);
+  
+  --贸易商运价表
+  create table TB_HTMS_TRADERPRICE
+(
+  PRICEID          NUMBER(38) not null,
+  ROUTEID          NUMBER(38),
+  PRICETYPE        NUMBER(38),
+  CUSTOMERPRICE    VARCHAR2(30),
+  COMPANYPRICE     VARCHAR2(30),
+  CARRIERPRICE     VARCHAR2(30),
+  PRICESTART       VARCHAR2(30),
+  PRICEEND         VARCHAR2(30),
+  PRICEUNIT        VARCHAR2(30),
+  CREATOR          VARCHAR2(30),
+  CREATETIME       VARCHAR2(30),
+  MODIFIER         VARCHAR2(30),
+  MODIFYTIME       VARCHAR2(30),
+  ISVALIDATE       NUMBER(38) default '1',
+  CUSTOMERONEPRICE VARCHAR2(30),
+  CARRIERONEPRICE  VARCHAR2(30),
+  FREIGHTMODEL     INTEGER,
+  VALIDATEDATE     VARCHAR2(30)
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_TRADERPRICE
+  add constraint PK_TB_HTMS_TRADERPRICE primary key (PRICEID);
+alter table TB_HTMS_TRADERPRICE
+  add constraint FK_TRADERPRICE_ROUTE foreign key (ROUTEID)
+  references TB_HTMS_ROUTE (ROUTEID);
+
+
+ alter table TB_HTMS_transportsend
+  add constraint UN_TB_HTMS_transportsend unique (transportid);
+  
+  -- Add/modify columns 
+alter table TB_HTMS_FREIGHT add invoiceFreight VARCHAR2(30);
+
+
+
+create table TB_HTMS_USER_FACTORY
+(
+  USERID INTEGER,
+  FACTORYID      INTEGER
+);
+alter table TB_HTMS_USER_FACTORY
+  add constraint USER_REF_FACTORY foreign key (FACTORYID)
+  references TB_HTMS_FACTORY (FACTORYID);
+alter table TB_HTMS_USER_FACTORY
+  add constraint FACTORY_REF_USER foreign key (USERID)
+  references TB_WSM_USER (USERID);
+  
+  alter table TB_HTMS_USER_FACTORY
+add constraint USER_FACTORY_PK_ID primary key(USERID,FACTORYID) ;
+
+
+-- Create table
+create table TB_HTMS_WXUSER
+(
+  WXOPENID     VARCHAR2(30) not null,
+  NICKNAME     VARCHAR2(30),
+  SEX          VARCHAR2(10),
+  PROVINCE     VARCHAR2(30),
+  CITY         VARCHAR2(30),
+  COUNTRY      VARCHAR2(30),
+  HEADIMGURL   VARCHAR2(300),
+  PRIVILEGE    VARCHAR2(300),
+  UNIONID      VARCHAR2(300),
+  DRIVERMOBILE VARCHAR2(30),
+  VEHICLENO    VARCHAR2(30),
+  DRIVERID     VARCHAR2(30),
+  LOGISTICS    VARCHAR2(30),
+  IDENTITY     VARCHAR2(30)
+);
+-- Add comments to the columns 
+comment on column TB_HTMS_WXUSER.WXOPENID
+  is '微信openid，微信唯一标识';
+comment on column TB_HTMS_WXUSER.NICKNAME
+  is '用户昵称';
+comment on column TB_HTMS_WXUSER.SEX
+  is '用户性别';
+comment on column TB_HTMS_WXUSER.PROVINCE
+  is '用户资料省份';
+comment on column TB_HTMS_WXUSER.CITY
+  is '用户资料城市';
+comment on column TB_HTMS_WXUSER.COUNTRY
+  is '用户资料城市';
+comment on column TB_HTMS_WXUSER.HEADIMGURL
+  is '用户头像';
+comment on column TB_HTMS_WXUSER.PRIVILEGE
+  is '用户特权信息';
+comment on column TB_HTMS_WXUSER.UNIONID
+  is '用户关注公众平台的关联ID';
+comment on column TB_HTMS_WXUSER.DRIVERMOBILE
+  is '司机电话号码';
+comment on column TB_HTMS_WXUSER.VEHICLENO
+  is '车牌号';
+comment on column TB_HTMS_WXUSER.DRIVERID
+  is '关联司机ID';
+comment on column TB_HTMS_WXUSER.LOGISTICS
+  is '承运商，车队信息';
+comment on column TB_HTMS_WXUSER.IDENTITY
+  is '司机身份证';
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_WXUSER
+  add constraint KEY_TB_HTMS_WXUSER primary key (WXOPENID);
+
+  
+  
+-- Create table
+create table TB_HTMS_LOCATION
+(
+  LOCATIONID NUMBER not null,
+  LATITUDE   VARCHAR2(20),
+  LONGITUDE  VARCHAR2(20),
+  WXOPENID   VARCHAR2(30),
+  TRANSID    VARCHAR2(30),
+  CREATETIME VARCHAR2(30)
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_LOCATION
+  add constraint KEY_TB_HTMS_LOCATION primary key (LOCATIONID);
+  
+  
+-- Create table
+create table TB_HTMS_sendLOCATION
+(
+  LATITUDE   VARCHAR2(20),
+  LONGITUDE  VARCHAR2(20),
+  WXOPENID   VARCHAR2(30),
+  TRANSID    VARCHAR2(30)  Not Null,
+  CREATETIME VARCHAR2(30),
+  PROVINCE     VARCHAR2(30),
+  CITY         VARCHAR2(30),
+  COUNTRY      VARCHAR2(30)  
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_sendLOCATION
+  add constraint KEY_TB_HTMS_sendLOCATION primary key (TRANSID);
+  
+  alter table TB_HTMS_SENDLOCATION rename column COUNTRY to district;
+
+
+create table TB_HTMS_SIGN
+(
+       SENDID INTEGER NOT NULL,
+       PICLIST VARCHAR(256)
+);
+alter table tb_htms_sign rename column SENDID to TRANSPORTID;
+alter table tb_htms_sign add SIGNTIME varchar2(30);
+
+
+create table TB_HTMS_DRIVER_VEHICLE
+(
+  DRIVERID     NUMBER(38),
+  VEHICLEID    NUMBER(38)
+);
+alter table TB_HTMS_DRIVER_VEHICLE
+  add constraint DRIVER_REF_VEHICLE foreign key (DRIVERID)
+  references TB_HTMS_DRIVER(DRIVERID);
+alter table TB_HTMS_DRIVER_VEHICLE
+  add constraint VEHICLE_REF_DRIVER foreign key (VEHICLEID)
+  references TB_HTMS_VEHICLE (VEHICLEID);
+alter table TB_HTMS_DRIVER_VEHICLE
+add constraint DRIVER_VEHICLE_PK_ID primary key(DRIVERID,VEHICLEID);
+
+
+alter table TB_HTMS_WXUSER add driverName varchar2(30);
+
+ alter table TB_HTMS_FREIGHT add INVOICETONNUM  VARCHAR2(30);
+ alter table TB_HTMS_FREIGHT add INVOICETIME    VARCHAR2(30);
+ 
+  alter table TB_HTMS_SENDLOCATION add modifyTIME    VARCHAR2(30);
+  
+  
+-- 园区物流接口,保存的数据
+ create table TB_HTMS_PARKLOGISTICS
+(
+  SAPCODE     VARCHAR2(30) not null,
+  BINDINGTIME VARCHAR2(30),
+  EXITTIME    VARCHAR2(30),
+  PARKSTATUS  VARCHAR2(10),
+  CREATETIME  VARCHAR2(30),
+  MODIFYTIME  VARCHAR2(30)
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_PARKLOGISTICS
+  add primary key (SAPCODE) ;
+
+
+-- 自备车自提用户
+alter table tb_wsm_user add CUSTOMERCODE  VARCHAR2(100);
+alter table tb_wsm_user add isFee NUMBER(38) default 0;
+
+
+create table TB_HTMS_MANAGEMENTFEE
+(
+  FEEID      NUMBER(38) not null,
+  MANAGEMENTFEE   VARCHAR2(30),
+  CREATETIME VARCHAR2(30),
+  ISVALIDATE INTEGER
+);
+
+alter table TB_HTMS_MANAGEMENTFEE
+  add constraint KEY_TB_HTMS_MANAGEMENTFEE primary key (FEEID);
+  
+  
+  alter table TB_HTMS_VEHICLE modify VEHICLENO VARCHAR2(50);
+  
+  alter table TB_HTMS_TRANSPORT add sendid varchar2(38);
+  
+  
+  -- 自备车自提车辆表
+ create table TB_HTMS_selffetchcar
+(
+  carid     NUMBER(30) not null,
+  customerCode VARCHAR2(30) Not Null ,
+  vehicleNo    VARCHAR2(30) Not Null,
+  remark  VARCHAR2(300),
+  createTime  VARCHAR2(30),
+  isValidate  VARCHAR2(30)  default  1
+    
+);
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TB_HTMS_selffetchcar
+  add primary key (carid) ;

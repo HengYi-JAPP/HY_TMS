@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.themes.definetype.DefineTypeBean">
+		<map property="themesId" javaType="java.lang.String" column="THEMESID" colType=""/>
+		<map property="tdtCode" javaType="java.lang.String" column="TDTCODE" colType=""/>
+		<map property="tdtName" javaType="java.lang.String" column="TDTNAME" colType=""/>
+		<map property="tdtDesc" javaType="java.lang.String" column="TDTDESC" colType=""/>
+		<map property="tdtIcon" javaType="java.lang.String" column="TDTICON" colType=""/>
+		<map property="tdtId" javaType="java.lang.String" column="TDTID" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="isDefault" javaType="java.lang.String" column="ISDEFAULT" colType=""/>
+		<map property="showOrder" javaType="java.lang.Integer" column="SHOWORDER" colType=""/>
+	</bean>
+
+</root>

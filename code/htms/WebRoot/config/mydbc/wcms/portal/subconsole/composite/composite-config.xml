@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="toAddChannelComposite" businessClass="com.mobilecn.portal.composite.CompositeColumnBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.channel.ChannelBean"
+		cacheType="bean"	cacheName="channelViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>
+		<sql name="listComposite" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="compositeList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_WSM_CHANNEL_COLUMN WHERE SYSID=$sysId AND CHANNELID=$channelId  ORDER BY CCID
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_WSM_COLUMN WHERE SYSID=$sysId AND ISVALIDATE='1' ORDER BY COLUMNID
+		]]></sql>
+		
+		<forward name="listPage">jsp/portal/console/subconsole/composite/add.jsp</forward>
+	</operation>
+	<operation name="addChannelComposite" businessClass="com.mobilecn.portal.composite.CompositeColumnBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert" caiidTable="TB_WSM_CHANNEL_COLUMN" caiidKey="CCID"  caiidName="TB_WSM_CHANNEL_COLUMN" caiidVar="newCcId">
+		INSERT INTO TB_WSM_CHANNEL_COLUMN (CCID,SYSID,CHANNELID,COLUMNID,PARENTID,SHOWNAME,SHOWORDER,BEFOREICON,AFTERICON,SHOWHEIGHT)
+		VALUES($newCcId,$sysId,$channelId,$columnId,$parentId,$showName,$showOrder,$beforeIcon,$afterIcon,$showHeight)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listChannelComposite</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listChannelComposite" businessClass="com.mobilecn.portal.composite.CompositeColumnBusiness"
+		invokeMethod="list" forward="" cacheParams="showNameSH,curpage" cacheScopes="page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_CHANNEL_COLUMN WHERE  SYSID=$sysId AND CHANNELID=$channelId   
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="compositeList" cacheScope="request" ><![CDATA[
+			    SELECT * FROM TB_WSM_CHANNEL_COLUMN WHERE  SYSID=$sysId AND CHANNELID=$channelId
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/subconsole/composite/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteChannelComposite" businessClass="com.mobilecn.portal.composite.CompositeColumnBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_CHANNEL_COLUMN WHERE CCID=$newCcId
+		</sql>
+		
+		<forward name="listAction"><![CDATA[contoller.do?operation=listChannelComposite&sysId=$[sysId]]]></forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewChannelComposite" businessClass="com.mobilecn.portal.composite.CompositeColumnBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="compositeViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_CHANNEL_COLUMN WHERE CCID=$newCcId
+		</sql>
+		<sql name="viewChannel" beanClass="com.mobilecn.portal.channel.ChannelBean"
+			cacheType="bean" cacheName="channelViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_CHANNEL WHERE CHANNELID=$channelId
+		</sql>
+		<sql name="listComposite" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="compositeList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_WSM_CHANNEL_COLUMN WHERE SYSID=$sysId AND CHANNELID=$channelId  ORDER BY CCID
+		]]></sql>
+		
+		<sql name="listCheckedComposite" beanClass="com.mobilecn.portal.composite.CompositeColumnBean"
+			cacheName="checkedCompositeList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_WSM_CHANNEL_COLUMN WHERE SYSID=$sysId AND CHANNELID=$channelId AND CCID =(
+			  	SELECT PARENTID FROM TB_WSM_CHANNEL_COLUMN WHERE CCID=$newCcId 
+			  )
+		]]></sql>
+		<sql name="listColumn" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			  SELECT * FROM TB_WSM_COLUMN WHERE SYSID=$sysId AND ISVALIDATE='1' ORDER BY COLUMNID
+		]]></sql>
+		<forward name="modifyPage">jsp/portal/console/subconsole/composite/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/subconsole/composite/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyChannelComposite" businessClass="com.mobilecn.portal.composite.CompositeColumnBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">
+		 UPDATE TB_WSM_CHANNEL_COLUMN SET 
+			COLUMNID=$columnId,
+			PARENTID=$parentId,
+			SHOWNAME=$showName,
+			SHOWORDER=$showOrder,
+			BEFOREICON=$beforeIcon,
+			AFTERICON=$afterIcon,
+			SHOWHEIGHT=$showHeight
+		 WHERE CCID=$newCcId
+		</sql>	
+		<forward name="listAction"><![CDATA[contoller.do?operation=listChannelComposite&sysId=$[sysId]]]></forward>
+	</operation>
+	
+</root>

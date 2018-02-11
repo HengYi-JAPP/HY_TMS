@@ -1,0 +1,64 @@
+
+/**-- ########################################################### --**/
+/**-- 菜单整体[表格]样式 --**/
+.system-menu-table{width:100%;height:100%;min-height:100%;border-collapse:collapse;border-spacing:0;font-size:12px;valign:top;}
+/**-- 菜单头[列]样式 --**/
+/*.system-menu-table thead td{height:28px;background:url(../images/menu-header-bg.gif) repeat-x;border-bottom:#d8d8d8 1px solid;font-size:14px;color:#004976;font-weight:bold;}*/
+.system-menu-table thead td{display:none; height:28px;background-color: #eff3f7;font-size:14px;color:#004976;font-weight:bold;}
+
+/**-- 菜单头[列-icon]样式 --**/
+.system-menu-table thead td img{margin:0 5px;}
+
+/**-- ########################################################### --**/
+/**-- 根结点[行]样式 --**/
+/*.system-menu-lvl1{cursor:pointer;height:23px;background:url(../images/menu-title-first-bg.gif) repeat-x;vertical-align:top;}*/
+/*.system-menu-lvl1-current{cursor:pointer;height:23px;background:url(../images/lvl1-current-bg.gif) repeat-x;color:#FFF; !important;}*/
+
+.system-menu-lvl1{cursor:pointer;height:40px;vertical-align:top;border-bottom:#eff3f7 1px solid;}
+.system-menu-lvl1-current{display:none; cursor:pointer;height:40px;  background-color:#eff3f7;border-bottom:#eff3f7 1px solid;}
+
+/**-- 根结点[列]样式 --**/
+/*.system-menu-lvl1 td{border-top:#6aadd8 1px solid;border-bottom:#6aadd8 1px solid;font-weight:bold;}*/
+.system-menu-lvl1 td{font-size:15px;font-family: Microsoft YaHei; color:#2889c4;background:url(../images/arrow-down.png) no-repeat 196px center;line-height: 35px;}
+
+
+/**-- 根结点[列-icon]样式 --**/
+.system-menu-lvl1 td img{margin:0 5px;}
+
+
+/**-- ########################################################### --**/
+/**-- 根结点包含子结点的[表格]样式 --**/
+/*.system-menu-content-warpper{height:auto; vertical-align:top;text-align:center;}
+.system-menu-inner-scoller{overflow:auto;height:auto;}
+.system-menu-lvl2-table{width:100%;border-collapse:collapse;border-spacing:0;font-size:12px;text-align:left;valign:top;}*/
+
+.system-menu-content-warpper{height:auto; vertical-align:top;text-align:center;background-color:#eff3f7;}
+.system-menu-inner-scoller{overflow:auto;height:auto;}
+.system-menu-lvl2-table{width:100%;border-collapse:collapse;border-spacing:0;font-size:12px;text-align:left;valign:top;}
+
+/**-- ########################################################### --**/
+/**-- 中间结点[行]样式 --**/
+/*.system-menu-lvl2{cursor: hand;}*/
+.system-menu-lvl2{cursor: hand;background:url(../images/arrow-down.png) no-repeat 196px center #eff3f7;}
+
+/**-- 中间结点[列]样式 --**/
+/*.system-menu-lvl2 td{height:24px;background:url(../images/down-arrow.gif) no-repeat #ededed 200px center;border-bottom:#cccccc 1px solid;font-weight:bold;}*/
+.system-menu-lvl2 td{font-size:14px;font-family: Microsoft YaHei; color:#2889c4;height:40px;}
+
+/**-- ########################################################### --**/
+/**-- 中间结点包含子结点的[表格]样式 --**/
+/*.system-menu-list{width:100%;border-collapse:collapse;border-spacing:0;margin:0 auto;font-size:12px;text-align:left;}
+.system-menu-list tr td{height:26px;cursor:pointer;}*/
+
+.system-menu-list{width:100%;border-collapse:collapse;border-spacing:0;margin:0 auto;font-size:12px;text-align:left;}
+.system-menu-list tr td{height:26px;cursor:pointer;background-color: #f9fafb;font-family:Microsoft YaHei; font-size: 12px;padding: 8px 0px 8px 0px;}
+
+/**-- ########################################################### --**/
+/**-- 叶子结点[行]样式 --**/
+.system-menu-list-line{cursor: hand;}
+/**-- 叶子结点[列]样式 --**/
+/*.system-menu-list-tr-td{height:26px;background:url(../images/menu-dashed.gif) no-repeat;position: relative;cursor:pointer;}
+.system-menu-list-current-td{height:26px;background:url(../images/menu-dashed.gif) #f0f5fd no-repeat !important;color:#ed6f00 !important;}*/
+
+.system-menu-list-tr-td{height:26px;background:url(../images/sub-menu-off.png) no-repeat 15px;position: relative;cursor:pointer;}
+.system-menu-list-current-td{height:26px;background:url(../images/sub-menu-off.png) #f0f5fd no-repeat 15px !important;color:#ed6f00 !important;}

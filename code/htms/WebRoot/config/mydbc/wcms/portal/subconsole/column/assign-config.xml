@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!--把指定栏目分配给角色 -->
+	
+	
+		
+	<!-- 为栏目指定可访问的角色  start-->
+	<operation name="toAddRoleForSubSystemColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="view"  forward="" >
+		<sql name="view" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnViewBean" cacheScope="request">
+			  SELECT  TB_WSM_COLUMN.*  FROM TB_WSM_COLUMN  WHERE COLUMNID = $checkColumnId
+		</sql>
+		<sql name="roleOfColumn" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false"
+			cacheName="roleOfColumn" cacheScope="request">
+			  SELECT  TB_WSM_ROLE.*  FROM TB_WSM_ROLE WHERE TB_WSM_ROLE.ROLEID IN (SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_COLUMN,TB_WSM_ROLE  WHERE TB_WSM_ROLE_COLUMN.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_COLUMN.COLUMNID=$checkColumnId) ORDER BY TB_WSM_ROLE.ROLEID
+		</sql>
+		<sql name="canSelectRole" beanClass="com.mobilecn.privilege.role.RoleBean"  isEscape="false" 
+			cacheName="canSelectRole" cacheScope="request">
+			 SELECT  TB_WSM_ROLE.*  FROM  TB_WSM_ROLE,TB_WSM_COLUMN WHERE 
+				TB_WSM_COLUMN.COLUMNID=$checkColumnId AND 
+				TB_WSM_ROLE.SYSID =TB_WSM_COLUMN.SYSID AND 
+				TB_WSM_ROLE.ROLEID NOT IN(
+				                   SELECT  TB_WSM_ROLE.ROLEID  FROM TB_WSM_ROLE_COLUMN,TB_WSM_ROLE  WHERE TB_WSM_ROLE_COLUMN.ROLEID=TB_WSM_ROLE.ROLEID AND TB_WSM_ROLE_COLUMN.COLUMNID=$checkColumnId
+				 ) AND 
+				TB_WSM_ROLE.ISVALIDATE=1 
+				ORDER BY TB_WSM_ROLE.ROLEID 
+		</sql>
+		<forward name="viewPage"><![CDATA[jsp/portal/console/subconsole/column/assignRole.jsp?sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<operation name="doAddRoleForSubSystemColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="delete"  forward="" >
+		<sql name="delete" isBatch="true">
+			  DELETE FROM  TB_WSM_ROLE_COLUMN WHERE  COLUMNID = $columnId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=addRoleForSubSystemColumn&sysId=$[sysId]]]></forward>
+	</operation>
+	<operation name="addRoleForSubSystemColumn" businessClass="com.mobilecn.portal.column.ColumnBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="add"  isBatch="true">
+			 INSERT INTO TB_WSM_ROLE_COLUMN(COLUMNID,ROLEID) VALUES($columnId,$selectedRole)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemColumn&sysId=$[sysId]]]></forward>
+	</operation>
+	<!-- 为栏目指定可访问的角色  end -->
+	
+	<!-- 为角色指定可访问的栏目  start -->
+	<operation name="toAssignColumnForRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.privilege.role.RoleBean"
+			cacheName="roleViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_ROLE WHERE ROLEID=$checkRoleId
+		</sql>
+		<sql name="columnCheckedList" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnCheckedList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN,TB_WSM_ROLE_COLUMN WHERE TB_WSM_COLUMN.SYSID=$sysId AND TB_WSM_COLUMN.COLUMNID=TB_WSM_ROLE_COLUMN.COLUMNID AND TB_WSM_ROLE_COLUMN.ROLEID=$checkRoleId 
+		]]></sql>
+		<sql name="columnList" beanClass="com.mobilecn.portal.column.ColumnBean"
+			cacheName="columnList" cacheScope="request"><![CDATA[
+			    SELECT TB_WSM_COLUMN.* FROM TB_WSM_COLUMN WHERE TB_WSM_COLUMN.SYSID=$sysId AND TB_WSM_COLUMN.COLUMNID NOT IN(SELECT COLUMNID FROM  TB_WSM_ROLE_COLUMN WHERE TB_WSM_ROLE_COLUMN.ROLEID=$checkRoleId)
+		]]></sql>
+		<forward name="viewPage"><![CDATA[jsp/privilege/subsystem/role/assignColumn.jsp?sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<operation name="assignColumnForRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="delete" >
+			 DELETE   FROM TB_WSM_ROLE_COLUMN WHERE ROLEID=$checkRoleId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=executeAssignColumnForRole&sysId=$[sysId]]]></forward>
+	</operation>
+	<operation name="executeAssignColumnForRole" businessClass="com.mobilecn.privilege.role.RoleBusiness"
+		invokeMethod="add" forward="" >		
+		<sql name="insert" isBatch="true">
+		INSERT INTO TB_WSM_ROLE_COLUMN (COLUMNID,ROLEID) VALUES($selectedColumn,$checkRoleId)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listSubSystemRole&sysId=$[sysId]]]></forward>
+	</operation>
+	
+	<!-- 为角色指定可访问的栏目  end -->
+	
+</root>

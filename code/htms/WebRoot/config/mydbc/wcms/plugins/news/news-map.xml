@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.news.NewsBean">
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="infoId" javaType="java.lang.String" column="INFOID" colType=""/>
+		<map property="draftor" javaType="java.lang.String" column="DRAFTOR" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="approver" javaType="java.lang.String" column="APPROVER" colType=""/>
+		<map property="approveTime" javaType="java.lang.String" column="APPROVETIME" colType=""/>
+		<map property="isRecommend" javaType="java.lang.String" column="ISRECOMMEND" colType=""/>
+		<map property="isTop" javaType="java.lang.String" column="ISTOP" colType=""/>
+		<map property="approveStatus" javaType="java.lang.String" column="APPROVESTATUS" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="title" javaType="java.lang.String" column="TITLE" colType=""/>
+		<map property="subTile" javaType="java.lang.String" column="SUBTILE" colType=""/>
+		<map property="introduction" javaType="java.lang.String" column="INTRODUCTION" colType=""/>
+		<map property="keyword" javaType="java.lang.String" column="KEYWORD" colType=""/>
+		<map property="contents" javaType="java.lang.String" column="CONTENTS" colType=""/>
+		<map property="modifier" javaType="java.lang.String" column="MODIFIER" colType=""/>
+		<map property="modifyTime" javaType="java.lang.String" column="MODIFYTIME" colType=""/>
+		<map property="indexPic" javaType="java.lang.String" column="INDEXPIC" colType=""/>
+	</bean>
+</root>

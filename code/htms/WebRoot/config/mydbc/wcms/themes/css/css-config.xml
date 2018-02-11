@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 增加 -->
+	<operation name="addCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="add"  forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_CSS" caiidKey="CSSID"  caiidName="TB_WSM_CSS" caiidVar="newCssId" isBatch="true">
+		INSERT INTO TB_WSM_CSS (CSSID,OWNERID,CSSNAME,CSSCODE,SHOWORDER,CSSCONTENT,CSSDESC,ISVALIDATE)
+		VALUES($newCssId,$ownerId,$cssName,$cssCode,$showOrder,$cssContent,$cssDesc,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listCss</forward>
+	</operation>
+
+	<!-- 查询 -->
+	<operation name="listCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="list" forward="" cacheParams="cssNameSH,cssCodeSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			SELECT COUNT(*) AS total  FROM TB_WSM_CSS WHERE  TB_WSM_CSS.OWNERID=$ownerId AND TB_WSM_CSS.CSSNAME LIKE '%$cssCodeSH%' AND  TB_WSM_CSS.CSSNAME LIKE '%$cssNameSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.themes.css.CssBean"
+			cacheName="cssList" cacheScope="request" isPage="true" pageField="CSSID"><![CDATA[
+			SELECT TB_WSM_CSS.*  FROM TB_WSM_CSS  WHERE  TB_WSM_CSS.OWNERID=$ownerId AND TB_WSM_CSS.CSSNAME LIKE '%$cssCodeSH%'  AND  TB_WSM_CSS.CSSNAME LIKE '%$cssNameSH%' ORDER BY TB_WSM_CSS.SHOWORDER DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/css/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteItems" isBatch="true">
+			DELETE  FROM TB_WSM_CSS_ITEM
+			 WHERE TB_WSM_CSS_ITEM.CSSID = $checkCssId
+		</sql>
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_CSS WHERE CSSID=$checkCssId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listCss</forward>
+	</operation>
+	
+	<!-- 查看 -->
+	<operation name="viewCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.themes.css.CssBean"
+			cacheName="cssViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_CSS WHERE CSSID    =$cssId
+		</sql>	
+		
+		<forward name="modifyPage">jsp/portal/themes/css/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/themes/css/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改 -->
+	<operation name="modifyCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_CSS SET 
+			 CSSNAME =$cssName,
+			 CSSCODE =$cssCode,
+			 SHOWORDER=$showOrder,
+			 CSSDESC =$cssDesc,
+			 ISVALIDATE =$isValidate,
+			 CSSCONTENT   =$cssContent
+		 WHERE CSSID    =$cssId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=listCss]]></forward>
+	</operation>
+	<!-- 排序 -->
+	<operation name="orderCss" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="list" beanClass="com.mobilecn.themes.css.CssBean"
+			cacheName="cssList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_CSS.*  FROM TB_WSM_CSS  WHERE  TB_WSM_CSS.OWNERID=$ownerId AND TB_WSM_CSS.ISVALIDATE=1 ORDER BY TB_WSM_CSS.SHOWORDER				
+		]]></sql>
+		<forward name="listPage">jsp/portal/themes/css/orderCss.jsp</forward>
+	</operation>
+	<operation name="updateCssOrder" businessClass="com.mobilecn.themes.css.CssBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify" isBatch="true">		
+		 UPDATE TB_WSM_CSS SET 
+			 SHOWORDER=$showOrder
+		 WHERE CSSID    =$cssId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=orderCss]]></forward>
+	</operation>
+</root>

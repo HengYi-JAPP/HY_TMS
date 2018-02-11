@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="modifyLogistics" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_LOGISTICS 
+				    SET logisticsName = $logisticsName ,logisticsCode = $logisticsCode 
+				        ,logisticsAddress = $logisticsAddress ,logisticsContactor = 
+				        $logisticsContactor ,logisticsTelephone = $logisticsTelephone 
+				        ,isValidate = $isValidate 
+				    WHERE TB_HTMS_LOGISTICS.logisticsId = $logisticsId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listLogistics]]></address>
+		</forward>
+	</operation>
+	<operation name="viewLogistics" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.logistic.LogisticsBean" cacheType="bean" cacheName="logisticsViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_LOGISTICS.logisticsId ,TB_HTMS_LOGISTICS.logisticsName 
+				        ,TB_HTMS_LOGISTICS.logisticsCode 
+				        ,TB_HTMS_LOGISTICS.logisticsAddress 
+				        ,TB_HTMS_LOGISTICS.logisticsContactor 
+				        ,TB_HTMS_LOGISTICS.logisticsTelephone 
+				        ,TB_HTMS_LOGISTICS.isValidate 
+				    FROM TB_HTMS_LOGISTICS 
+				    WHERE TB_HTMS_LOGISTICS.logisticsId = $logisticsId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/logistic/logistics/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/logistic/logistics/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteLogistics" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="DELETE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						DELETE FROM TB_HTMS_LOGISTICS 
+				    WHERE TB_HTMS_LOGISTICS.logisticsId = $logisticsId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listLogistics]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddLogistics" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/logistics/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addLogistics" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_LOGISTICS" caiidKey="logisticsId" caiidName="logisticsId" caiidVar="logisticsId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_LOGISTICS ( logisticsId, logisticsName, 
+				        logisticsCode, logisticsAddress, logisticsContactor, 
+				        logisticsTelephone, isValidate) 
+				        VALUES($logisticsId,$logisticsName,$logisticsCode,$logisticsAddress,$logisticsContactor,$logisticsTelephone,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listLogistics]]></address>
+		</forward>
+	</operation>
+	<operation name="listLogistics" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness" version="2.0"  forward="" >
+		<method name="默认查询" businessClass="com.zzy.htms.logistic.logistics.LogisticsBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_LOGISTICS 
+				    WHERE TB_HTMS_LOGISTICS.logisticsName LIKE'%$logisticsNameSH%' AND 
+				        TB_HTMS_LOGISTICS.logisticsCode LIKE'%$logisticsCodeSH%' 
+				        AND TB_HTMS_LOGISTICS.logisticsAddress LIKE'%$logisticsAddressSH%'  
+				        AND TB_HTMS_LOGISTICS.logisticsContactor LIKE'%$logisticsContactorSH%'  
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.logistic.LogisticsBean" cacheType="list" cacheName="logisticsList" cacheScope="request" isPage="true"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_LOGISTICS.logisticsId ,TB_HTMS_LOGISTICS.logisticsName 
+				        ,TB_HTMS_LOGISTICS.logisticsCode 
+				        ,TB_HTMS_LOGISTICS.logisticsAddress 
+				        ,TB_HTMS_LOGISTICS.logisticsContactor 
+				        ,TB_HTMS_LOGISTICS.logisticsTelephone 
+				        ,TB_HTMS_LOGISTICS.isValidate 
+				    FROM TB_HTMS_LOGISTICS 
+				    WHERE TB_HTMS_LOGISTICS.logisticsName LIKE'%$logisticsNameSH%'
+				       AND   TB_HTMS_LOGISTICS.logisticsCode LIKE'%$logisticsCodeSH%' 
+				       AND   TB_HTMS_LOGISTICS.logisticsAddress LIKE'%$logisticsAddressSH%'  
+				       AND   TB_HTMS_LOGISTICS.logisticsContactor LIKE'%$logisticsContactorSH%'  
+				    ORDER BY TB_HTMS_LOGISTICS.logisticsId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/logistic/logistics/list.jsp]]></address>
+		</forward>
+	</operation>
+</root>

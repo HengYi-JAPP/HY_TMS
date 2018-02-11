@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<!--通用操作定义start -->
+<!--根据ID值修改单表中的指定属性值 -->
+	<operation name="updateSinglePropertyById" businessClass="com.mobilecn.business.AbstractBusinessExecutor"
+		invokeMethod="modify"  forward="">
+		<sql name="modify"  escapeQuotationVars="tableName,varName,idName">
+			UPDATE $tableName SET $varName=$varValue  WHERE  $idName = $idValue
+		</sql>		
+	</operation>
+<!--通用操作定义end  -->
+</root>

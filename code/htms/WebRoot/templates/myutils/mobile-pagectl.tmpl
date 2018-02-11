@@ -1,0 +1,23 @@
+	<input	type="hidden" name="curpage" id="curpage" value="1">                   
+	<div  align="center" class="footer-page" style="text-align:right;height: 20px;font-size:12px;margin-top:30px;">                     
+			<div class="footer-page-table">                                                   
+				                                                                            
+				<div valign="center" align="right" nowrap="true"class="footer-page-table" style="width: 100%;text-align:center;position: fixed;background-color: white;bottom: 0px;padding: 0 0 0 10px;">                              
+					<a href="javascript:toPage({$prevPage})">                                   
+						<div style="background-color: #2eaed3;border-radius:14px;font-size: 17px;width:40%;color:white; border: 1px solid;height: 30px;float:left;padding:6px 0 0 0;box-shadow: -1px 0px 1px 1px #9be9ff;">上一页</div>                                               
+					</a>      
+					<span style="float:left;padding:11px 0 0 3%;">{$currentPage}/{$totalPage}页    </span>     
+					<a href="javascript:toPage({$nextPage})">                                     
+						<div style="background-color: #2eaed3;border-radius:14px;font-size: 17px;width:40%;color:white; border: 1px solid;height: 30px;float:right;padding:6px 0 0 0;box-shadow: -1px 0px 1px 1px #9be9ff;margin-right:15px;">下一页</div>
+					</a>
+				</div>                                                                            
+			</div>                                                                              
+		</div>                                                                             
+		<script type="text/javascript">                                                    
+						function toPage(pageNo){                                                     
+						if(pageNo == 0)pageNo = 1; if(pageNo > {$totalPage})return;                                                  
+						  document.getElementById("curpage").value = pageNo;                       
+						  if('{$fromName}'==''||'{$fromName}'=='null'){document.forms[0].submit();return;};                       
+						  document.getElementById("{$fromName}").submit();                         
+						}                                                                            
+		</script>           

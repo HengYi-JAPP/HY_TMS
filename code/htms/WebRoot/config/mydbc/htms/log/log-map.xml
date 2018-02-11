@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.carrier.CarrierBean">
+		<map property="carrierId" javaType="int" column="carrierId"  colType=""/>
+		<map property="carrierName" javaType="String" column="carrierName"  colType=""/>
+		<map property="carrierCode" javaType="String" column="carrierCode"  colType=""/>
+		<map property="carrierArea" javaType="String" column="carrierArea"  colType=""/>
+		<map property="carrierContactor" javaType="String" column="carrierContactor"  colType=""/>
+		<map property="carrierTelephone" javaType="String" column="carrierTelephone"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+	</bean>
+	<bean beanClass="com.zzy.htms.log.HtmsLogBean">
+		<map property="logCode" javaType="String" column="logCode"  colType=""/>
+		<map property="logDesc" javaType="String" column="logDesc"  colType=""/>
+		<map property="logTime" javaType="String" column="logTime"  colType=""/>
+		<map property="logAddress" javaType="String" column="logAddress"  colType=""/>
+		<map property="logUser" javaType="String" column="logUser"  colType=""/>
+		<map property="logResult" javaType="String" column="logResult"  colType=""/>
+		<map property="logId" javaType="String" column="logId"  colType=""/>
+	</bean>
+</root>

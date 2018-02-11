@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 分页列表展示 -->
+	<operation name="listDatasource" businessClass="com.mobilecn.common.datasource.DatasourceBusiness"
+		invokeMethod="list" forward="" cacheParams="dbAccountSH,dbsNameSH,dbAccountSH,dbsNameSH,curpage" cacheScopes="page,page,session,session,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_DATASOURCE WHERE DBSNAME LIKE '%$dbsNameSH%' AND DBACCOUNT LIKE '%$dbAccountSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.common.datasource.DatasourceBean"
+			cacheName="datasourceList" cacheScope="request" isPage="true" pageField="DICID"><![CDATA[
+			    SELECT TB_DATASOURCE.*  FROM TB_DATASOURCE WHERE DBSNAME LIKE '%$dbsNameSH%' AND DBACCOUNT LIKE '%$dbAccountSH%' ORDER BY TB_DATASOURCE.DBSID 
+		]]></sql>
+		<forward name="listPage">jsp/common/datasource/list.jsp</forward>
+	</operation>
+	
+	<!-- 增加操作配置  afterInvoke="reloadDatasource"-->
+	<operation name="addDatasource" businessClass="com.mobilecn.common.datasource.DatasourceBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert" caiidTable="TB_DATASOURCE" caiidKey="DBSID" caiidName="TB_DATASOURCE" caiidVar="newDbsId">
+		INSERT INTO TB_DATASOURCE 
+		(DBSID,DBSNAME,DBTYPE,DBDRIVER,DBNAME,HOSTIP,HOSTPORT,DBACCOUNT,DBPWD,MAXCONN,ISVALIDATE)
+		VALUES
+		($newDbsId,$dbsName,$dbType,$dbDriver,$dbName,$hostIp,$hostPort,$dbAccount,$dbPwd,$maxConn,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDatasource</forward>
+	</operation>
+	
+	<!-- 删除操作配置  afterInvoke="reloadDatasource"-->
+	<operation name="deleteDatasource" businessClass="com.mobilecn.common.datasource.DatasourceBusiness"
+		invokeMethod="delete" forward="" >
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_DATASOURCE WHERE DBSID=$checkDbsId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDatasource</forward>
+	</operation>
+
+	<!-- 查看操作配置 -->
+	<operation name="viewDatasource" businessClass="com.mobilecn.common.datasource.DatasourceBusiness"
+		invokeMethod="view" forward="">		
+		<sql name="view" beanClass="com.mobilecn.common.datasource.DatasourceBean"
+			cacheName="datasourceViewBean" cacheScope="request">
+			 SELECT TB_DATASOURCE.* FROM TB_DATASOURCE WHERE DBSID=$dbsId
+		</sql>
+		<forward name="modifyPage">jsp/common/datasource/modify.jsp</forward>
+		<forward name="viewPage">jsp/common/datasource/view.jsp</forward>
+	</operation>
+
+	<!-- 修改操作配置 afterInvoke="reloadDatasource"-->
+	<operation name="modifyDatasource" businessClass="com.mobilecn.common.datasource.DatasourceBusiness"
+		invokeMethod="modify" forward=""  >
+		<sql name="modify">
+		 UPDATE TB_DATASOURCE  SET 	
+		    DBSID=$dbsId,
+			DBSNAME=$dbsName,
+			DBTYPE=$dbType,
+			DBDRIVER=$dbDriver,
+			DBNAME=$dbName,
+			HOSTIP=$hostIp,
+			HOSTPORT=$hostPort,
+			DBACCOUNT=$dbAccount,
+			DBPWD=$dbPwd,
+			MAXCONN=$maxConn,
+			ISVALIDATE=$isValidate
+		WHERE DBSID=$dbsId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listDatasource</forward>
+	</operation>
+	
+</root>

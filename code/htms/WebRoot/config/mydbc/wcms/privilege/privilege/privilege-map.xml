@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 权限 start -->
+	<bean beanClass="com.mobilecn.privilege.privilege.PrivilegeBean">		
+		<map property="privId" javaType="java.lang.String" column="PRIVID" colType=""/>
+		<map property="privName" javaType="java.lang.String" column="PRIVNAME" colType=""/>
+		<map property="privCode" javaType="java.lang.String" column="PRIVCODE" colType=""/>
+		<map property="privDesc" javaType="java.lang.String" column="PRIVDESC" colType=""/>
+		<map property="privAddr" javaType="java.lang.String" column="PRIVADDR" colType=""/>
+		<map property="privParentId" javaType="java.lang.String" column="PRIVPARENTID" colType=""/>
+		<map property="privType" javaType="java.lang.String" column="PRIVTYPE" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="privOrder" javaType="java.lang.String" column="PRIVORDER" colType=""/>
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="isDefault" javaType="java.lang.String" column="ISDEFAULT" colType=""/>
+		<map property="defaultId" javaType="java.lang.String" column="DEFAULTID" colType=""/>
+		<map property="moduleId" javaType="java.lang.String" column="MODULEID" colType=""/>
+		<map property="objId" javaType="java.lang.String" column="OBJID" colType=""/>
+	</bean>
+
+	<!-- 权限 end -->
+</root>

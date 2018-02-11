@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.plugins.piclink.PicLinkGroupBean">
+		<map property="sysId" javaType="java.lang.String" column="SYSID" colType=""/>
+		<map property="columnId" javaType="java.lang.String" column="COLUMNID" colType=""/>
+		<map property="linkGroupId" javaType="java.lang.String" column="LINKGROUPID" colType=""/>
+		<map property="linkTypeId" javaType="java.lang.String" column="LINKTYPEID" colType=""/>
+		<map property="linkGroupCode" javaType="java.lang.String" column="LINKGROUPCODE" colType=""/>
+		<map property="linkGroupName" javaType="java.lang.String" column="LINKGROUPNAME" colType=""/>
+		<map property="linkGroupDesc" javaType="java.lang.String" column="LINKGROUPDESC" colType=""/>
+		<map property="showGroupName" javaType="java.lang.String" column="SHOWGROUPNAME" colType=""/>
+		<map property="showOrder" javaType="java.lang.String" column="SHOWORDER" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+		<map property="isSystem" javaType="java.lang.String" column="ISSYSTEM" colType=""/>
+		<map property="userId" javaType="java.lang.String" column="USERID" colType=""/>
+		<map property="showLinkGroup" javaType="java.lang.String" column="SHOWLINKGROUP" colType=""/>
+		<map property="userShowOrder" javaType="java.lang.String" column="USERSHOWORDER" colType=""/>
+		
+	</bean>
+</root>

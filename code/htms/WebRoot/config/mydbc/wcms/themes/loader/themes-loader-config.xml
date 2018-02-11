@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 加载所有工程 -->
+	
+<operation name="loadAllSystemThemes" businessClass="com.mobilecn.themes.loader.ThemesLoader" invokeMethod="list" forward="" >
+	<sql name="loadAllSystemThemes" beanClass="com.mobilecn.themes.themes.ThemesBean"><![CDATA[
+		    SELECT TB_WSM_THEMES.*,TB_SYSTEM.SYSCODE  
+		    FROM TB_WSM_THEMES,TB_WSM_SYS_THEMES,TB_SYSTEM  
+		    WHERE   TB_WSM_THEMES.ISVALIDATE=1 AND  
+		    TB_WSM_THEMES.THEMESID=TB_WSM_SYS_THEMES.THEMESID AND 
+		    TB_WSM_SYS_THEMES.SYSID=TB_SYSTEM.SYSID
+		    ORDER BY TB_WSM_SYS_THEMES.SYSID, TB_WSM_THEMES.THEMESID DESC				
+	]]></sql>
+</operation>
+</root>

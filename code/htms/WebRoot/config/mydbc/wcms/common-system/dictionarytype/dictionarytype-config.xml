@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="addDictionaryType" businessClass="com.mobilecn.common.dictionarytype.DictionaryTypeBusiness"
+		invokeMethod="add" forward=""  afterInvoke="reloadDicrectory">
+		<sql name="insert" caiidTable="TB_DIC_TYPE" caiidKey="TYPEID"  caiidName="TB_DIC_TYPE" caiidVar="primaryValue">
+		INSERT INTO TB_DIC_TYPE (TYPEID,TYPECODE,TYPENAME,TYPEDESC,ISVALIDATE)
+		VALUES($primaryValue,$typeCode,$typeName,$typeDesc,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDictionaryType</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listDictionaryType" businessClass="com.mobilecn.common.dictionarytype.DictionaryTypeBusiness"
+		invokeMethod="list" forward="" cacheParams="typeCodeSH,typeNameSH,typeCodeSH,typeNameSH,curpage" cacheScopes="page,page,session,session,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_DIC_TYPE WHERE TYPECODE LIKE '%$typeCodeSH%' AND TYPENAME LIKE '%$typeNameSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.common.dictionarytype.DictionaryTypeBean"
+			cacheName="dictionaryTypeList" cacheScope="request" isPage="true" pageField="TYPEID"><![CDATA[
+			    SELECT * FROM TB_DIC_TYPE WHERE TYPECODE LIKE '%$typeCodeSH%' AND TYPENAME LIKE '%$typeNameSH%' 
+		]]></sql>
+		<forward name="listPage">jsp/common/dictionarytype/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteDictionaryType" businessClass="com.mobilecn.common.dictionarytype.DictionaryTypeBusiness"
+		invokeMethod="delete" forward=""  afterInvoke="reloadDicrectory">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_DIC_TYPE WHERE TYPEID=$checkTypeId
+		</sql>
+		<sql name="deletedic" isBatch="true">
+			DELETE FROM TB_DICTIONARY WHERE TYPEID=$checkTypeId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listDictionaryType</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewDictionaryType" businessClass="com.mobilecn.common.dictionarytype.DictionaryTypeBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.common.dictionarytype.DictionaryTypeBean"
+			cacheName="dictionaryTypeViewBean" cacheScope="request">
+			 SELECT *   FROM TB_DIC_TYPE WHERE  TYPEID=$typeId
+		</sql>
+		<forward name="modifyPage">jsp/common/dictionarytype/modify.jsp</forward>
+		<forward name="viewPage">jsp/common/dictionarytype/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifyDictionaryType" businessClass="com.mobilecn.common.dictionarytype.DictionaryTypeBusiness"
+		invokeMethod="modify" forward="" afterInvoke="reloadDicrectory">
+		<sql name="modify">
+		 UPDATE TB_DIC_TYPE SET 
+			TYPECODE=$typeCode,TYPENAME=$typeName,TYPEDESC=$typeDesc
+		 WHERE   TYPEID=$typeId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listDictionaryType</forward>
+	</operation>
+	<!-- 用户end -->
+</root>

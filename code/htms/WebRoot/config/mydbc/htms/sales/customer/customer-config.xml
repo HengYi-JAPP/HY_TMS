@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<operation name="listCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"  forward="" loadCacheForm="customerForm">
+		<method name="默认查询" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="list" exeOrder="" version="2.0">
+			<sql name="COUNT" cacheType="single" cacheName="totalCount" cacheScope="request"  version="2.0"  isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+						SELECT COUNT(*) AS totalCount 
+				    FROM TB_HTMS_CUSTOMER
+				    WHERE 
+				    TB_HTMS_CUSTOMER.customerCode IN (
+	                	SELECT CUSTOMERCODE FROM TB_HTMS_CUSTORDER WHERE 
+	                	(TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                )
+				    AND TB_HTMS_CUSTOMER.customerCode LIKE'%$customerCodeSH%' AND 
+				        TB_HTMS_CUSTOMER.customerName LIKE'%$customerNameSH%' 
+					]]></content>
+			</sql>
+			<sql name="SELECT" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request" isPage="true"  version="2.0"  isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.*
+				    FROM TB_HTMS_CUSTOMER 
+				    WHERE 
+				    TB_HTMS_CUSTOMER.customerCode IN (
+	                	SELECT CUSTOMERCODE FROM TB_HTMS_CUSTORDER WHERE (TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))
+	                )
+				    AND TB_HTMS_CUSTOMER.customerCode LIKE'%$customerCodeSH%' 
+				    AND TB_HTMS_CUSTOMER.customerName LIKE'%$customerNameSH%' 
+				    ORDER BY TB_HTMS_CUSTOMER.customerId DESC 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/customer/list.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="modifyCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="modify" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTOMER 
+				    SET customerCode = $customerCode ,customerName = $customerName 
+				        ,customerNotice = $customerNotice ,customerAmount = 
+				        $customerAmount ,creator = $creator ,createTime = $createTime 
+				        ,customerType = $customerType 
+				    WHERE TB_HTMS_CUSTOMER.customerId = $customerId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomer]]></address>
+		</forward>
+	</operation>
+	<operation name="viewCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"  forward="" >
+		<method name="默认修改" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="view" exeOrder="" version="2.0">
+			<sql name="VIEW" beanClass="com.zzy.htms.sales.CustomerBean" cacheType="bean" cacheName="customerViewBean" cacheScope="request"  version="2.0">
+					<content><![CDATA[
+						SELECT TB_HTMS_CUSTOMER.*
+				    FROM TB_HTMS_CUSTOMER 
+				    WHERE TB_HTMS_CUSTOMER.customerId = $customerId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="viewPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==0]]></condition>
+			<address><![CDATA[jsp/htms/sales/customer/view.jsp]]></address>
+		</forward>
+		<forward name="modifyPage" forwardStyle="1" version="2.0">
+			<condition><![CDATA[$[isModify]==1]]></condition>
+			<address><![CDATA[jsp/htms/sales/customer/modify.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="deleteCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"  forward="" >
+		<method name="默认删除" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="delete" exeOrder="" version="2.0">
+			<sql name="UPDATE" isBatch="true"  version="2.0">
+					<content><![CDATA[
+						UPDATE TB_HTMS_CUSTOMER 
+				    SET isValidate = '0'
+				    WHERE TB_HTMS_CUSTOMER.customerId = $customerId 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomer]]></address>
+		</forward>
+	</operation>
+	<operation name="toAddCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="toAdd" exeOrder="" version="2.0">
+		</method>
+		<forward name="addPage" forwardStyle="1" version="2.0">
+			<address><![CDATA[jsp/htms/sales/customer/add.jsp]]></address>
+		</forward>
+	</operation>
+	<operation name="addCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"  forward="" >
+		<method name="默认新增" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="add" exeOrder="" version="2.0">
+			<sql name="INSERT" isBatch="true" caiidTable="TB_HTMS_CUSTOMER" caiidKey="customerId" caiidName="customerId" caiidVar="customerId"  version="2.0">
+					<content><![CDATA[
+						INSERT INTO TB_HTMS_CUSTOMER ( customerId, customerCode,customerType, customerName, 
+				        customerNotice, customerAmount, creator, createTime, 
+				        isValidate) 
+				        VALUES($customerId,$customerCode,$customerType,$customerName,$customerNotice,$customerAmount,$creator,$createTime,$isValidate) 
+					]]></content>
+			</sql>
+		</method>
+		<forward name="listAction" forwardStyle="1" version="2.0">
+			<address><![CDATA[contoller.do?operation=listCustomer]]></address>
+		</forward>
+	</operation>
+	
+	<operation name="selectGetAllCustomer" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"   >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="getSelectCustomer" exeOrder="" version="2.0">
+			<sql name="SELECTcustomer" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"   version="2.0"  isEscapeQuotation="true"  isEscape="false">
+					<content><![CDATA[
+				    SELECT TB_HTMS_CUSTOMER.customerId, TB_HTMS_CUSTOMER.customerName FROM TB_HTMS_CUSTOMER
+				     Where isvalidate = 1 
+				    ORDER BY TB_HTMS_CUSTOMER.customerId Asc 
+					]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	<operation name="selectGetAllCustomerByUserGroup" businessClass="com.zzy.htms.sales.customer.CustomerBusiness" version="2.0"   >
+		<method name="默认查询" businessClass="com.zzy.htms.sales.customer.CustomerBusiness"  invokeMethod="getSelectCustomer" exeOrder="" version="2.0">
+			<sql name="SELECTcustomer" beanClass="com.zzy.htms.sales.customer.CustomerBean" cacheType="list" cacheName="customerList" cacheScope="request"   version="2.0"  isEscapeQuotation="true"  isEscape="false">
+				<content><![CDATA[					
+					Select Tb_Htms_Customer.Customerid, Tb_Htms_Customer.Customername
+					From   Tb_Htms_Customer
+					Where  Tb_Htms_Customer.Isvalidate = 1 And
+								Tb_Htms_Customer.Customerid In
+								(Select Tb_Htms_Customer.Customerid
+								 From Tb_Htms_Customer, Tb_Htms_Custorder
+								 Where Tb_Htms_Customer.Customercode = Tb_Htms_Custorder.Customercode And
+											(TB_HTMS_CUSTORDER.SALEGROUP IN ($sql_user_sales_no)  
+	                	or TB_HTMS_CUSTORDER.syncemployno  IN ($sql_user_sync_employ_no))  )
+					Order By Tb_Htms_Customer.Customerid Asc
+				]]></content>
+			</sql>
+		</method>
+	</operation>
+	
+	
+</root>

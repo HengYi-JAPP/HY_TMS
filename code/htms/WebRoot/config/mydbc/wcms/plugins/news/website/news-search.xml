@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 分页列表展示 -->
+	<!-- 分页列表展示 -->
+	
+	
+	<!-- 审批状态：0这初始状态，1为审批通过，2为撤销审批 -->
+	<!-- 查出指定站点中与用户指定关键字相匹配的用户有权限访问的新闻栏目的信息 -->
+	<operation name="searchWebSiteNewsList" businessClass="com.mobilecn.plugins.news.NewsBusiness"
+		invokeMethod="list" forward="">
+		<sql name="currentSysId" refNames="currentSysId" refCols="SYSID"  ><![CDATA[
+			   SELECT SYSID  FROM TB_SYSTEM WHERE  SYSCODE=$currentSysCode
+		]]></sql>
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_INFO_NEWS,TB_WSM_INFO_COLUMN WHERE  
+			 TB_WSM_INFO_COLUMN.COLUMNID IN(
+			 	SELECT TB_WSM_COLUMN.COLUMNID FROM TB_WSM_COLUMN,TB_WSM_ROLE_COLUMN,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+				WHERE 
+				TB_WSM_COLUMN.SYSID=$currentSysId AND
+				TB_WSM_COLUMN.COLUMNID=TB_WSM_ROLE_COLUMN.COLUMNID AND
+				TB_WSM_ROLE_COLUMN.ROLEID=TB_WSM_GROUP_ROLE.ROLEID AND 
+				TB_WSM_GROUP_ROLE.GROUPID=TB_WSM_USER_GROUP.GROUPID AND
+				TB_WSM_USER_GROUP.USERID=$userId 
+			 ) AND
+         	 TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_NEWS.INFOID AND 
+         	 TB_WSM_INFO_COLUMN.ISVALIDATE = 1 AND 
+         	 TB_WSM_INFO_COLUMN.APPROVESTATUS = 1 AND 
+         	 (
+         	 	TB_WSM_INFO_NEWS.TITLE LIKE '%$keyword%' OR 
+         	 	TB_WSM_INFO_NEWS.SUBTILE LIKE '%$keyword%' OR 
+         	 	TB_WSM_INFO_NEWS.INTRODUCTION LIKE '%$keyword%' OR 
+         	 	TB_WSM_INFO_NEWS.CONTENTS LIKE '%$keyword%' 
+         	 )         	
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.news.NewsBean"
+			cacheName="newsList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			 SELECT TB_WSM_INFO_NEWS.* FROM TB_WSM_INFO_NEWS,TB_WSM_INFO_COLUMN WHERE  
+			 TB_WSM_INFO_COLUMN.COLUMNID IN(
+			 	SELECT TB_WSM_COLUMN.COLUMNID FROM TB_WSM_COLUMN,TB_WSM_ROLE_COLUMN,TB_WSM_GROUP_ROLE,TB_WSM_USER_GROUP 
+				WHERE 
+				TB_WSM_COLUMN.SYSID=$currentSysId AND
+				TB_WSM_COLUMN.COLUMNID=TB_WSM_ROLE_COLUMN.COLUMNID AND
+				TB_WSM_ROLE_COLUMN.ROLEID=TB_WSM_GROUP_ROLE.ROLEID AND 
+				TB_WSM_GROUP_ROLE.GROUPID=TB_WSM_USER_GROUP.GROUPID AND
+				TB_WSM_USER_GROUP.USERID=$userId 
+			 ) AND
+         	 TB_WSM_INFO_COLUMN.INFOID=TB_WSM_INFO_NEWS.INFOID AND 
+         	 TB_WSM_INFO_COLUMN.ISVALIDATE = 1 AND 
+         	 TB_WSM_INFO_COLUMN.APPROVESTATUS = 1 AND 
+         	 (
+         	 	TB_WSM_INFO_NEWS.TITLE LIKE '%$keyword%' OR 
+         	 	TB_WSM_INFO_NEWS.SUBTILE LIKE '%$keyword%' OR 
+         	 	TB_WSM_INFO_NEWS.INTRODUCTION LIKE '%$keyword%' OR 
+         	 	TB_WSM_INFO_NEWS.CONTENTS LIKE '%$keyword%' 
+         	 ) 
+		      ORDER BY TB_WSM_INFO_COLUMN.ISTOP DESC,TB_WSM_INFO_COLUMN.ISRECOMMEND DESC,TB_WSM_INFO_NEWS.APPROVETIME DESC,TB_WSM_INFO_NEWS.CREATETIME DESC
+		]]></sql>
+		
+		<forward name="listPage"><![CDATA[jsp/wsites/$[currentSysCode]/plugins/news/search.jsp?currentSysCode=$[currentSysCode]&keyword=$[keyword]]]></forward>
+	</operation>
+
+</root>

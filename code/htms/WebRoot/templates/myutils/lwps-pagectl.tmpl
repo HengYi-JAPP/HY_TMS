@@ -1,0 +1,32 @@
+<input	type="hidden" name="curpage" id="curpage" value="1">  
+<div class="page">
+	<div style="overflow:hidden; margin-left:64px">
+		<div class="pageToGo">第<input type="text" id="gotoPage" name="gotoPage" size="3" value="{$currentPage}" onkeydown="dowEnterKeyToPage()"/> 页    <a href="javascript:toPage(document.getElementById('gotoPage').value);" >跳</a> </div>
+    	<a href="javascript:toPage(1);" class="btn"><img src="lwportal/images/btn_backAll_pic_06.png" alt="" /></a>
+        <a href="javascript:toPage({$prevPage})" class="btn"><img src="lwportal/images/btn_goup_pic_08.png" alt="" /></a>
+        <div class="pagenum">
+        	{$showPageNums}
+        </div>
+        <a href="javascript:toPage({$nextPage});" class="btn"><img src="lwportal/images/btn_godown_pic_03.png" alt="" /></a>
+        <a href="javascript:toPage({$lastPage});" class="btn"><img src="lwportal/images/btn_lastAll_pic_05.png" alt="" /></a>
+        <div class="pageToo">共<a href="#">{$totalPage}</a>页,共<a href="#">{$totalCount}</a>条记录</div>
+    </div>
+</div>
+<script type="text/javascript">                                                    
+function toPage(pageNo){                                                     
+if(pageNo == 0)pageNo = 1; if(pageNo > {$totalPage})return;                                                  
+  document.getElementById("curpage").value = pageNo;                       
+  if('{$fromName}'==''||'{$fromName}'=='null'){document.forms[0].submit();return;};                       
+  document.getElementById("{$fromName}").submit();                         
+}        
+ 
+  function  dowEnterKeyToPage(){
+    if(window.event.keyCode == 13){
+    	var value = document.getElementById('gotoPage').value;
+    	if(value==null){
+    		return;
+    	}
+      	toPage(document.getElementById('gotoPage').value);
+    }
+  }                                                                    
+</script>           

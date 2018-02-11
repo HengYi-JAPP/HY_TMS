@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.services.user.ServiceUserBean">
+		<map property="suserId" javaType="java.lang.String" column="SUSERID" colType=""/>
+		<map property="syscode" javaType="java.lang.String" column="SYSCODE" colType=""/>
+		<map property="account" javaType="java.lang.String" column="ACCOUNT" colType=""/>
+		<map property="passwd" javaType="java.lang.String" column="PASSWD" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

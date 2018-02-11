@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<tag2bean>
+		<mapping key="com.mobilecn.taglib.tags.ajax.AjaxTag"   value="com.mobilecn.taglib.tags.ajax.AjaxBean"/>
+		<mapping key="com.mobilecn.taglib.tags.dtable.tag.TableTag"   value="com.mobilecn.taglib.tags.dtable.bean.TableBean"/>
+		<mapping key="com.mobilecn.taglib.tags.dtable.tag.RowTag"   value="com.mobilecn.taglib.tags.dtable.bean.RowBean"/>
+		<mapping key="com.mobilecn.taglib.tags.dtable.tag.ColumnTag"   value="com.mobilecn.taglib.tags.dtable.bean.ColumnBean"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.ChooseTag"   value="com.mobilecn.taglib.tags.elements.bean.ChooseBean"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.ImageTag"   value="com.mobilecn.taglib.tags.elements.bean.ImageBean"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.OptionTag"   value="com.mobilecn.taglib.tags.elements.bean.OptionBean"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.SelectTag"   value="com.mobilecn.taglib.tags.elements.bean.SelectBean"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.TextAreaTag"   value="com.mobilecn.taglib.tags.elements.bean.TextAreaBean"/>
+		<mapping key="com.mobilecn.taglib.tags.elements.tag.TextTag"   value="com.mobilecn.taglib.tags.elements.bean.TextBean"/>
+		<mapping key="com.mobilecn.taglib.tags.operate.OperationTag"   value="com.mobilecn.taglib.tags.operate.OperationBean"/>
+		<mapping key="com.mobilecn.taglib.tags.parameter.ParameterTag"   value="com.mobilecn.taglib.tags.parameter.ParameterBean"/>
+		<mapping key="com.mobilecn.taglib.tags.tree.TreeTag"   value="com.mobilecn.taglib.tags.tree.TreeBean"/>
+		<mapping key="com.mobilecn.taglib.tags.tree.TreeOperationTag"   value="com.mobilecn.taglib.tags.tree.TreeOperationBean"/>
+		<mapping key="com.mobilecn.taglib.tags.forms.FormTag"   value="com.mobilecn.taglib.tags.forms.FormBean"/>	
+		<mapping key="com.mobilecn.taglib.tags.lorbox.tag.SelectBoxTag"   value="com.mobilecn.taglib.tags.lorbox.bean.SelectBoxBean"/>
+		<mapping key="com.mobilecn.taglib.tags.lorbox.tag.MopTag"   value="com.mobilecn.taglib.tags.lorbox.bean.MopBean"/>
+		<mapping key="com.mobilecn.taglib.tags.lorbox.tag.LorBoxTag"   value="com.mobilecn.taglib.tags.lorbox.bean.LorBoxBean"/>
+		<mapping key="com.mobilecn.taglib.tags.dynamic.DynamicTag"   value="com.mobilecn.taglib.tags.dynamic.DynamicBean"/>
+		<mapping key="com.mobilecn.taglib.tags.pagination.PaginationTag"   value="com.mobilecn.taglib.tags.pagination.PaginationBean"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PortalPageTag"   value="com.mobilecn.taglib.tags.portlet.bean.PortalPageBean"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PageRowTag"   value="com.mobilecn.taglib.tags.portlet.bean.PageRowBean"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PageColumnTag"   value="com.mobilecn.taglib.tags.portlet.bean.PageColumnBean"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.ContainerTag"   value="com.mobilecn.taglib.tags.portlet.bean.ContainerBean"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.PortletTag"   value="com.mobilecn.taglib.tags.portlet.bean.PortletBean"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.TabPortletTag"   value="com.mobilecn.taglib.tags.portlet.bean.TabPortletBean"/>
+		<mapping key="com.mobilecn.taglib.tags.portlet.tag.TabPortletSegmentTag"   value="com.mobilecn.taglib.tags.portlet.bean.TabPortletSegmentBean"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.vcode.VCodeTag"   value="com.mobilecn.taglib.tags.vcode.VCodeBean"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.vml.tag.BarTag"   value="com.mobilecn.taglib.tags.vml.bean.BarBean"/>
+		<mapping key="com.mobilecn.taglib.tags.vml.tag.PieTag"   value="com.mobilecn.taglib.tags.vml.bean.PieBean"/>
+		<mapping key="com.mobilecn.taglib.tags.vml.tag.CurveTag"   value="com.mobilecn.taglib.tags.vml.bean.CurveBean"/>
+		
+		<mapping key="com.mobilecn.taglib.tags.validator.ValidatorTag"   value="com.mobilecn.taglib.tags.validator.ValidatorBean"/>
+		<mapping key="com.mobilecn.taglib.tags.page.PageTag"   value="com.mobilecn.taglib.tags.page.PageBean"/>
+	</tag2bean>
+</root>

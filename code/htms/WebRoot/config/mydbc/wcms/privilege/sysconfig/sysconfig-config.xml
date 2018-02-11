@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 添加 -->
+	<operation name="addSysConfig" businessClass="com.mobilecn.privilege.sysconfig.SysConfigBusiness"
+		invokeMethod="add" forward="" >
+		<sql name="insert"  caiidTable="TB_WSM_SYS_CONF" caiidKey="CONFIGID"  caiidName="TB_WSM_SYS_CONF" caiidVar="configId" lobKeyName="CONFIGID" lobKeyVar="configId">
+		INSERT INTO TB_WSM_SYS_CONF (CONFIGID,SYSID,CONFIGTYPE,CONFIGNAME,CONFIGCODE,CONFIGDESC,CONFIGCONTENT,VERSIONNO,ISREF,ISVALIDATE)
+		VALUES($configId,$sysId,$configType,$configName,$configCode,$configDesc,$configContent,$versionNo,$isRef,$isValidate)
+		</sql>
+	
+		<forward name="listAction">contoller.do?operation=listSysConfig</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listSysConfig" businessClass="com.mobilecn.privilege.sysconfig.SysConfigBusiness"
+		invokeMethod="list" forward="" cacheParams="configNameSH,configCodeSH,curpage" cacheScopes="session,session,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total FROM TB_WSM_SYS_CONF WHERE  SYSID=$sysId AND CONFIGNAME LIKE '%$configNameSH%' AND CONFIGCODE LIKE '%$configCodeSH%'
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.privilege.sysconfig.SysConfigBean"
+			cacheName="sysConfigList" cacheScope="request" isPage="true" pageField="SYSID"><![CDATA[
+			    SELECT * FROM TB_WSM_SYS_CONF WHERE  SYSID=$sysId AND CONFIGNAME LIKE '%$configNameSH%' AND CONFIGCODE LIKE '%$configCodeSH%' ORDER BY CONFIGID
+		]]></sql>
+		<forward name="listPage">jsp/privilege/sysconfig/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteSysConfig" businessClass="com.mobilecn.privilege.sysconfig.SysConfigBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" isBatch="true">
+			DELETE FROM TB_WSM_SYS_CONF WHERE CONFIGID=$checkConfigId
+		</sql>
+		<forward name="listAction">contoller.do?operation=listSysConfig</forward>
+	</operation>
+
+	<!-- 查看单个记录 -->
+	<operation name="viewSysConfig" businessClass="com.mobilecn.privilege.sysconfig.SysConfigBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.privilege.sysconfig.SysConfigBean"
+			cacheName="configViewBean" cacheScope="request">
+			 SELECT *   FROM TB_WSM_SYS_CONF WHERE CONFIGID=$configId
+		</sql>
+		<forward name="modifyPage">jsp/privilege/sysconfig/modify.jsp</forward>
+		<forward name="viewPage">jsp/privilege/sysconfig/view.jsp</forward>
+	</operation>
+
+	<!-- 修改记录 -->
+	<operation name="modifySysConfig" businessClass="com.mobilecn.privilege.sysconfig.SysConfigBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify"  >
+		 UPDATE TB_WSM_SYS_CONF SET 
+			CONFIGTYPE=$configType,
+			CONFIGNAME=$configName,
+			CONFIGCODE=$configCode,
+			CONFIGDESC=$configDesc,
+			CONFIGCONTENT=$configContent,
+			VERSIONNO=$versionNo,
+			ISREF=$isRef
+		 WHERE  CONFIGID=$configId
+		</sql>	
+		<forward name="listAction">contoller.do?operation=listSysConfig</forward>
+	</operation>
+	
+	<!-- 加载所有有效的系统配置 -->
+	<operation name="loadAllSysConfig" businessClass="com.mobilecn.privilege.sysconfig.SysConfigBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="loadAllSysConfig" beanClass="com.mobilecn.privilege.sysconfig.SysConfigBean"><![CDATA[
+			    SELECT TB_WSM_SYS_CONF.* FROM TB_WSM_SYS_CONF,TB_SYSTEM WHERE TB_SYSTEM.ISVALIDATE=1  AND TB_WSM_SYS_CONF.ISVALIDATE=1 AND TB_WSM_SYS_CONF.ISREF=1 AND TB_WSM_SYS_CONF.SYSID=TB_SYSTEM.SYSID ORDER BY CONFIGID
+		]]></sql>
+		
+	</operation>
+	
+	<!-- 用户end -->
+</root>

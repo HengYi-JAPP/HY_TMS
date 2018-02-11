@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.vstore.SignBean">
+		<map property="transportId" javaType="int" column="transportId"  colType=""/>
+		<map property="picList" javaType="String" column="picList"  colType=""/>
+		<map property="signTime" javaType="String" column="signTime"  colType=""/>
+	</bean>
+</root>

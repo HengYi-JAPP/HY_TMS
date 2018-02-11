@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.zzy.htms.logistic.senddetail.SendDetailBean">
+		<map property="sendDetailId" javaType="int" column="sendDetailId"  colType=""/>
+		<map property="sendId" javaType="int" column="sendId"  colType=""/>
+		<map property="transDetailId" javaType="int" column="transDetailId"  colType=""/>
+		<map property="transportId" javaType="int" column="transportId"  colType=""/>
+		<map property="transferId" javaType="int" column="transferId"  colType=""/>
+		<map property="shipDetailId" javaType="int" column="shipDetailId"  colType=""/>
+		<map property="codetailId" javaType="int" column="codetailId"  colType=""/>
+		<map property="shipId" javaType="int" column="shipId"  colType=""/>
+		<map property="caddrId" javaType="int" column="caddrId"  colType=""/>
+		<map property="productId" javaType="int" column="productId"  colType=""/>
+		<map property="applyTonNum" javaType="String" column="applyTonNum"  colType=""/>
+		<map property="applyPackNum" javaType="String" column="applyPackNum"  colType=""/>
+		<map property="fetchTonNum" javaType="String" column="fetchTonNum"  colType=""/>
+		<map property="fetchPackNum" javaType="String" column="fetchPackNum"  colType=""/>
+		<map property="planFreight" javaType="String" column="planFreight"  colType=""/>
+		<map property="actulFreight" javaType="String" column="actulFreight"  colType=""/>
+		<map property="freightUnit" javaType="String" column="freightUnit"  colType=""/>
+		<map property="useFreight" javaType="String" column="useFreight"  colType=""/>
+		<map property="transDetailNotice" javaType="String" column="transDetailNotice"  colType=""/>
+		<map property="transDetailStatus" javaType="String" column="transDetailStatus"  colType=""/>
+		<map property="creator" javaType="String" column="creator"  colType=""/>
+		<map property="createTime" javaType="String" column="createTime"  colType=""/>
+		<map property="modifier" javaType="String" column="modifier"  colType=""/>
+		<map property="modifyTime" javaType="String" column="modifyTime"  colType=""/>
+		<map property="isValidate" javaType="int" column="isValidate"  colType=""/>
+		<map property="driverName" javaType="String" column="driverName"  colType=""/>
+		<map property="driverMobile" javaType="String" column="driverMobile"  colType=""/>
+		<map property="vehicleNo" javaType="String" column="vehicleNo"  colType=""/>
+	</bean>
+</root>

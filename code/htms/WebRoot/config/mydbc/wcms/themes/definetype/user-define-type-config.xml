@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<!-- 查询 -->
+	<operation name="listUserDefinableType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="list" forward="" >
+		<sql name="list" beanClass="com.mobilecn.themes.definetype.DefineTypeBean"
+			cacheName="tdtList" cacheScope="request" ><![CDATA[
+			SELECT TB_WSM_THEMES_DEFINE_TYPE.*  FROM TB_WSM_THEMES_DEFINE_TYPE  WHERE TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId AND TB_WSM_THEMES_DEFINE_TYPE.ISVALIDATE=1 ORDER BY TB_WSM_THEMES_DEFINE_TYPE.SHOWORDER				
+		]]></sql>
+		<forward name="listPage"><![CDATA[jsp/portal/themes/definetype/userDefinableTypes.jsp?reload=false]]></forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="defineUserDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="delete" >
+			DELETE FROM TB_WSM_THEMES_TYPE_USER WHERE USERID=$userId AND TB_WSM_THEMES_TYPE_USER.TDTID IN(
+				SELECT TDTID 
+				FROM TB_WSM_THEMES_DEFINE_TYPE 
+				WHERE TB_WSM_THEMES_DEFINE_TYPE.ISVALIDATE=1 AND 
+				TB_WSM_THEMES_DEFINE_TYPE.THEMESID=$themesId
+			)
+		</sql>
+		<forward name="listAction">contoller.do?operation=addUserDefineType</forward>
+	</operation>
+	
+	<!-- 增加 -->
+	<operation name="addUserDefineType" businessClass="com.mobilecn.themes.definetype.DefineTypeBusiness"
+		invokeMethod="add"  afterInvoke="reloadSystemThemes" forward="" >
+		<sql name="insert" >
+		INSERT INTO TB_WSM_THEMES_TYPE_USER (TDTID,USERID)
+		VALUES($tdtId,$userId)
+		</sql>
+		<forward name="listAction"><![CDATA[contoller.do?operation=listUserDefinableType]]></forward>
+	</operation>
+
+	
+</root>

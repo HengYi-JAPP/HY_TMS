@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<bean beanClass="com.mobilecn.common.log.LogBean">
+		<map property="logId" javaType="java.lang.String" column="LOGID" colType=""/>
+		<map property="logDesc" javaType="java.lang.String" column="LOGDESC" colType=""/>
+		<map property="logIp" javaType="java.lang.String" column="LOGIP" colType=""/>
+		<map property="logUser" javaType="java.lang.String" column="LOGUSER" colType=""/>
+		<map property="logTime" javaType="java.lang.String" column="LOGTIME" colType=""/>
+		<map property="operation" javaType="java.lang.String" column="OPERATION" colType=""/>
+		<map property="createTime" javaType="java.lang.String" column="CREATETIME" colType=""/>
+		<map property="isValidate" javaType="java.lang.String" column="ISVALIDATE" colType=""/>
+	</bean>
+</root>

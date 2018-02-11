@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	
+	<operation name="toListServiceParams" businessClass="com.mobilecn.plugins.service.ServiceParamsBusiness"
+		invokeMethod="view" forward="" >
+		<sql name="view" beanClass="com.mobilecn.plugins.service.ServiceBean"
+			cacheName="serviceViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SERVICE WHERE   SERVICEID=$checkServiceId
+		</sql>	
+		<forward name="viewPage"><![CDATA[contoller.do?operation=listServiceParams]]></forward>
+	</operation>
+	
+	<!-- 嵌套栏目在新增之前要把同一栏目的信息删除，确保一个嵌套栏目只有一条信息 -->
+	<operation name="addServiceParams" businessClass="com.mobilecn.plugins.service.ServiceParamsBusiness"
+		invokeMethod="add"  forward="" >		
+		<sql name="insert"  caiidTable="TB_WSM_INFO_SERVICE_PARAMS" caiidKey="PARAMID" caiidName="SERVICE_PARAMS" caiidVar="serviceParamsId">
+		INSERT INTO TB_WSM_INFO_SERVICE_PARAMS (PARAMID,SERVICEID,PARAMCODE,PARAMNAME,PARAMDESC,PARAMVAR,PARAMVALUE,ISVALIDATE)
+		VALUES($serviceParamsId,$checkServiceId,$paramCode,$paramName,$paramDesc,$paramVar,$paramValue,$isValidate)
+		</sql>
+		<forward name="listAction">contoller.do?operation=toListServiceParams</forward>
+	</operation>
+
+	<!-- 分页列表展示 -->
+	<operation name="listServiceParams" businessClass="com.mobilecn.plugins.service.ServiceParamsBusiness"
+		invokeMethod="list" forward="" cacheParams="paramNameSH,curpage" cacheScopes="page,page,session">
+		<sql name="count">
+			 SELECT COUNT(*) AS total 
+			FROM TB_WSM_INFO_SERVICE_PARAMS
+			WHERE  SERVICEID=$checkServiceId AND PARAMNAME LIKE '%$paramNameSH%' 
+		</sql>
+		<sql name="list" beanClass="com.mobilecn.plugins.service.ServiceParamsBean"
+			cacheName="serivceParamsList" cacheScope="request" isPage="true" pageField="COLUMNID"><![CDATA[
+			    SELECT TB_WSM_INFO_SERVICE_PARAMS.* 
+				FROM TB_WSM_INFO_SERVICE_PARAMS 
+				WHERE  SERVICEID=$checkServiceId AND PARAMNAME LIKE '%$paramNameSH%'  
+				ORDER BY PARAMID DESC				
+		]]></sql>
+		<forward name="listPage">jsp/portal/console/plugins/service/params/list.jsp</forward>
+	</operation>
+
+	<!-- 删除 -->
+	<operation name="deleteServiceParams" businessClass="com.mobilecn.plugins.service.ServiceParamsBusiness"
+		invokeMethod="delete" forward="">
+		<sql name="deleteInfo" isBatch="true">
+			DELETE FROM TB_WSM_INFO_SERVICE_PARAMS WHERE PARAMID=$checkParamId
+		</sql>			
+		<forward name="listAction">contoller.do?operation=toListServiceParams</forward>
+	</operation>
+	
+	<!--service实质上是对栏目内容链接的维护与修改，因此，在维护之前要先加载栏目信息 -->
+	
+	<operation name="viewServiceParams" businessClass="com.mobilecn.plugins.service.ServiceParamsBusiness"
+		invokeMethod="view" forward="">
+		<sql name="view" beanClass="com.mobilecn.plugins.service.ServiceParamsBean"
+			cacheName="serviceParamsViewBean" cacheScope="request">
+			 SELECT *  FROM TB_WSM_INFO_SERVICE_PARAMS WHERE  PARAMID=$paramId
+		</sql>	
+		<forward name="modifyPage">jsp/portal/console/plugins/service/params/modify.jsp</forward>
+		<forward name="viewPage">jsp/portal/console/plugins/service/params/view.jsp</forward>
+	</operation>
+	
+	<!-- 修改记录 -->
+	<operation name="modifyServiceParams" businessClass="com.mobilecn.plugins.service.ServiceParamsBusiness"
+		invokeMethod="modify" forward="">
+		<sql name="modify">		
+		 UPDATE TB_WSM_INFO_SERVICE_PARAMS SET 
+			SERVICEID=$checkServiceId,
+			PARAMCODE=$paramCode,
+			PARAMNAME=$paramName,
+			PARAMDESC=$paramDesc,
+			PARAMVAR=$paramVar,
+			PARAMVALUE=$paramValue,
+			ISVALIDATE=$isValidate
+		 WHERE  PARAMID=$paramId
+		</sql>			
+		<forward name="listAction"><![CDATA[contoller.do?operation=toListServiceParams]]></forward>
+	</operation>
+</root>
